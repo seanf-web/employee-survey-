@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TASK Monthly Survey</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TASK Monthly Employment Check-In</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -11,147 +11,133 @@
       margin: 0;
       padding: 0;
     }
+
     .container {
-      max-width: 800px;
-      margin: 40px auto;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      padding: 20px 30px;
-      position: relative;
+      max-width: 900px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     }
-
-    /* Language Toggle */
-    .lang-toggle {
-      position: absolute;
-      top: 15px; left: 15px;
-      padding: 6px 10px;
-      border: 2px solid #ff911f;
-      border-radius: 6px;
-      font-size: 13px;
-      background: white;
-    }
-
-    /* Stepper */
-    .steps {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-    .step {
-      text-align: center;
-      flex: 1;
-    }
-    .circle {
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      background: #145078;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: auto;
-      font-size: 14px;
-      font-weight: bold;
-    }
-    .active { background: #74ba58; }
-    .steps span { font-size: 13px; display: block; margin-top: 4px; }
 
     /* Progress bar */
-    .progress {
-      height: 8px;
-      background: #e5e7eb;
-      border-radius: 4px;
-      overflow: hidden;
-      margin: 20px 0;
+    .progressbar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      counter-reset: step;
     }
-    .progress-bar {
-      height: 100%;
+    .progressbar li {
+      list-style: none;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      font-weight: bold;
+      color: #555;
+    }
+    .progressbar li::before {
+      counter-increment: step;
+      content: counter(step);
+      width: 35px;
+      height: 35px;
+      line-height: 35px;
+      border: 2px solid #ccc;
+      display: block;
+      text-align: center;
+      margin: 0 auto 10px auto;
+      border-radius: 50%;
+      background-color: #fff;
+    }
+    .progressbar li.active::before {
+      border-color: #ff911f;
       background: #ff911f;
-      width: 80%; /* update per step */
-      transition: width 0.4s ease;
+      color: #fff;
+    }
+    .progressbar li::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 4px;
+      background: #ccc;
+      top: 16px;
+      left: -50%;
+      z-index: -1;
+    }
+    .progressbar li:first-child::after {
+      content: none;
+    }
+    .progressbar li.active + li::after {
+      background: #ff911f;
     }
 
-    /* Completion message */
-    .complete-message {
-      text-align: center;
-      margin: 30px 0;
+    /* Language toggle */
+    .language-toggle {
+      position: absolute;
+      top: 20px;
+      left: 20px;
     }
-    .complete-message h2 {
-      color: green;
+    .language-toggle select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 2px solid #ff911f;
+      font-weight: bold;
+    }
+
+    /* Center alignment for Completed */
+    .completed {
+      text-align: center;
+    }
+    .completed h2 {
       font-size: 28px;
+      color: green;
       margin-bottom: 10px;
     }
-    .complete-message p {
-      font-size: 16px;
-      color: #374151;
-    }
-
-    /* Info box */
-    .info-box {
-      background: #e0f2fe;
+    .next-steps {
+      background: #e6f3fc;
       padding: 20px;
-      border-radius: 8px;
+      border-radius: 12px;
       margin-top: 20px;
+      display: inline-block;
       text-align: center;
-    }
-    .info-box h3 {
-      margin-bottom: 12px;
-      font-size: 18px;
-    }
-    .info-box pre {
-      font-family: inherit;
-      font-size: 15px;
-      margin: 10px 0;
-    }
-    .info-box p {
-      font-size: 15px;
-      margin: 5px 0;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    
-    <!-- Language Toggle -->
-    <select class="lang-toggle">
-      <option>English</option>
-      <option>Español</option>
-      <option>Kreyòl Ayisyen</option>
-    </select>
 
-    <!-- Stepper -->
-    <div class="steps">
-      <div class="step"><div class="circle">1</div><span>Contact</span></div>
-      <div class="step"><div class="circle">2</div><span>Employment</span></div>
-      <div class="step"><div class="circle">3</div><span>Survey</span></div>
-      <div class="step"><div class="circle">4</div><span>Pay Stubs</span></div>
-      <div class="step"><div class="circle active">5</div><span>Complete</span></div>
-    </div>
+<div class="language-toggle">
+  <select>
+    <option>English</option>
+    <option>Español</option>
+    <option>Kreyòl</option>
+  </select>
+</div>
 
-    <!-- Progress -->
-    <div class="progress">
-      <div class="progress-bar" style="width:100%"></div>
-    </div>
+<div class="container">
+  <!-- Progress Bar -->
+  <ul class="progressbar">
+    <li class="active">Contact</li>
+    <li class="active">Employment</li>
+    <li class="active">Survey</li>
+    <li class="active">Pay Stubs</li>
+    <li class="active">Complete</li>
+  </ul>
 
-    <!-- Completion -->
-    <div class="complete-message">
-      <h2>🎉 Survey Completed!</h2>
-      <p>Thank you for completing your monthly survey.</p>
-    </div>
+  <!-- Completion Page -->
+  <div class="completed">
+    <h2>🎉 Survey Completed!</h2>
+    <p>Thank you for completing your monthly survey.</p>
 
-    <!-- Next Steps -->
-    <div class="info-box">
+    <div class="next-steps">
       <h3>Next Steps</h3>
       <p>Visit the TASK Employment Office to pick up your gift card.</p>
-      <pre>
-Office: Mon–Fri 9–4
-Lunch: Mon–Sat 10:30–1
-Dinner: Mon–Thu 3:30–5
-      </pre>
-      <p>Phone Numbers: (609) 697-6215 / (609) 697-6166</p>
+      <p><strong>Office:</strong> Mon–Fri 9–4<br>
+         <strong>Lunch:</strong> Mon–Sat 10:30–1<br>
+         <strong>Dinner:</strong> Mon–Thu 3:30–5</p>
+      <p><strong>Phone Numbers:</strong> (609) 697-6215 / (609) 697-6166</p>
     </div>
-
   </div>
+</div>
+
 </body>
 </html>
