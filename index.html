@@ -1,145 +1,225 @@
+{
+  "name": "employee-survey",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "lucide-react": "^0.363.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.15",
+    "postcss": "^8.4.23",
+    "tailwindcss": "^3.3.2",
+    "gh-pages": "^6.0.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+  "homepage": "https://<your-username>.github.io/employee-survey"
+}
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./public/index.html"
+  ],
+  theme: {
+    extend: {}
+  },
+  plugins: []
+};
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TASK Employment Monthly Survey</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TASK Employment Survey</title>
 </head>
 <body class="bg-gray-100">
-  <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-8 mt-8">
-    <h1 class="text-3xl font-bold text-blue-700 text-center mb-6">TASK Monthly Employment Survey</h1>
-    <p class="text-center text-gray-600 mb-6">
-      Complete this form once per month to verify employment and receive your gift card reward.
-    </p>
-
-    <form action="/submit" method="POST" enctype="multipart/form-data" class="space-y-6">
-      <!-- Job Title -->
-      <div>
-        <label class="block font-semibold">Current Job Title</label>
-        <input type="text" name="job_title" required class="w-full border rounded-lg p-3">
-      </div>
-
-      <!-- Employer -->
-      <div>
-        <label class="block font-semibold">Employer</label>
-        <input type="text" name="employer" required class="w-full border rounded-lg p-3">
-      </div>
-
-      <!-- Pay Rate -->
-      <div>
-        <label class="block font-semibold">Current Hourly Pay Rate / Salary</label>
-        <input type="text" name="pay_rate" required class="w-full border rounded-lg p-3">
-      </div>
-
-      <!-- Rating -->
-      <div>
-        <label class="block font-semibold">Rate TASK Employment Support (1-5)</label>
-        <select name="rating" class="w-full border rounded-lg p-3" required>
-          <option value="1">1 - Poor</option>
-          <option value="2">2 - Fair</option>
-          <option value="3">3 - Good</option>
-          <option value="4">4 - Very Good</option>
-          <option value="5">5 - Excellent</option>
-        </select>
-      </div>
-
-      <!-- Short Answers -->
-      <div>
-        <label class="block font-semibold">How is your job going so far? (Enjoyments & Challenges)</label>
-        <textarea name="job_feedback" rows="3" class="w-full border rounded-lg p-3"></textarea>
-      </div>
-
-      <div>
-        <label class="block font-semibold">Did TASK prepare you well for this job? Why/Why not?</label>
-        <textarea name="prep_feedback" rows="3" class="w-full border rounded-lg p-3"></textarea>
-      </div>
-
-      <div>
-        <label class="block font-semibold">What additional support from TASK would help you succeed?</label>
-        <textarea name="support_feedback" rows="3" class="w-full border rounded-lg p-3"></textarea>
-      </div>
-
-      <!-- File Upload -->
-      <div>
-        <label class="block font-semibold">Upload Your Last Two Pay Stubs (PDF or Image)</label>
-        <input type="file" name="paystubs" accept=".pdf,image/*" multiple required class="w-full">
-      </div>
-
-      <!-- Camera Option -->
-      <div>
-        <label class="block font-semibold">Or Take a Picture</label>
-        <input type="file" name="camera_upload" accept="image/*" capture="environment">
-      </div>
-
-      <!-- Submit -->
-      <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-bold">
-        Submit Monthly Survey
-      </button>
-    </form>
-  </div>
+  <div id="root"></div>
 </body>
 </html>
-from flask import Flask, render_template, request, redirect, url_for, flash
-from werkzeug.utils import secure_filename
-import os, datetime
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
 
-app = Flask(__name__)
-app.secret_key = "yoursecret"
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-UPLOAD_FOLDER = "uploads/"
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+body {
+  font-family: system-ui, sans-serif;
+}
+import React from 'react';
+import SurveyWizard from './SurveyWizard';
 
-# Track submissions by email (or phone)
-last_submission = {}
+function App() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
+      <SurveyWizard />
+    </div>
+  );
+}
 
-@app.route("/")
-def survey():
-    return render_template("survey.html")
+export default App;
+import React, { useState } from 'react';
+import { CheckCircle, ArrowRightCircle, ArrowLeftCircle } from 'lucide-react';
 
-@app.route("/submit", methods=["POST"])
-def submit():
-    user_id = request.form.get("employer") + request.form.get("job_title")  # or email/phone field
-    today = datetime.date.today()
+const steps = [
+  { title: 'Personal Info' },
+  { title: 'Employment' },
+  { title: 'Feedback' },
+  { title: 'Paystubs' },
+  { title: 'Review & Submit' }
+];
 
-    # Prevent multiple submissions within 30 days
-    if user_id in last_submission:
-        delta = today - last_submission[user_id]
-        if delta.days < 30:
-            flash("You can only submit once per month. Please try again later.")
-            return redirect(url_for("survey"))
+export default function SurveyWizard() {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    phone: '',
+    email: '',
+    employer: '',
+    jobTitle: '',
+    feedback: '',
+    prepFeedback: '',
+    supportFeedback: '',
+    paystubs: [],
+    cameraUploads: []
+  });
 
-    # Save files
-    files = request.files.getlist("paystubs")
-    for f in files:
-        if f:
-            filename = secure_filename(f.filename)
-            f.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+  const goNext = () => {
+    if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
+  };
+  const goBack = () => {
+    if (currentStep > 0) setCurrentStep(currentStep - 1);
+  };
 
-    # Camera upload
-    camera_file = request.files.get("camera_upload")
-    if camera_file:
-        filename = secure_filename(camera_file.filename)
-        camera_file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+  const handleChange = (field, value) => {
+    setFormData({ ...formData, [field]: value });
+  };
 
-    # Record submission date
-    last_submission[user_id] = today
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files);
+    setFormData({ ...formData, paystubs: [...formData.paystubs, ...files] });
+  };
 
-    return render_template("thank_you.html")
-<div class="text-center py-12">
-  <h1 class="text-4xl font-bold text-green-600">Survey Completed 🎉</h1>
-  <p class="mt-4 text-lg text-gray-700">
-    Thank you for your continued commitment! Please visit the TASK Employment Office
-    to claim your gift card reward.
-  </p>
-  <div class="mt-6">
-    <p class="font-bold">Trenton Area Soup Kitchen</p>
-    <p>72½ Escher St, Trenton, NJ 08609</p>
-    <p>(609) 697-6215</p>
-    <p>Office Hours: Mon–Fri 9:00 AM–4:00 PM</p>
-    <p>Meals: Mon–Fri 10:30 AM–1:00 PM, Mon–Thu 3:30–5:00 PM</p>
-    <p><a href="https://trentonsoupkitchen.org" class="text-blue-600">Visit our website</a></p>
-  </div>
-</div>
+  const handleCamera = (e) => {
+    const files = Array.from(e.target.files);
+    setFormData({ ...formData, cameraUploads: [...formData.cameraUploads, ...files] });
+  };
+
+  const handleSubmit = () => {
+    alert("✅ Survey submitted! Please visit TASK Employment Office for your gift card reward.");
+    console.log(formData); // Replace with API/database call
+  };
+
+  return (
+    <div className="max-w-3xl w-full p-8 bg-white rounded-2xl shadow-xl">
+      {/* Stepper */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          {steps.map((step, idx) => (
+            <div key={idx} className="flex-1 text-center">
+              <div className={`w-10 h-10 mx-auto flex items-center justify-center rounded-full ${idx <= currentStep ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}>
+                {idx < currentStep ? <CheckCircle size={24} /> : idx + 1}
+              </div>
+              <div className="mt-2 text-xs font-semibold">{step.title}</div>
+            </div>
+          ))}
+        </div>
+        <div className="relative mt-4 h-2 bg-gray-200 rounded-full">
+          <div
+            className="absolute h-2 bg-blue-600 rounded-full transition-all duration-500"
+            style={{ width: `${(currentStep) / (steps.length - 1) * 100}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Step Content */}
+      <div>
+        {currentStep === 0 && (
+          <div className="space-y-4">
+            <input type="text" placeholder="Full Name" value={formData.fullName} onChange={e => handleChange('fullName', e.target.value)} className="w-full border p-3 rounded-lg"/>
+            <input type="tel" placeholder="Phone" value={formData.phone} onChange={e => handleChange('phone', e.target.value)} className="w-full border p-3 rounded-lg"/>
+            <input type="email" placeholder="Email" value={formData.email} onChange={e => handleChange('email', e.target.value)} className="w-full border p-3 rounded-lg"/>
+          </div>
+        )}
+
+        {currentStep === 1 && (
+          <div className="space-y-4">
+            <input type="text" placeholder="Employer" value={formData.employer} onChange={e => handleChange('employer', e.target.value)} className="w-full border p-3 rounded-lg"/>
+            <input type="text" placeholder="Job Title" value={formData.jobTitle} onChange={e => handleChange('jobTitle', e.target.value)} className="w-full border p-3 rounded-lg"/>
+          </div>
+        )}
+
+        {currentStep === 2 && (
+          <div className="space-y-4">
+            <textarea placeholder="How is your job going so far?" value={formData.feedback} onChange={e => handleChange('feedback', e.target.value)} className="w-full border p-3 rounded-lg"/>
+            <textarea placeholder="Did TASK prepare you well? Why or why not?" value={formData.prepFeedback} onChange={e => handleChange('prepFeedback', e.target.value)} className="w-full border p-3 rounded-lg"/>
+            <textarea placeholder="What support would help you succeed?" value={formData.supportFeedback} onChange={e => handleChange('supportFeedback', e.target.value)} className="w-full border p-3 rounded-lg"/>
+          </div>
+        )}
+
+        {currentStep === 3 && (
+          <div className="space-y-4">
+            <div>
+              <label className="block font-semibold mb-2">Upload Paystubs</label>
+              <input type="file" accept="image/*,application/pdf" multiple onChange={handleFileUpload} className="w-full"/>
+            </div>
+            <div>
+              <label className="block font-semibold mb-2">Or Take a Picture</label>
+              <input type="file" accept="image/*" capture="environment" onChange={handleCamera} className="w-full"/>
+            </div>
+          </div>
+        )}
+
+        {currentStep === 4 && (
+          <div className="space-y-2 text-sm">
+            <p><strong>Name:</strong> {formData.fullName}</p>
+            <p><strong>Phone:</strong> {formData.phone}</p>
+            <p><strong>Email:</strong> {formData.email}</p>
+            <p><strong>Employer:</strong> {formData.employer}</p>
+            <p><strong>Job Title:</strong> {formData.jobTitle}</p>
+            <p><strong>Feedback:</strong> {formData.feedback}</p>
+            <p><strong>Prep Feedback:</strong> {formData.prepFeedback}</p>
+            <p><strong>Support Feedback:</strong> {formData.supportFeedback}</p>
+            <p><strong>Paystubs Uploaded:</strong> {formData.paystubs.length}</p>
+            <p><strong>Camera Uploads:</strong> {formData.cameraUploads.length}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Navigation */}
+      <div className="flex justify-between mt-8">
+        <button onClick={goBack} disabled={currentStep === 0} className={`flex items-center px-4 py-2 rounded-lg ${currentStep === 0 ? 'bg-gray-300 text-gray-500' : 'bg-gray-500 text-white hover:bg-gray-600'}`}>
+          <ArrowLeftCircle className="mr-2"/> Back
+        </button>
+        <button onClick={currentStep === steps.length - 1 ? handleSubmit : goNext} className="flex items-center px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+          {currentStep === steps.length - 1 ? 'Submit Survey' : 'Next'}
+          <ArrowRightCircle className="ml-2"/>
+        </button>
+      </div>
+    </div>
+  );
+}
+
