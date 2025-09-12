@@ -19,17 +19,14 @@
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-    h2 {
-      color: #145078;
-      margin-bottom: 10px;
-    }
+    h2 { color: #145078; margin-bottom: 10px; }
     label {
       font-weight: bold;
       color: #333;
       display: block;
       margin: 12px 0 6px;
     }
-    input, select, textarea {
+    input, select {
       width: 100%;
       padding: 10px;
       border: 2px solid #ccc;
@@ -37,7 +34,7 @@
       margin-bottom: 16px;
       font-size: 14px;
     }
-    input:focus, select:focus, textarea:focus {
+    input:focus, select:focus {
       outline: none;
       border-color: #ff911f;
       box-shadow: 0 0 5px rgba(255,145,31,0.4);
@@ -53,10 +50,7 @@
       margin: 10px 5px 0 0;
     }
     .btn:hover { background: #0f3c5a; }
-    .btn-secondary {
-      background: #ccc;
-      color: #333;
-    }
+    .btn-secondary { background: #ccc; color: #333; }
     .btn-secondary:hover { background: #aaa; }
     .progress {
       height: 10px;
@@ -71,13 +65,8 @@
       width: 0;
       transition: width 0.3s ease;
     }
-    .success-card {
-      text-align: center;
-      color: #145078;
-    }
-    .success-card h1 {
-      color: green;
-    }
+    .success-card { text-align: center; color: #145078; }
+    .success-card h1 { color: green; }
     .info-box {
       margin-top: 20px;
       background: #e8f5ff;
@@ -85,11 +74,7 @@
       border-radius: 8px;
       border: 1px solid #b3d7f5;
     }
-    .reset-btn {
-      margin-top: 20px;
-      font-size: 12px;
-      background: #666;
-    }
+    .reset-btn { margin-top: 20px; font-size: 12px; background: #666; }
   </style>
 </head>
 <body>
@@ -98,16 +83,11 @@
   </div>
 
   <script>
-    const steps = [
-      { id: 1, label: "Contact Info" },
-      { id: 2, label: "Employment Status" },
-      { id: 3, label: "Verification" },
-      { id: 4, label: "Confirmation" }
-    ];
-
+    const steps = [1, 2, 3, 4];
     let page = 1;
     let formData = {
-      fullName: "",
+      firstName: "",
+      lastName: "",
       phone: "",
       email: "",
       preferredContact: "",
@@ -146,8 +126,11 @@
       if (page === 1) {
         html += `
           <h2>Monthly Employment Check-In</h2>
-          <label>Full Name *</label>
-          <input type="text" id="fullName" value="${formData.fullName}" required />
+          <label>First Name *</label>
+          <input type="text" id="firstName" value="${formData.firstName}" required />
+
+          <label>Last Name *</label>
+          <input type="text" id="lastName" value="${formData.lastName}" required />
 
           <label>Phone *</label>
           <input type="tel" id="phone" value="${formData.phone}" required />
@@ -227,11 +210,12 @@
 
     function nextPage() {
       if (page === 1) {
-        formData.fullName = document.getElementById("fullName").value.trim();
+        formData.firstName = document.getElementById("firstName").value.trim();
+        formData.lastName = document.getElementById("lastName").value.trim();
         formData.phone = document.getElementById("phone").value.trim();
         formData.email = document.getElementById("email").value.trim();
         formData.preferredContact = document.getElementById("preferredContact").value;
-        if (!formData.fullName || !formData.phone || !formData.email || !formData.preferredContact) {
+        if (!formData.firstName || !formData.lastName || !formData.phone || !formData.email || !formData.preferredContact) {
           alert("Please fill out all required fields.");
           return;
         }
@@ -250,13 +234,12 @@
         const payStubs = document.getElementById("payStubs").files;
         const photo = document.getElementById("photo").files[0];
 
-        // ✅ FIXED: allow either 2+ paystubs OR 1 photo
-        if (payStubs.length >= 2) {
+        // ✅ FIXED validation
+        if (payStubs.length >= 2 || photo || (payStubs.length === 1 && photo)) {
           formData.payStubs = payStubs;
-        } else if (photo) {
           formData.photo = photo;
         } else {
-          alert("Please upload at least 2 pay stubs OR take 1 picture.");
+          alert("Please upload at least 2 pay stubs OR 1 photo OR 1 pay stub + 1 photo.");
           return;
         }
       }
@@ -273,7 +256,7 @@
       localStorage.removeItem("lastSubmittedMonth");
       page = 1;
       formData = {
-        fullName: "", phone: "", email: "", preferredContact: "",
+        firstName: "", lastName: "", phone: "", email: "", preferredContact: "",
         employer: "", jobTitle: "", startDate: "", stillWorking: "",
         payStubs: [], photo: null
       };
