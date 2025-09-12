@@ -1,136 +1,9 @@
-# EBC Employee Survey - Complete Files
-
-## File Structure
-```
-ebc-employee-survey/
-├── package.json
-├── vite.config.js
-├── index.html
-├── src/
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── index.css
-└── public/
-    └── vite.svg
-```
-
----
-
-## package.json
-```json
-{
-  "name": "ebc-employee-survey",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "deploy": "npm run build && netlify deploy --prod --dir dist"
-  },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "lucide-react": "^0.263.1"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.15",
-    "@types/react-dom": "^18.2.7",
-    "@vitejs/plugin-react": "^4.0.3",
-    "autoprefixer": "^10.4.14",
-    "eslint": "^8.45.0",
-    "eslint-plugin-react": "^7.32.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.3",
-    "postcss": "^8.4.27",
-    "tailwindcss": "^3.3.0",
-    "vite": "^4.4.5"
-  }
-}
-```
-
----
-
-## vite.config.js
-```javascript
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  plugins: [react()],
-  base: '/'
-})
-```
-
----
-
-## index.html
-```html
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Employee Retention Survey - Engage by Cell</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
-```
-
----
-
-## src/main.jsx
-```javascript
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
-```
-
----
-
-## src/index.css
-```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-}
-```
-
----
-
-## src/App.jsx
-```javascript
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Upload, Check, MapPin, Phone, Globe } from 'lucide-react';
 
-function App() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [formData, setFormData] = useState({
+export default function EmployeeRetentionSurvey() {
+  const [page, setPage] = useState(1);
+  const [data, setData] = useState({
     fullName: '',
     phone: '',
     email: '',
@@ -143,490 +16,425 @@ function App() {
     stayReasons: '',
     challenges: '',
     permission: false,
-    payStubs: null
+    files: null
   });
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const handleChange = (field, value) => {
+    setData({ ...data, [field]: value });
   };
 
-  const handleFileUpload = (event) => {
-    const files = event.target.files;
-    handleInputChange('payStubs', files);
-  };
-
-  const nextPage = () => {
-    if (currentPage < 3) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const prevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleSubmit = () => {
-    setCurrentPage(4);
-  };
-
-  const ProgressBar = () => (
-    <div className="w-full bg-gray-200 rounded-full h-2 mb-8">
-      <div 
-        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-        style={{ width: `${(currentPage / 3) * 100}%` }}
-      />
-    </div>
-  );
-
-  const Page1 = () => (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <div className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-full inline-block mb-4">
-          ENGAGE BY CELL
-        </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Employee Retention Survey</h1>
-        <p className="text-gray-600">Help us understand your employment experience</p>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Full Name <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            placeholder="First Last"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            value={formData.fullName}
-            onChange={(e) => handleInputChange('fullName', e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Phone <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="tel"
-            placeholder="(###) ###-####"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            value={formData.phone}
-            onChange={(e) => handleInputChange('phone', e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Email <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="email"
-            placeholder="you@example.com"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            value={formData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Preferred Contact Method
-          </label>
-          <select
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            value={formData.preferredContact}
-            onChange={(e) => handleInputChange('preferredContact', e.target.value)}
-          >
-            <option value="Phone">Phone</option>
-            <option value="Email">Email</option>
-            <option value="Text">Text</option>
-          </select>
-        </div>
-      </div>
-    </div>
-  );
-
-  const Page2 = () => (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Employment Details</h2>
-        <p className="text-gray-600">Tell us about your current position</p>
-      </div>
-
-      <div className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Current Employer <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            placeholder="Company name"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            value={formData.currentEmployer}
-            onChange={(e) => handleInputChange('currentEmployer', e.target.value)}
-          />
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Job Title
-            </label>
-            <input
-              type="text"
-              placeholder="e.g., Cook, Warehouse Associate"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              value={formData.jobTitle}
-              onChange={(e) => handleInputChange('jobTitle', e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Start Date <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="date"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              value={formData.startDate}
-              onChange={(e) => handleInputChange('startDate', e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Hours per week
-          </label>
-          <input
-            type="number"
-            placeholder="e.g., 35"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            value={formData.hoursPerWeek}
-            onChange={(e) => handleInputChange('hoursPerWeek', e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Are you still working there? <span className="text-red-500">*</span>
-          </label>
-          <div className="flex gap-6">
-            <label className="flex items-center cursor-pointer">
-              <input
-                type="radio"
-                name="stillWorking"
-                value="yes"
-                className="mr-2 text-blue-600 focus:ring-blue-500"
-                checked={formData.stillWorking === 'yes'}
-                onChange={(e) => handleInputChange('stillWorking', e.target.value)}
-              />
-              <span className="text-gray-700">Yes</span>
-            </label>
-            <label className="flex items-center cursor-pointer">
-              <input
-                type="radio"
-                name="stillWorking"
-                value="no"
-                className="mr-2 text-blue-600 focus:ring-blue-500"
-                checked={formData.stillWorking === 'no'}
-                onChange={(e) => handleInputChange('stillWorking', e.target.value)}
-              />
-              <span className="text-gray-700">No</span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const Page3 = () => (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Additional Information</h2>
-        <p className="text-gray-600">Help us better understand your situation</p>
-      </div>
-
-      <div className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            What helps you stay on the job?
-          </label>
-          <textarea
-            placeholder="Schedule, pay, transportation, etc."
-            rows="3"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
-            value={formData.stayReasons}
-            onChange={(e) => handleInputChange('stayReasons', e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Any challenges we can help with?
-          </label>
-          <textarea
-            placeholder="Childcare, transportation, etc."
-            rows="3"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
-            value={formData.challenges}
-            onChange={(e) => handleInputChange('challenges', e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Upload your last two pay stubs <span className="text-red-500">*</span>
-          </label>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors cursor-pointer">
-            <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <div className="space-y-2">
-              <input
-                type="file"
-                multiple
-                accept=".pdf,image/*"
-                onChange={handleFileUpload}
-                className="sr-only"
-                id="file-upload"
-              />
-              <label
-                htmlFor="file-upload"
-                className="cursor-pointer inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Choose Files
-              </label>
-              <p className="text-sm text-gray-500">PDF or image files accepted</p>
-              {formData.payStubs && formData.payStubs.length > 0 && (
-                <div className="mt-3 p-3 bg-green-50 rounded-lg">
-                  <p className="text-sm text-green-700 font-medium">
-                    ✓ {formData.payStubs.length} file(s) selected
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-blue-50 rounded-lg p-4">
-          <label className="flex items-start cursor-pointer">
-            <input
-              type="checkbox"
-              className="mt-1 mr-3 h-4 w-4 text-blue-600 rounded focus:ring-blue-500"
-              checked={formData.permission}
-              onChange={(e) => handleInputChange('permission', e.target.checked)}
-            />
-            <span className="text-sm text-gray-700">
-              I give TASK permission to contact me about this survey. <span className="text-red-500">*</span>
-            </span>
-          </label>
-        </div>
-      </div>
-    </div>
-  );
-
-  const ThankYouPage = () => (
-    <div className="text-center space-y-8">
-      <div className="text-6xl mb-6">🎉</div>
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Thank you!</h1>
-        <p className="text-lg text-gray-600 mb-8">
-          We received your Employee Retention Survey and pay stubs.
-        </p>
-      </div>
-
-      <div className="bg-blue-50 rounded-xl p-8 text-left max-w-lg mx-auto">
-        <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">
-          Next step: Please visit TASK to pick up your gift card.
-        </h3>
-        
-        <div className="space-y-4 text-gray-700">
-          <div className="flex items-start">
-            <MapPin className="h-5 w-5 text-blue-600 mr-3 mt-1 flex-shrink-0" />
-            <div>
-              <p className="font-medium">Address:</p>
-              <p>72½ Escher St, Trenton, NJ 08609</p>
-            </div>
+  if (page === 1) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-8 px-4">
+        <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-xl p-8">
+          {/* Progress Bar */}
+          <div className="w-full bg-gray-200 rounded-full h-2 mb-8">
+            <div className="bg-blue-600 h-2 rounded-full w-1/3"></div>
           </div>
           
-          <div className="flex items-center">
-            <Phone className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0" />
-            <div>
-              <p className="font-medium">Phone:</p>
-              <p>(609) 337-1624</p>
+          {/* Header */}
+          <div className="flex justify-between items-center mb-8">
+            <span className="text-sm font-medium text-gray-600">Step 1 of 3</span>
+            <div className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+              ENGAGE BY CELL
             </div>
           </div>
-        </div>
 
-        <div className="mt-6 p-4 bg-white rounded-lg">
-          <p className="font-medium text-gray-900 mb-2">Gift Card Distribution Hours:</p>
-          <div className="text-sm text-gray-600 space-y-1">
-            <p>• Lunch: Mon–Fri 10:30a–1:00p</p>
-            <p>• Dinner: Mon–Thu 3:30–5:00p</p>
+          {/* Content */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Employee Retention Survey</h1>
+            <p className="text-gray-600">Help us understand your employment experience</p>
           </div>
-          <p className="text-xs text-gray-500 mt-3 italic">
-            Bring a photo ID. Gift cards are distributed during meal hours only.
-          </p>
+
+          <div className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="First Last"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={data.fullName}
+                  onChange={(e) => handleChange('fullName', e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Phone <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="tel"
+                  placeholder="(###) ###-####"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={data.phone}
+                  onChange={(e) => handleChange('phone', e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  placeholder="you@example.com"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={data.email}
+                  onChange={(e) => handleChange('email', e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Preferred Contact Method
+                </label>
+                <select
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={data.preferredContact}
+                  onChange={(e) => handleChange('preferredContact', e.target.value)}
+                >
+                  <option value="Phone">Phone</option>
+                  <option value="Email">Email</option>
+                  <option value="Text">Text</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
+            <div></div>
+            <button
+              onClick={() => setPage(2)}
+              className="flex items-center px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              Next Step
+              <ChevronRight className="h-4 w-4 ml-2" />
+            </button>
+          </div>
         </div>
       </div>
+    );
+  }
 
-      <div className="flex flex-col sm:flex-row justify-center gap-4">
-        <button 
-          onClick={() => window.open('https://maps.google.com/?q=72.5+Escher+St,+Trenton,+NJ+08609', '_blank')}
-          className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <MapPin className="h-4 w-4 mr-2" />
-          Open in Google Maps
-        </button>
-        <button 
-          onClick={() => window.open('https://www.task-nj.org', '_blank')}
-          className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-        >
-          <Globe className="h-4 w-4 mr-2" />
-          Visit TASK Website
-        </button>
+  if (page === 2) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-8 px-4">
+        <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-xl p-8">
+          {/* Progress Bar */}
+          <div className="w-full bg-gray-200 rounded-full h-2 mb-8">
+            <div className="bg-blue-600 h-2 rounded-full w-2/3"></div>
+          </div>
+          
+          {/* Header */}
+          <div className="flex justify-between items-center mb-8">
+            <span className="text-sm font-medium text-gray-600">Step 2 of 3</span>
+            <div className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+              TASK
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Employment Details</h2>
+            <p className="text-gray-600">Tell us about your current position</p>
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Current Employer <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Company name"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={data.currentEmployer}
+                onChange={(e) => handleChange('currentEmployer', e.target.value)}
+              />
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Job Title
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Cook, Warehouse Associate"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={data.jobTitle}
+                  onChange={(e) => handleChange('jobTitle', e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Start Date <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="date"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={data.startDate}
+                  onChange={(e) => handleChange('startDate', e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Hours per week
+              </label>
+              <input
+                type="number"
+                placeholder="e.g., 35"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={data.hoursPerWeek}
+                onChange={(e) => handleChange('hoursPerWeek', e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Are you still working there? <span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-6">
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="stillWorking"
+                    value="yes"
+                    className="mr-2 text-blue-600"
+                    checked={data.stillWorking === 'yes'}
+                    onChange={(e) => handleChange('stillWorking', e.target.value)}
+                  />
+                  <span className="text-gray-700">Yes</span>
+                </label>
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="stillWorking"
+                    value="no"
+                    className="mr-2 text-blue-600"
+                    checked={data.stillWorking === 'no'}
+                    onChange={(e) => handleChange('stillWorking', e.target.value)}
+                  />
+                  <span className="text-gray-700">No</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
+            <button
+              onClick={() => setPage(1)}
+              className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100 border border-gray-300 rounded-lg font-medium"
+            >
+              <ChevronLeft className="h-4 w-4 mr-2" />
+              Previous
+            </button>
+            <button
+              onClick={() => setPage(3)}
+              className="flex items-center px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              Next Step
+              <ChevronRight className="h-4 w-4 ml-2" />
+            </button>
+          </div>
+        </div>
       </div>
+    );
+  }
 
-      <button 
-        onClick={() => {
-          setCurrentPage(1);
-          setFormData({
-            fullName: '',
-            phone: '',
-            email: '',
-            preferredContact: 'Phone',
-            currentEmployer: '',
-            jobTitle: '',
-            startDate: '',
-            hoursPerWeek: '',
-            stillWorking: '',
-            stayReasons: '',
-            challenges: '',
-            permission: false,
-            payStubs: null
-          });
-        }}
-        className="text-blue-600 hover:text-blue-800 underline font-medium"
-      >
-        ← Submit another response
-      </button>
-    </div>
-  );
+  if (page === 3) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-8 px-4">
+        <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-xl p-8">
+          {/* Progress Bar */}
+          <div className="w-full bg-gray-200 rounded-full h-2 mb-8">
+            <div className="bg-blue-600 h-2 rounded-full w-full"></div>
+          </div>
+          
+          {/* Header */}
+          <div className="flex justify-between items-center mb-8">
+            <span className="text-sm font-medium text-gray-600">Step 3 of 3</span>
+            <div className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+              TASK
+            </div>
+          </div>
 
+          {/* Content */}
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Additional Information</h2>
+            <p className="text-gray-600">Help us better understand your situation</p>
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                What helps you stay on the job?
+              </label>
+              <textarea
+                placeholder="Schedule, pay, transportation, etc."
+                rows="3"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                value={data.stayReasons}
+                onChange={(e) => handleChange('stayReasons', e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Any challenges we can help with?
+              </label>
+              <textarea
+                placeholder="Childcare, transportation, etc."
+                rows="3"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                value={data.challenges}
+                onChange={(e) => handleChange('challenges', e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Upload your last two pay stubs <span className="text-red-500">*</span>
+              </label>
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
+                <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                <input
+                  type="file"
+                  multiple
+                  accept=".pdf,image/*"
+                  className="sr-only"
+                  id="file-upload"
+                  onChange={(e) => handleChange('files', e.target.files)}
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="cursor-pointer inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Choose Files
+                </label>
+                <p className="text-sm text-gray-500 mt-2">PDF or image files accepted</p>
+                {data.files && data.files.length > 0 && (
+                  <div className="mt-3 p-3 bg-green-50 rounded-lg">
+                    <p className="text-sm text-green-700 font-medium">
+                      ✓ {data.files.length} file(s) selected
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-blue-50 rounded-lg p-4">
+              <label className="flex items-start cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mt-1 mr-3 h-4 w-4 text-blue-600 rounded"
+                  checked={data.permission}
+                  onChange={(e) => handleChange('permission', e.target.checked)}
+                />
+                <span className="text-sm text-gray-700">
+                  I give TASK permission to contact me about this survey. <span className="text-red-500">*</span>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
+            <button
+              onClick={() => setPage(2)}
+              className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100 border border-gray-300 rounded-lg font-medium"
+            >
+              <ChevronLeft className="h-4 w-4 mr-2" />
+              Previous
+            </button>
+            <button
+              onClick={() => setPage(4)}
+              className="flex items-center px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              <Check className="h-4 w-4 mr-2" />
+              Submit Survey
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Thank You Page (page 4)
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-8 px-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-xl shadow-xl p-8">
-          {currentPage <= 3 && (
-            <>
-              <ProgressBar />
-              <div className="flex justify-between items-center mb-8">
-                <span className="text-sm font-medium text-gray-600">Step {currentPage} of 3</span>
-                <div className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                  TASK
-                </div>
-              </div>
-            </>
-          )}
-
-          <div className="min-h-[500px]">
-            {currentPage === 1 && <Page1 />}
-            {currentPage === 2 && <Page2 />}
-            {currentPage === 3 && <Page3 />}
-            {currentPage === 4 && <ThankYouPage />}
+      <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-xl p-8">
+        <div className="text-center space-y-8">
+          <div className="text-6xl mb-6">🎉</div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">Thank you!</h1>
+            <p className="text-lg text-gray-600 mb-8">
+              We received your Employee Retention Survey and pay stubs.
+            </p>
           </div>
 
-          {currentPage <= 3 && (
-            <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
-              <button
-                onClick={prevPage}
-                disabled={currentPage === 1}
-                className={`flex items-center px-6 py-3 rounded-lg font-medium transition-all ${
-                  currentPage === 1
-                    ? 'text-gray-400 cursor-not-allowed'
-                    : 'text-gray-700 hover:bg-gray-100 border border-gray-300'
-                }`}
-              >
-                <ChevronLeft className="h-4 w-4 mr-2" />
-                Previous
-              </button>
-
-              <button
-                onClick={currentPage === 3 ? handleSubmit : nextPage}
-                className="flex items-center px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg"
-              >
-                {currentPage === 3 ? (
-                  <>
-                    <Check className="h-4 w-4 mr-2" />
-                    Submit Survey
-                  </>
-                ) : (
-                  <>
-                    Next Step
-                    <ChevronRight className="h-4 w-4 ml-2" />
-                  </>
-                )}
-              </button>
+          <div className="bg-blue-50 rounded-xl p-8 text-left max-w-lg mx-auto">
+            <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">
+              Next step: Please visit TASK to pick up your gift card.
+            </h3>
+            
+            <div className="space-y-4 text-gray-700">
+              <div className="flex items-start">
+                <MapPin className="h-5 w-5 text-blue-600 mr-3 mt-1 flex-shrink-0" />
+                <div>
+                  <p className="font-medium">Address:</p>
+                  <p>72½ Escher St, Trenton, NJ 08609</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center">
+                <Phone className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0" />
+                <div>
+                  <p className="font-medium">Phone:</p>
+                  <p>(609) 337-1624</p>
+                </div>
+              </div>
             </div>
-          )}
+
+            <div className="mt-6 p-4 bg-white rounded-lg">
+              <p className="font-medium text-gray-900 mb-2">Gift Card Distribution Hours:</p>
+              <div className="text-sm text-gray-600 space-y-1">
+                <p>• Lunch: Mon–Fri 10:30a–1:00p</p>
+                <p>• Dinner: Mon–Thu 3:30–5:00p</p>
+              </div>
+              <p className="text-xs text-gray-500 mt-3 italic">
+                Bring a photo ID. Gift cards are distributed during meal hours only.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <button className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <MapPin className="h-4 w-4 mr-2" />
+              Open in Google Maps
+            </button>
+            <button className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <Globe className="h-4 w-4 mr-2" />
+              Visit TASK Website
+            </button>
+          </div>
+
+          <button 
+            onClick={() => setPage(1)}
+            className="text-blue-600 hover:text-blue-800 underline font-medium"
+          >
+            ← Submit another response
+          </button>
         </div>
       </div>
     </div>
   );
-}
-
-export default App;
-```
-
----
-
-## Additional Files Needed
-
-### tailwind.config.js
-```javascript
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}
-```
-
-### postcss.config.js
-```javascript
-export default {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-}
-```
-
----
-
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}
-export default {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
 }
