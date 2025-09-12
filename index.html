@@ -5,265 +5,208 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TASK Monthly Employment Check-In</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f7fb;
-      margin: 0;
-      padding: 0;
+    body { font-family: Arial, sans-serif; background:#f4f7fb; margin:0; padding:0; }
+    .container { max-width:800px; margin:30px auto; background:#fff; padding:30px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
+    h2 { color:#145078; margin-bottom:15px; }
+    label { font-weight:bold; display:block; margin:12px 0 6px; color:#333; }
+    input, select, textarea {
+      width:100%; padding:10px; border:2px solid #ccc; border-radius:8px; margin-bottom:16px; font-size:14px;
     }
-    .container {
-      max-width: 700px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    input:focus, select:focus, textarea:focus { border-color:#ff911f; outline:none; box-shadow:0 0 5px rgba(255,145,31,0.4); }
+    .btn { padding:12px 20px; border:none; border-radius:8px; font-weight:bold; cursor:pointer; margin:10px 5px 0 0; }
+    .btn-primary { background:#145078; color:white; }
+    .btn-primary:hover { background:#0f3c5a; }
+    .btn-secondary { background:#ccc; color:#333; }
+    .btn-secondary:hover { background:#aaa; }
+    .progress { height:12px; background:#ddd; border-radius:6px; margin-bottom:20px; overflow:hidden; }
+    .progress-bar { height:12px; width:0; transition:width 0.5s ease; }
+    .upload-card {
+      border:2px solid #e0e0e0; border-radius:12px; padding:20px; text-align:center; margin-bottom:20px;
     }
-    h2 { color: #145078; margin-bottom: 10px; }
-    label {
-      font-weight: bold;
-      color: #333;
-      display: block;
-      margin: 12px 0 6px;
-    }
-    input, select {
-      width: 100%;
-      padding: 10px;
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      font-size: 14px;
-    }
-    input:focus, select:focus {
-      outline: none;
-      border-color: #ff911f;
-      box-shadow: 0 0 5px rgba(255,145,31,0.4);
-    }
-    .btn {
-      background: #145078;
-      color: #fff;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      margin: 10px 5px 0 0;
-    }
-    .btn:hover { background: #0f3c5a; }
-    .btn-secondary { background: #ccc; color: #333; }
-    .btn-secondary:hover { background: #aaa; }
-    .progress {
-      height: 10px;
-      background: #ddd;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      overflow: hidden;
-    }
-    .progress-bar {
-      height: 10px;
-      background: #ff911f;
-      width: 0;
-      transition: width 0.3s ease;
-    }
-    .success-card { text-align: center; color: #145078; }
-    .success-card h1 { color: green; }
-    .info-box {
-      margin-top: 20px;
-      background: #e8f5ff;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #b3d7f5;
-    }
-    .reset-btn { margin-top: 20px; font-size: 12px; background: #666; }
+    .upload-card h3 { margin:10px 0; color:#145078; }
+    .upload-card p { margin:0 0 15px; font-size:14px; color:#555; }
+    .upload-btn { display:block; margin:10px 0; padding:12px; border:none; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer; width:100%; }
+    .blue-btn { background:#2979ff; color:#fff; }
+    .green-btn { background:#43a047; color:#fff; }
+    .preview { margin-top:10px; }
+    .preview img { max-width:120px; margin:5px; border-radius:8px; border:1px solid #ccc; }
+    .success-card { text-align:center; color:#145078; }
+    .success-card h1 { color:green; }
+    .info-box { margin-top:20px; background:#e8f5ff; padding:15px; border-radius:8px; border:1px solid #b3d7f5; }
+    .lang-select { float:right; margin-bottom:10px; }
   </style>
 </head>
 <body>
   <div class="container">
+    <select id="lang" class="lang-select" onchange="switchLang()">
+      <option value="en">🌐 English</option>
+      <option value="es">🇪🇸 Español</option>
+      <option value="ht">🇭🇹 Kreyòl</option>
+    </select>
     <div id="survey"></div>
   </div>
 
-  <script>
-    const steps = [1, 2, 3, 4];
-    let page = 1;
-    let formData = {
-      firstName: "",
-      lastName: "",
-      phone: "",
-      email: "",
-      preferredContact: "",
-      employer: "",
-      jobTitle: "",
-      startDate: "",
-      stillWorking: "",
-      payStubs: [],
-      photo: null
-    };
+<script>
+  const steps=[1,2,3,4];
+  let page=1;
+  let lang="en";
+  let formData={
+    firstName:"", lastName:"", phone:"", email:"", preferredContact:"",
+    employer:"", jobTitle:"", payRate:"", stillWorking:"",
+    rating:"", jobExperience:"", prepared:"", extraSupport:"",
+    payStub1:null, payStub2:null
+  };
 
-    const surveyDiv = document.getElementById("survey");
-
-    function renderProgress() {
-      return `
-        <div class="progress">
-          <div class="progress-bar" style="width: ${(page-1)/(steps.length-1)*100}%"></div>
-        </div>
-      `;
+  const texts={
+    en:{
+      step1:"Step 1: Contact Information", firstName:"First Name *", lastName:"Last Name *", phone:"Phone *", email:"Email *", contact:"Preferred Contact *", contBtn:"Continue",
+      step2:"Step 2: Employment Status", jobTitle:"Job Title *", employer:"Employer *", payRate:"Pay Rate/Salary *", stillWorking:"Are you still employed? *", yes:"Yes", no:"No",
+      back:"Back", next:"Continue", step3:"Step 3: Verification & Survey", stub1:"📷 Pay Stub #1", stub2:"📷 Pay Stub #2", upload:"Upload File", camera:"Take Photo",
+      rating:"Rate TASK Support (1=Poor, 5=Excellent)", jobQ:"How is your job going?", prepQ:"Did TASK prepare you well? Why/why not?", supportQ:"What extra support would help?",
+      submit:"Submit", step4:"🎉 Survey Completed!", thanks:"Thank you for your commitment to employment success through TASK.", nextSteps:"Next Steps", instructions:"Visit the TASK Employment Office to pick up your gift card reward.",
+      hours:"Office: Mon–Fri 9–4\nLunch: Mon–Sat 10:30–1\nDinner: Mon–Thu 3:30–5", phone:"Phone: 609-697-6215 / 609-697-6166",
+      already:"✅ Already Submitted", alreadyMsg:"You already completed this month's survey."
+    },
+    es:{
+      step1:"Paso 1: Información de contacto", firstName:"Nombre *", lastName:"Apellido *", phone:"Teléfono *", email:"Correo *", contact:"Método preferido *", contBtn:"Continuar",
+      step2:"Paso 2: Estado laboral", jobTitle:"Puesto *", employer:"Empleador *", payRate:"Salario *", stillWorking:"¿Sigues empleado? *", yes:"Sí", no:"No",
+      back:"Atrás", next:"Continuar", step3:"Paso 3: Verificación y Encuesta", stub1:"📷 Recibo de pago #1", stub2:"📷 Recibo de pago #2", upload:"Subir archivo", camera:"Tomar foto",
+      rating:"Califica el apoyo de TASK (1=Malo, 5=Excelente)", jobQ:"¿Cómo va tu trabajo?", prepQ:"¿TASK te preparó bien? ¿Por qué sí o no?", supportQ:"¿Qué apoyo adicional te ayudaría?",
+      submit:"Enviar", step4:"🎉 ¡Encuesta completada!", thanks:"Gracias por tu compromiso con el éxito laboral a través de TASK.", nextSteps:"Próximos pasos", instructions:"Visita la oficina de empleo de TASK para recoger tu tarjeta de regalo.",
+      hours:"Oficina: Lun–Vie 9–4\nAlmuerzo: Lun–Sáb 10:30–1\nCena: Lun–Jue 3:30–5", phone:"Teléfono: 609-697-6215 / 609-697-6166",
+      already:"✅ Ya completado", alreadyMsg:"Ya completaste la encuesta de este mes."
+    },
+    ht:{
+      step1:"Etap 1: Enfòmasyon Kontak", firstName:"Prenon *", lastName:"Non fanmi *", phone:"Telefòn *", email:"Imèl *", contact:"Metòd kontak pi renmen *", contBtn:"Kontinye",
+      step2:"Etap 2: Sitiyasyon Travay", jobTitle:"Tit Travay *", employer:"Anplwayè *", payRate:"Salè *", stillWorking:"Èske w toujou anplwaye? *", yes:"Wi", no:"Non",
+      back:"Retounen", next:"Kontinye", step3:"Etap 3: Verifikasyon & Sondaj", stub1:"📷 Fich Pewòl #1", stub2:"📷 Fich Pewòl #2", upload:"Chaje fichye", camera:"Pran foto",
+      rating:"Evalye sipò TASK (1=Fèb, 5=Ekselan)", jobQ:"Kijan travay ou ap mache?", prepQ:"Èske TASK te prepare w byen? Poukisa wi oswa non?", supportQ:"Ki lòt sipò ki ta ede w?",
+      submit:"Soumèt", step4:"🎉 Sondaj fini!", thanks:"Mèsi pou angajman ou ak siksè travay avèk TASK.", nextSteps:"Pwochen Etap", instructions:"Tanpri vizite Biwo Anplwa TASK pou pran kat kado ou.",
+      hours:"Biwo: Lendi–Vandredi 9–4\nManje midi: Lendi–Samdi 10:30–1\nDine: Lendi–Jedi 3:30–5", phone:"Telefòn: 609-697-6215 / 609-697-6166",
+      already:"✅ Dejè Soumèt", alreadyMsg:"Ou deja ranpli sondaj mwa sa a."
     }
+  };
 
-    function renderPage() {
-      const thisMonth = new Date().getMonth();
-      if (localStorage.getItem("lastSubmittedMonth") == thisMonth && page !== 4) {
-        surveyDiv.innerHTML = `
-          <div class="success-card">
-            <h1>✅ Already Submitted</h1>
-            <p>You have already completed this month's survey. Thank you!</p>
-          </div>
-          <button class="btn reset-btn" onclick="resetSurvey()">Reset (Testing)</button>
-        `;
-        return;
-      }
+  const surveyDiv=document.getElementById("survey");
 
-      let html = renderProgress();
-      if (page === 1) {
-        html += `
-          <h2>Monthly Employment Check-In</h2>
-          <label>First Name *</label>
-          <input type="text" id="firstName" value="${formData.firstName}" required />
+  function renderProgress(){
+    const colors=["#145078","#ff911f","#43a047","#6a1b9a"];
+    return `<div class="progress"><div class="progress-bar" style="background:${colors[page-1]};width:${(page-1)/(steps.length-1)*100}%"></div></div>`;
+  }
 
-          <label>Last Name *</label>
-          <input type="text" id="lastName" value="${formData.lastName}" required />
-
-          <label>Phone *</label>
-          <input type="tel" id="phone" value="${formData.phone}" required />
-
-          <label>Email *</label>
-          <input type="email" id="email" value="${formData.email}" required />
-
-          <label>Preferred Contact Method *</label>
-          <select id="preferredContact">
-            <option value="">Select...</option>
-            <option ${formData.preferredContact=="Phone"?"selected":""}>Phone</option>
-            <option ${formData.preferredContact=="Email"?"selected":""}>Email</option>
-            <option ${formData.preferredContact=="Text"?"selected":""}>Text</option>
-          </select>
-
-          <button class="btn" onclick="nextPage()">Continue</button>
-        `;
-      }
-      if (page === 2) {
-        html += `
-          <h2>Step 2: Employment Status</h2>
-          <label>Employer *</label>
-          <input type="text" id="employer" value="${formData.employer}" required />
-
-          <label>Job Title *</label>
-          <input type="text" id="jobTitle" value="${formData.jobTitle}" required />
-
-          <label>Start Date *</label>
-          <input type="date" id="startDate" value="${formData.startDate}" required />
-
-          <label>Are you still employed? *</label>
-          <select id="stillWorking">
-            <option value="">Select...</option>
-            <option ${formData.stillWorking=="Yes"?"selected":""}>Yes</option>
-            <option ${formData.stillWorking=="No"?"selected":""}>No</option>
-          </select>
-
-          <button class="btn-secondary btn" onclick="prevPage()">Back</button>
-          <button class="btn" onclick="nextPage()">Continue</button>
-        `;
-      }
-      if (page === 3) {
-        html += `
-          <h2>Monthly Employment Check-In</h2>
-          <label>Upload Pay Stubs (2 required) *</label>
-          <input type="file" id="payStubs" multiple accept=".pdf,image/*" />
-
-          <label>Or Take a Picture *</label>
-          <input type="file" id="photo" accept="image/*" capture="environment" />
-
-          <button class="btn-secondary btn" onclick="prevPage()">Back</button>
-          <button class="btn" onclick="nextPage()">Submit</button>
-        `;
-      }
-      if (page === 4) {
-        localStorage.setItem("lastSubmittedMonth", thisMonth);
-        html += `
-          <div class="success-card">
-            <h1>🎉 Survey Completed!</h1>
-            <p>Thank you for your continued commitment to employment success through TASK.</p>
-          </div>
-          <div class="info-box">
-            <h3>✅ Next Steps</h3>
-            <p>Please visit the <strong>TASK Employment Office</strong> to pick up your gift card reward.</p>
-            <p><strong>Hours:</strong><br>
-              Office: Monday–Friday 9:00 AM – 4:00 PM<br>
-              Lunch: Monday–Saturday 10:30 AM – 1:00 PM<br>
-              Dinner: Monday–Thursday 3:30 PM – 5:00 PM
-            </p>
-            <p><strong>Phone:</strong> 609-697-6215, 609-697-6166</p>
-          </div>
-          <button class="btn reset-btn" onclick="resetSurvey()">🔄 Reset (Testing)</button>
-        `;
-      }
-      surveyDiv.innerHTML = html;
+  function renderPage(){
+    const t=texts[lang];
+    const thisMonth=new Date().getMonth();
+    if(localStorage.getItem("lastSubmittedMonth")==thisMonth && page!==4){
+      surveyDiv.innerHTML=`<div class="success-card"><h1>${t.already}</h1><p>${t.alreadyMsg}</p></div>`;
+      return;
     }
-
-    function nextPage() {
-      if (page === 1) {
-        formData.firstName = document.getElementById("firstName").value.trim();
-        formData.lastName = document.getElementById("lastName").value.trim();
-        formData.phone = document.getElementById("phone").value.trim();
-        formData.email = document.getElementById("email").value.trim();
-        formData.preferredContact = document.getElementById("preferredContact").value;
-        if (!formData.firstName || !formData.lastName || !formData.phone || !formData.email || !formData.preferredContact) {
-          alert("Please fill out all required fields.");
-          return;
-        }
-      }
-      if (page === 2) {
-        formData.employer = document.getElementById("employer").value.trim();
-        formData.jobTitle = document.getElementById("jobTitle").value.trim();
-        formData.startDate = document.getElementById("startDate").value;
-        formData.stillWorking = document.getElementById("stillWorking").value;
-        if (!formData.employer || !formData.jobTitle || !formData.startDate || !formData.stillWorking) {
-          alert("Please fill out all required fields.");
-          return;
-        }
-      }
-      if (page === 3) {
-        const payStubs = document.getElementById("payStubs").files;
-        const photo = document.getElementById("photo").files[0];
-
-        // ✅ FIXED validation
-        if (payStubs.length >= 2 || photo || (payStubs.length === 1 && photo)) {
-          formData.payStubs = payStubs;
-          formData.photo = photo;
-        } else {
-          alert("Please upload at least 2 pay stubs OR 1 photo OR 1 pay stub + 1 photo.");
-          return;
-        }
-      }
-      if (page < steps.length) page++;
-      renderPage();
+    let html=renderProgress();
+    if(page===1){
+      html+=`<h2>${t.step1}</h2>
+      <label>${t.firstName}</label><input id="firstName" value="${formData.firstName}">
+      <label>${t.lastName}</label><input id="lastName" value="${formData.lastName}">
+      <label>${t.phone}</label><input id="phone" value="${formData.phone}">
+      <label>${t.email}</label><input id="email" value="${formData.email}">
+      <label>${t.contact}</label>
+      <select id="preferredContact">
+        <option value="">--</option>
+        <option ${formData.preferredContact=="Phone"?"selected":""}>Phone</option>
+        <option ${formData.preferredContact=="Email"?"selected":""}>Email</option>
+        <option ${formData.preferredContact=="Text"?"selected":""}>Text</option>
+      </select>
+      <button class="btn btn-primary" onclick="nextPage()">${t.contBtn}</button>`;
     }
-
-    function prevPage() {
-      if (page > 1) page--;
-      renderPage();
+    if(page===2){
+      html+=`<h2>${t.step2}</h2>
+      <label>${t.jobTitle}</label><input id="jobTitle" value="${formData.jobTitle}">
+      <label>${t.employer}</label><input id="employer" value="${formData.employer}">
+      <label>${t.payRate}</label><input id="payRate" value="${formData.payRate}">
+      <label>${t.stillWorking}</label>
+      <select id="stillWorking">
+        <option value="">--</option>
+        <option ${formData.stillWorking=="Yes"?"selected":""}>${t.yes}</option>
+        <option ${formData.stillWorking=="No"?"selected":""}>${t.no}</option>
+      </select>
+      <button class="btn btn-secondary" onclick="prevPage()">${t.back}</button>
+      <button class="btn btn-primary" onclick="nextPage()">${t.next}</button>`;
     }
-
-    function resetSurvey() {
-      localStorage.removeItem("lastSubmittedMonth");
-      page = 1;
-      formData = {
-        firstName: "", lastName: "", phone: "", email: "", preferredContact: "",
-        employer: "", jobTitle: "", startDate: "", stillWorking: "",
-        payStubs: [], photo: null
-      };
-      renderPage();
+    if(page===3){
+      html+=`<h2>${t.step3}</h2>
+      <div class="upload-card">
+        <h3>${t.stub1}</h3>
+        <input type="file" id="payStub1" accept="image/*,.pdf" capture="environment" onchange="previewFile(this,'preview1')">
+        <div id="preview1" class="preview"></div>
+      </div>
+      <div class="upload-card">
+        <h3>${t.stub2}</h3>
+        <input type="file" id="payStub2" accept="image/*,.pdf" capture="environment" onchange="previewFile(this,'preview2')">
+        <div id="preview2" class="preview"></div>
+      </div>
+      <label>${t.rating}</label><select id="rating"><option value="">--</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+      <label>${t.jobQ}</label><textarea id="jobExperience">${formData.jobExperience}</textarea>
+      <label>${t.prepQ}</label><textarea id="prepared">${formData.prepared}</textarea>
+      <label>${t.supportQ}</label><textarea id="extraSupport">${formData.extraSupport}</textarea>
+      <button class="btn btn-secondary" onclick="prevPage()">${t.back}</button>
+      <button class="btn btn-primary" onclick="nextPage()">${t.submit}</button>`;
     }
+    if(page===4){
+      localStorage.setItem("lastSubmittedMonth",thisMonth);
+      html+=`<div class="success-card"><h1>${t.step4}</h1><p>${t.thanks}</p></div>
+      <div class="info-box"><h3>${t.nextSteps}</h3><p>${t.instructions}</p><pre>${t.hours}</pre><p>${t.phone}</p></div>`;
+    }
+    surveyDiv.innerHTML=html;
+  }
 
+  function previewFile(input,id){
+    const preview=document.getElementById(id);
+    preview.innerHTML="";
+    Array.from(input.files).forEach(file=>{
+      if(file.type.startsWith("image/")){
+        const reader=new FileReader();
+        reader.onload=e=>{
+          const img=document.createElement("img");
+          img.src=e.target.result;
+          preview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.innerHTML+=`<p>${file.name}</p>`;
+      }
+    });
+  }
+
+  function nextPage(){
+    if(page===1){
+      formData.firstName=document.getElementById("firstName").value.trim();
+      formData.lastName=document.getElementById("lastName").value.trim();
+      formData.phone=document.getElementById("phone").value.trim();
+      formData.email=document.getElementById("email").value.trim();
+      formData.preferredContact=document.getElementById("preferredContact").value;
+      if(!formData.firstName||!formData.lastName||!formData.phone||!formData.email||!formData.preferredContact){alert("Fill all fields");return;}
+    }
+    if(page===2){
+      formData.jobTitle=document.getElementById("jobTitle").value.trim();
+      formData.employer=document.getElementById("employer").value.trim();
+      formData.payRate=document.getElementById("payRate").value.trim();
+      formData.stillWorking=document.getElementById("stillWorking").value;
+      if(!formData.jobTitle||!formData.employer||!formData.payRate||!formData.stillWorking){alert("Fill all fields");return;}
+    }
+    if(page===3){
+      formData.payStub1=document.getElementById("payStub1").files[0];
+      formData.payStub2=document.getElementById("payStub2").files[0];
+      formData.rating=document.getElementById("rating").value;
+      formData.jobExperience=document.getElementById("jobExperience").value.trim();
+      formData.prepared=document.getElementById("prepared").value.trim();
+      formData.extraSupport=document.getElementById("extraSupport").value.trim();
+      if(!formData.payStub1||!formData.payStub2||!formData.rating){alert("Upload 2 stubs and complete required questions");return;}
+    }
+    if(page<steps.length)page++;
     renderPage();
-  </script>
+  }
+  function prevPage(){ if(page>1)page--; renderPage(); }
+  function switchLang(){ lang=document.getElementById("lang").value; renderPage(); }
+  renderPage();
+</script>
 </body>
 </html>
