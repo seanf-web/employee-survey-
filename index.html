@@ -1,269 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TASK Monthly Employment Check-In</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f2f5f9;
+      background: #f4f7fb;
       margin: 0;
       padding: 0;
     }
     .container {
-      max-width: 650px;
-      margin: 30px auto;
+      max-width: 700px;
+      margin: 40px auto;
       background: #fff;
       padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     h2 {
-      text-align: center;
       color: #145078;
-    }
-    .progress {
-      height: 10px;
-      background: #e0e0e0;
-      border-radius: 5px;
-      overflow: hidden;
-      margin: 20px 0;
-    }
-    .progress-bar {
-      height: 10px;
-      width: 0%;
-      background: #ff911f;
-      transition: width 0.4s ease;
-    }
-    .step {
-      display: none;
-    }
-    .step.active {
-      display: block;
+      margin-bottom: 10px;
     }
     label {
-      display: block;
-      margin-top: 14px;
       font-weight: bold;
-      color: #145078;
+      color: #333;
+      display: block;
+      margin: 12px 0 6px;
     }
     input, select, textarea {
       width: 100%;
       padding: 10px;
-      margin-top: 6px;
       border: 2px solid #ccc;
-      border-radius: 6px;
-      font-size: 1rem;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
     }
-    input:invalid, select:invalid, textarea:invalid {
+    input:focus, select:focus, textarea:focus {
+      outline: none;
       border-color: #ff911f;
+      box-shadow: 0 0 5px rgba(255,145,31,0.4);
     }
-    button {
-      margin-top: 20px;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-    .btn-next {
+    .btn {
       background: #145078;
       color: #fff;
-    }
-    .btn-back {
-      background: #6b6b6b;
-      color: #fff;
-      margin-right: 10px;
-    }
-    .btn-next:hover { background: #0d3550; }
-    .btn-back:hover { background: #555; }
-    .success-card {
-      text-align: center;
-      padding: 20px;
-    }
-    .success-card h1 {
-      color: #74ba58;
-      margin-bottom: 10px;
-    }
-    .info-box {
-      background: #f9fafc;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 20px;
-      margin: 20px 0;
-      text-align: left;
-    }
-    .info-box h3 {
-      color: #ff911f;
-      margin-bottom: 6px;
-    }
-    .new-survey-btn {
-      background: #145078;
-      color: #fff;
-      padding: 14px 28px;
+      padding: 12px 20px;
       border: none;
       border-radius: 8px;
+      font-weight: bold;
       cursor: pointer;
-      font-size: 1rem;
+      margin: 10px 5px 0 0;
     }
-    .new-survey-btn:hover {
-      background: #0d3550;
+    .btn:hover { background: #0f3c5a; }
+    .btn-secondary {
+      background: #ccc;
+      color: #333;
+    }
+    .btn-secondary:hover { background: #aaa; }
+    .progress {
+      height: 10px;
+      background: #ddd;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 10px;
+      background: #ff911f;
+      width: 0;
+      transition: width 0.3s ease;
+    }
+    .success-card {
+      text-align: center;
+      color: #145078;
+    }
+    .success-card h1 {
+      color: green;
+    }
+    .info-box {
+      margin-top: 20px;
+      background: #e8f5ff;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #b3d7f5;
+    }
+    .reset-btn {
+      margin-top: 20px;
+      font-size: 12px;
+      background: #666;
     }
   </style>
 </head>
 <body>
-
-<div class="container">
-  <h2>Monthly Employment Check-In</h2>
-  <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
-
-  <!-- Step 1 -->
-  <div class="step active" id="step1">
-    <label>First Name *</label>
-    <input type="text" id="firstName" required>
-    <label>Last Name *</label>
-    <input type="text" id="lastName" required>
-    <label>Phone *</label>
-    <input type="tel" id="phone" required>
-    <label>Email *</label>
-    <input type="email" id="email" required>
-    <label>Preferred Contact Method *</label>
-    <select id="contact" required>
-      <option value="">Select...</option>
-      <option>Phone</option>
-      <option>Email</option>
-      <option>Text</option>
-    </select>
-    <button class="btn-next" onclick="nextStep(1)">Continue</button>
+  <div class="container">
+    <div id="survey"></div>
   </div>
 
-  <!-- Step 2 -->
-  <div class="step" id="step2">
-    <label>Employer *</label>
-    <input type="text" id="employer" required>
-    <label>Job Title *</label>
-    <input type="text" id="jobTitle" required>
-    <label>Start Date *</label>
-    <input type="date" id="startDate" required>
-    <label>Are you still employed? *</label>
-    <select id="stillWorking" required>
-      <option value="">Select...</option>
-      <option>Yes</option>
-      <option>No</option>
-    </select>
-    <button class="btn-back" onclick="prevStep(2)">Back</button>
-    <button class="btn-next" onclick="nextStep(2)">Continue</button>
-  </div>
+  <script>
+    const steps = [
+      { id: 1, label: "Contact Info" },
+      { id: 2, label: "Employment Status" },
+      { id: 3, label: "Verification" },
+      { id: 4, label: "Confirmation" }
+    ];
 
-  <!-- Step 3 -->
-  <div class="step" id="step3">
-    <label>Upload Pay Stubs (2 required) *</label>
-    <input type="file" id="paystubs" accept=".pdf,image/*" multiple>
-    <label>Or Take a Picture *</label>
-    <input type="file" accept="image/*" capture="environment" id="camera">
-    <button class="btn-back" onclick="prevStep(3)">Back</button>
-    <button class="btn-next" onclick="submitSurvey()">Submit</button>
-  </div>
+    let page = 1;
+    let formData = {
+      fullName: "",
+      phone: "",
+      email: "",
+      preferredContact: "",
+      employer: "",
+      jobTitle: "",
+      startDate: "",
+      stillWorking: "",
+      payStubs: [],
+      photo: null
+    };
 
-  <!-- Confirmation -->
-  <div class="step" id="confirmation">
-    <div class="success-card">
-      <h1>🎉 Survey Submitted Successfully!</h1>
-      <p>Thank you for completing your monthly employment check-in.</p>
-    </div>
+    const surveyDiv = document.getElementById("survey");
 
-    <div class="info-box">
-      <h3>✅ Next Steps</h3>
-      <p>
-        To receive your gift card reward, please visit the
-        <strong>TASK Employment Office</strong>.
-      </p>
-      <p>
-        Bring a valid ID. Gift cards must be picked up in person.
-      </p>
-    </div>
-
-    <div class="info-box">
-      <h3>📍 TASK Employment Services</h3>
-      <p>72½ Escher St, Trenton, NJ 08609</p>
-      <h3>📞 Contact</h3>
-      <p>Employment Office: 609-697-6215</p>
-      <p>Alternate Line: 609-697-6166</p>
-      <h3>🕒 Hours of Operation</h3>
-      <ul>
-        <li>Office: Mon–Fri, 9:00 AM – 4:00 PM</li>
-        <li>Lunch: Mon–Sat, 10:30 AM – 1:00 PM</li>
-        <li>Dinner: Mon–Thu, 3:30 PM – 5:00 PM</li>
-      </ul>
-    </div>
-
-    <button class="new-survey-btn" onclick="restartSurvey()">Start New Survey</button>
-  </div>
-</div>
-
-<script>
-  let currentStep = 1;
-  const totalSteps = 3;
-
-  // prevent multiple submissions per month
-  if (localStorage.getItem("lastSubmittedMonth") === new Date().getMonth().toString()) {
-    document.querySelector(".container").innerHTML = 
-      "<div class='success-card'><h1>✅ Already Submitted</h1><p>You have already completed this month's survey. Thank you!</p></div>";
-  }
-
-  function showStep(step) {
-    document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
-    document.getElementById("step" + step)?.classList.add("active");
-    if (step <= totalSteps) {
-      document.getElementById("progress-bar").style.width = ((step-1)/totalSteps)*100 + "%";
+    function renderProgress() {
+      return `
+        <div class="progress">
+          <div class="progress-bar" style="width: ${(page-1)/(steps.length-1)*100}%"></div>
+        </div>
+      `;
     }
-  }
 
-  function validateStep(step) {
-    let valid = true;
-    document.querySelectorAll("#step" + step + " input, #step" + step + " select").forEach(el => {
-      if (!el.checkValidity()) {
-        el.reportValidity();
-        valid = false;
+    function renderPage() {
+      // check if already submitted
+      const thisMonth = new Date().getMonth();
+      if (localStorage.getItem("lastSubmittedMonth") == thisMonth && page !== 4) {
+        surveyDiv.innerHTML = `
+          <div class="success-card">
+            <h1>✅ Already Submitted</h1>
+            <p>You have already completed this month's survey. Thank you!</p>
+          </div>
+          <button class="btn reset-btn" onclick="resetSurvey()">Reset (Testing)</button>
+        `;
+        return;
       }
-    });
-    return valid;
-  }
 
-  function nextStep(step) {
-    if (!validateStep(step)) return;
-    currentStep++;
-    showStep(currentStep);
-  }
+      let html = renderProgress();
+      if (page === 1) {
+        html += `
+          <h2>Monthly Employment Check-In</h2>
+          <label>Full Name *</label>
+          <input type="text" id="fullName" value="${formData.fullName}" required />
 
-  function prevStep(step) {
-    currentStep--;
-    showStep(currentStep);
-  }
+          <label>Phone *</label>
+          <input type="tel" id="phone" value="${formData.phone}" required />
 
-  function submitSurvey() {
-    const paystubs = document.getElementById("paystubs").files;
-    const camera = document.getElementById("camera").files;
+          <label>Email *</label>
+          <input type="email" id="email" value="${formData.email}" required />
 
-    // require at least 2 pay stubs OR 1 camera photo
-    if (paystubs.length < 2 && camera.length < 1) {
-      alert("Please upload at least 2 pay stubs OR take 1 picture.");
-      return;
+          <label>Preferred Contact Method *</label>
+          <select id="preferredContact">
+            <option value="">Select...</option>
+            <option ${formData.preferredContact=="Phone"?"selected":""}>Phone</option>
+            <option ${formData.preferredContact=="Email"?"selected":""}>Email</option>
+            <option ${formData.preferredContact=="Text"?"selected":""}>Text</option>
+          </select>
+
+          <button class="btn" onclick="nextPage()">Continue</button>
+        `;
+      }
+      if (page === 2) {
+        html += `
+          <h2>Step 2: Employment Status</h2>
+          <label>Employer *</label>
+          <input type="text" id="employer" value="${formData.employer}" required />
+
+          <label>Job Title *</label>
+          <input type="text" id="jobTitle" value="${formData.jobTitle}" required />
+
+          <label>Start Date *</label>
+          <input type="date" id="startDate" value="${formData.startDate}" required />
+
+          <label>Are you still employed? *</label>
+          <select id="stillWorking">
+            <option value="">Select...</option>
+            <option ${formData.stillWorking=="Yes"?"selected":""}>Yes</option>
+            <option ${formData.stillWorking=="No"?"selected":""}>No</option>
+          </select>
+
+          <button class="btn-secondary btn" onclick="prevPage()">Back</button>
+          <button class="btn" onclick="nextPage()">Continue</button>
+        `;
+      }
+      if (page === 3) {
+        html += `
+          <h2>Monthly Employment Check-In</h2>
+          <label>Upload Pay Stubs (2 required) *</label>
+          <input type="file" id="payStubs" multiple accept=".pdf,image/*" />
+
+          <label>Or Take a Picture *</label>
+          <input type="file" id="photo" accept="image/*" capture="environment" />
+
+          <button class="btn-secondary btn" onclick="prevPage()">Back</button>
+          <button class="btn" onclick="nextPage()">Submit</button>
+        `;
+      }
+      if (page === 4) {
+        localStorage.setItem("lastSubmittedMonth", thisMonth);
+        html += `
+          <div class="success-card">
+            <h1>🎉 Survey Completed!</h1>
+            <p>Thank you for your continued commitment to employment success through TASK.</p>
+          </div>
+          <div class="info-box">
+            <h3>✅ Next Steps</h3>
+            <p>Please visit the <strong>TASK Employment Office</strong> to pick up your gift card reward.</p>
+            <p><strong>Hours:</strong><br>
+              Lunch: Monday–Saturday 10:30 AM – 1:00 PM<br>
+              Dinner: Monday–Thursday 3:30 PM – 5:00 PM
+            </p>
+            <p><strong>Phone:</strong> 609-697-6215, 609-697-6166</p>
+          </div>
+          <button class="btn reset-btn" onclick="resetSurvey()">🔄 Reset (Testing)</button>
+        `;
+      }
+      surveyDiv.innerHTML = html;
     }
 
-    localStorage.setItem("lastSubmittedMonth", new Date().getMonth().toString());
-    showStep("confirmation");
-    document.getElementById("progress-bar").style.width = "100%";
-  }
+    function nextPage() {
+      // save data
+      if (page === 1) {
+        formData.fullName = document.getElementById("fullName").value.trim();
+        formData.phone = document.getElementById("phone").value.trim();
+        formData.email = document.getElementById("email").value.trim();
+        formData.preferredContact = document.getElementById("preferredContact").value;
+        if (!formData.fullName || !formData.phone || !formData.email || !formData.preferredContact) {
+          alert("Please fill out all required fields.");
+          return;
+        }
+      }
+      if (page === 2) {
+        formData.employer = document.getElementById("employer").value.trim();
+        formData.jobTitle = document.getElementById("jobTitle").value.trim();
+        formData.startDate = document.getElementById("startDate").value;
+        formData.stillWorking = document.getElementById("stillWorking").value;
+        if (!formData.employer || !formData.jobTitle || !formData.startDate || !formData.stillWorking) {
+          alert("Please fill out all required fields.");
+          return;
+        }
+      }
+      if (page === 3) {
+        formData.payStubs = document.getElementById("payStubs").files;
+        formData.photo = document.getElementById("photo").files[0];
+        if (formData.payStubs.length < 2 && !formData.photo) {
+          alert("Please upload at least 2 pay stubs or take a picture.");
+          return;
+        }
+      }
+      if (page < steps.length) page++;
+      renderPage();
+    }
 
-  function restartSurvey() {
-    localStorage.removeItem("lastSubmittedMonth");
-    location.reload();
-  }
+    function prevPage() {
+      if (page > 1) page--;
+      renderPage();
+    }
 
-  showStep(1);
-</script>
+    function resetSurvey() {
+      localStorage.removeItem("lastSubmittedMonth");
+      page = 1;
+      formData = {
+        fullName: "", phone: "", email: "", preferredContact: "",
+        employer: "", jobTitle: "", startDate: "", stillWorking: "",
+        payStubs: [], photo: null
+      };
+      renderPage();
+    }
 
+    renderPage();
+  </script>
 </body>
 </html>
