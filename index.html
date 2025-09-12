@@ -6,34 +6,34 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f8fafc;
+      background: #f2f5f9;
       margin: 0;
       padding: 0;
     }
     .container {
-      max-width: 600px;
+      max-width: 650px;
       margin: 30px auto;
       background: #fff;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
     }
     h2 {
       text-align: center;
       color: #145078;
     }
     .progress {
-      height: 8px;
-      background: #ddd;
+      height: 10px;
+      background: #e0e0e0;
       border-radius: 5px;
       overflow: hidden;
-      margin-bottom: 20px;
+      margin: 20px 0;
     }
     .progress-bar {
-      height: 8px;
+      height: 10px;
       width: 0%;
       background: #ff911f;
-      transition: width 0.3s;
+      transition: width 0.4s ease;
     }
     .step {
       display: none;
@@ -43,7 +43,7 @@
     }
     label {
       display: block;
-      margin-top: 12px;
+      margin-top: 14px;
       font-weight: bold;
       color: #145078;
     }
@@ -51,30 +51,64 @@
       width: 100%;
       padding: 10px;
       margin-top: 6px;
-      border: 1px solid #ccc;
+      border: 2px solid #ccc;
       border-radius: 6px;
+      font-size: 1rem;
+    }
+    input:invalid, select:invalid, textarea:invalid {
+      border-color: #ff911f;
     }
     button {
       margin-top: 20px;
-      padding: 10px 20px;
+      padding: 12px 24px;
       border: none;
       border-radius: 6px;
       font-weight: bold;
       cursor: pointer;
+      font-size: 1rem;
     }
     .btn-next {
       background: #145078;
       color: #fff;
     }
     .btn-back {
-      background: #aaa;
+      background: #6b6b6b;
       color: #fff;
       margin-right: 10px;
     }
-    .success {
+    .btn-next:hover { background: #0d3550; }
+    .btn-back:hover { background: #555; }
+    .success-card {
       text-align: center;
-      color: green;
-      font-size: 1.2em;
+      padding: 20px;
+    }
+    .success-card h1 {
+      color: #74ba58;
+      margin-bottom: 10px;
+    }
+    .info-box {
+      background: #f9fafc;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: left;
+    }
+    .info-box h3 {
+      color: #ff911f;
+      margin-bottom: 6px;
+    }
+    .new-survey-btn {
+      background: #145078;
+      color: #fff;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .new-survey-btn:hover {
+      background: #0d3550;
     }
   </style>
 </head>
@@ -86,8 +120,10 @@
 
   <!-- Step 1 -->
   <div class="step active" id="step1">
-    <label>Full Name *</label>
-    <input type="text" id="fullName" required>
+    <label>First Name *</label>
+    <input type="text" id="firstName" required>
+    <label>Last Name *</label>
+    <input type="text" id="lastName" required>
     <label>Phone *</label>
     <input type="tel" id="phone" required>
     <label>Email *</label>
@@ -123,16 +159,46 @@
   <!-- Step 3 -->
   <div class="step" id="step3">
     <label>Upload Pay Stubs (2 required) *</label>
-    <input type="file" id="paystubs" accept=".pdf,image/*" multiple required>
+    <input type="file" id="paystubs" accept=".pdf,image/*" multiple>
     <label>Or Take a Picture *</label>
     <input type="file" accept="image/*" capture="environment" id="camera">
     <button class="btn-back" onclick="prevStep(3)">Back</button>
     <button class="btn-next" onclick="submitSurvey()">Submit</button>
   </div>
 
-  <!-- Success -->
-  <div class="step" id="success">
-    <p class="success">🎉 Thank you! Your monthly report has been submitted successfully.</p>
+  <!-- Confirmation -->
+  <div class="step" id="confirmation">
+    <div class="success-card">
+      <h1>🎉 Survey Submitted Successfully!</h1>
+      <p>Thank you for completing your monthly employment check-in.</p>
+    </div>
+
+    <div class="info-box">
+      <h3>✅ Next Steps</h3>
+      <p>
+        To receive your gift card reward, please visit the
+        <strong>TASK Employment Office</strong>.
+      </p>
+      <p>
+        Bring a valid ID. Gift cards must be picked up in person.
+      </p>
+    </div>
+
+    <div class="info-box">
+      <h3>📍 TASK Employment Services</h3>
+      <p>72½ Escher St, Trenton, NJ 08609</p>
+      <h3>📞 Contact</h3>
+      <p>Employment Office: 609-697-6215</p>
+      <p>Alternate Line: 609-697-6166</p>
+      <h3>🕒 Hours of Operation</h3>
+      <ul>
+        <li>Office: Mon–Fri, 9:00 AM – 4:00 PM</li>
+        <li>Lunch: Mon–Sat, 10:30 AM – 1:00 PM</li>
+        <li>Dinner: Mon–Thu, 3:30 PM – 5:00 PM</li>
+      </ul>
+    </div>
+
+    <button class="new-survey-btn" onclick="restartSurvey()">Start New Survey</button>
   </div>
 </div>
 
@@ -140,19 +206,18 @@
   let currentStep = 1;
   const totalSteps = 3;
 
-  // Prevent multiple submissions per month (same browser)
+  // prevent multiple submissions per month
   if (localStorage.getItem("lastSubmittedMonth") === new Date().getMonth().toString()) {
-    document.querySelector(".container").innerHTML = "<p class='success'>✅ You have already submitted this month.</p>";
+    document.querySelector(".container").innerHTML = 
+      "<div class='success-card'><h1>✅ Already Submitted</h1><p>You have already completed this month's survey. Thank you!</p></div>";
   }
 
   function showStep(step) {
     document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
     document.getElementById("step" + step)?.classList.add("active");
-    updateProgress(step);
-  }
-
-  function updateProgress(step) {
-    document.getElementById("progress-bar").style.width = ((step-1) / totalSteps) * 100 + "%";
+    if (step <= totalSteps) {
+      document.getElementById("progress-bar").style.width = ((step-1)/totalSteps)*100 + "%";
+    }
   }
 
   function validateStep(step) {
@@ -178,10 +243,23 @@
   }
 
   function submitSurvey() {
-    if (!validateStep(3)) return;
+    const paystubs = document.getElementById("paystubs").files;
+    const camera = document.getElementById("camera").files;
+
+    // require at least 2 pay stubs OR 1 camera photo
+    if (paystubs.length < 2 && camera.length < 1) {
+      alert("Please upload at least 2 pay stubs OR take 1 picture.");
+      return;
+    }
+
     localStorage.setItem("lastSubmittedMonth", new Date().getMonth().toString());
-    showStep("success");
+    showStep("confirmation");
     document.getElementById("progress-bar").style.width = "100%";
+  }
+
+  function restartSurvey() {
+    localStorage.removeItem("lastSubmittedMonth");
+    location.reload();
   }
 
   showStep(1);
