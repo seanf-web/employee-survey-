@@ -1,302 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>TASK Monthly Employment Survey</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f8fafc;
-      margin: 0; padding: 0;
+      background: #f7f9fc;
+      margin: 0;
+      padding: 0;
     }
     .container {
-      max-width: 900px;
+      max-width: 800px;
       margin: 30px auto;
-      background: #fff;
+      background: white;
       padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      position: relative;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    /* Language Toggle */
-    .language-toggle {
-      position: absolute;
-      top: 15px; left: 15px;
-    }
-    .language-toggle select {
-      padding: 6px 10px;
-      border: 2px solid #ff911f;
-      border-radius: 6px;
-      font-size: 13px;
-    }
-    /* Progress bar */
-    .progressbar {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 30px;
-      counter-reset: step;
-    }
-    .progressbar li {
-      list-style: none;
-      width: 100%;
+    h2 {
       text-align: center;
-      position: relative;
-      font-weight: bold;
-      color: #555;
+      color: #145078;
     }
-    .progressbar li::before {
-      counter-increment: step;
-      content: counter(step);
-      width: 40px; height: 40px;
-      line-height: 40px;
-      border: 2px solid #ccc;
+    label {
+      font-weight: bold;
       display: block;
-      text-align: center;
-      margin: 0 auto 10px auto;
-      border-radius: 50%;
-      background: #fff;
-      font-weight: bold;
+      margin: 10px 0 5px;
     }
-    .progressbar li.active::before {
-      border-color: #ff911f;
-      background: #ff911f;
-      color: #fff;
-    }
-    .progressbar li::after {
-      content: '';
-      position: absolute;
+    input, select, textarea {
       width: 100%;
-      height: 4px;
-      background: #ccc;
-      top: 18px; left: -50%;
-      z-index: -1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+      font-size: 14px;
     }
-    .progressbar li:first-child::after { content: none; }
-    .progressbar li.active + li::after { background: #ff911f; }
-    /* Form inputs */
-    input, textarea, select {
-      width: 95%;
-      padding: 12px;
-      margin: 10px 0;
-      border: 2px solid #ccc;
-      border-radius: 10px;
-      font-size: 15px;
-    }
-    textarea { resize: vertical; }
-    /* Buttons */
-    .btn {
-      padding: 12px 24px;
+    button {
+      background: linear-gradient(90deg,#145078,#ff911f);
+      color: white;
       border: none;
+      padding: 12px 24px;
       border-radius: 8px;
       font-size: 16px;
-      font-weight: bold;
       cursor: pointer;
-      margin: 10px 5px;
-      transition: transform 0.2s;
-    }
-    .btn:hover { transform: translateY(-2px); }
-    .btn-primary { background: linear-gradient(135deg,#33A7B5,#145078); color:#fff; }
-    .btn-secondary { background: linear-gradient(135deg,#74ba58,#4a9c3c); color:#fff; }
-    /* Upload buttons */
-    .upload-btn {
-      display: inline-block;
-      padding: 12px 20px;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      text-align: center;
-      color: white;
       margin: 5px;
     }
-    .camera-btn { background: linear-gradient(135deg,#33A7B5,#145078); }
-    .file-btn { background: linear-gradient(135deg,#74ba58,#4a9c3c); }
-    .preview img {
-      max-width: 120px;
-      margin: 10px;
-      border-radius: 8px;
-      border: 2px solid #ccc;
+    button:hover {
+      opacity: 0.9;
     }
-    /* Completed page */
-    .completed { text-align: center; }
-    .completed h2 { font-size: 28px; color: green; margin-bottom: 10px; }
-    .next-steps {
-      background: #e6f3fc;
-      padding: 20px;
-      border-radius: 12px;
-      margin-top: 20px;
+    .hidden { display: none; }
+    .progress {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .step {
+      width: 18%;
+      text-align: center;
+      font-size: 14px;
+    }
+    .step span {
       display: inline-block;
+      background: #ccc;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      line-height: 30px;
+      margin-bottom: 5px;
+    }
+    .step.active span { background: #145078; }
+    .success {
+      text-align: center;
+      color: green;
+      font-size: 22px;
+      margin-top: 20px;
+    }
+    .lang-toggle {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+    }
+    .next-steps {
+      background: #e6f3ff;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
       text-align: center;
     }
   </style>
 </head>
 <body>
-<div class="container">
 
+<div class="container">
   <!-- Language Toggle -->
-  <div class="language-toggle">
-    <select id="languageSelect" onchange="setLanguage()">
-      <option value="en">English</option>
-      <option value="es">Español</option>
-      <option value="ht">Kreyòl</option>
-    </select>
-  </div>
+  <select id="lang" class="lang-toggle" onchange="switchLanguage(this.value)">
+    <option value="en">English</option>
+    <option value="es">Español</option>
+    <option value="ht">Kreyòl</option>
+  </select>
 
   <!-- Progress Bar -->
-  <ul class="progressbar" id="progressbar">
-    <li class="active">Contact</li>
-    <li>Employment</li>
-    <li>Survey</li>
-    <li>Pay Stubs</li>
-    <li>Complete</li>
-  </ul>
+  <div class="progress">
+    <div class="step" id="step1"><span>1</span><div id="step1Label">Contact</div></div>
+    <div class="step" id="step2"><span>2</span><div id="step2Label">Employment</div></div>
+    <div class="step" id="step3"><span>3</span><div id="step3Label">Survey</div></div>
+    <div class="step" id="step4"><span>4</span><div id="step4Label">Pay Stubs</div></div>
+    <div class="step" id="step5"><span>5</span><div id="step5Label">Complete</div></div>
+  </div>
 
-  <!-- Survey Form -->
-  <form id="surveyForm">
-    <!-- Step 1 -->
-    <div class="step" id="step1">
-      <h2 data-en="Contact Information" data-es="Información de Contacto" data-ht="Enfòmasyon Kontak">Contact Information</h2>
-      <p>Please provide your contact information so we can stay in touch.</p>
-      <label>First Name*</label>
-      <input type="text" id="firstName" required>
-      <label>Last Name*</label>
-      <input type="text" id="lastName" required>
-      <label>Phone Number*</label>
-      <input type="tel" id="phone" maxlength="14" placeholder="(XXX) XXX-XXXX" required>
-      <label>Email*</label>
-      <input type="email" id="email" required>
-      <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
+  <!-- Step 1: Contact -->
+  <div id="page1">
+    <h2 id="contactTitle">Contact Information</h2>
+    <label id="firstNameLabel">First Name*</label>
+    <input type="text" id="firstName">
+    <label id="lastNameLabel">Last Name*</label>
+    <input type="text" id="lastName">
+    <label id="phoneLabel">Phone Number*</label>
+    <input type="text" id="phone" placeholder="(XXX) XXX-XXXX" oninput="formatPhone(this)">
+    <label id="emailLabel">Email*</label>
+    <input type="email" id="email">
+    <button onclick="nextPage(1)">Next</button>
+  </div>
+
+  <!-- Step 2: Employment -->
+  <div id="page2" class="hidden">
+    <h2 id="employmentTitle">Employment Information</h2>
+    <label id="employerLabel">Employer*</label>
+    <input type="text" id="employer">
+    <label id="jobLabel">Job Title*</label>
+    <input type="text" id="jobTitle">
+    <label id="startDateLabel">Start Date*</label>
+    <input type="date" id="startDate">
+    <label id="stillLabel">Are you still employed?*</label>
+    <select id="stillWorking">
+      <option value="">Select</option>
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select>
+    <button onclick="prevPage(2)">Back</button>
+    <button onclick="nextPage(2)">Next</button>
+  </div>
+
+  <!-- Step 3: Survey -->
+  <div id="page3" class="hidden">
+    <h2 id="surveyTitle">Survey Questions</h2>
+    <label id="impactLabel">Has TASK support made a difference?</label>
+    <textarea id="impact"></textarea>
+    <label id="challengeLabel">Any challenges we can help with?</label>
+    <textarea id="challenges"></textarea>
+    <button onclick="prevPage(3)">Back</button>
+    <button onclick="nextPage(3)">Next</button>
+  </div>
+
+  <!-- Step 4: Pay Stubs -->
+  <div id="page4" class="hidden">
+    <h2 id="payStubTitle">Upload Pay Stubs</h2>
+    <p id="payStubBlurb">Please provide two pay stubs for employment verification.</p>
+    <label>Pay Stub #1</label>
+    <input type="file" id="payStub1" accept="image/*,.pdf" capture="environment">
+    <label>Pay Stub #2</label>
+    <input type="file" id="payStub2" accept="image/*,.pdf" capture="environment">
+    <button onclick="prevPage(4)">Back</button>
+    <button onclick="nextPage(4)">Submit</button>
+  </div>
+
+  <!-- Step 5: Complete -->
+  <div id="page5" class="hidden">
+    <div class="success">🎉 Survey Completed!</div>
+    <p style="text-align:center;">Thank you for completing your monthly survey.</p>
+    <div class="next-steps">
+      <h3>Next Steps</h3>
+      <p>Visit the TASK Employment Office to pick up your gift card reward.</p>
+      <p>Office: Mon–Fri 9–4<br>Lunch: Mon–Sat 10:30–1<br>Dinner: Mon–Thu 3:30–5</p>
+      <p>Phone Numbers: (609) 697-6215 / (609) 697-6166</p>
     </div>
-
-    <!-- Step 2 -->
-    <div class="step" id="step2" style="display:none;">
-      <h2>Employment Information</h2>
-      <label>Current Employer*</label>
-      <input type="text" id="employer" required>
-      <label>Job Title*</label>
-      <input type="text" id="jobTitle" required>
-      <label>Start Date*</label>
-      <input type="date" id="startDate" required>
-      <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
-      <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
-    </div>
-
-    <!-- Step 3 -->
-    <div class="step" id="step3" style="display:none;">
-      <h2>Survey Questions</h2>
-      <label>What has helped you stay successful?</label>
-      <textarea id="stayReasons" rows="3" required></textarea>
-      <label>What challenges are you facing?</label>
-      <textarea id="challenges" rows="3" required></textarea>
-      <label>Did TASK make a difference in your employment journey?</label>
-      <textarea id="taskImpact" rows="3" required></textarea>
-      <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
-      <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
-    </div>
-
-    <!-- Step 4 -->
-    <div class="step" id="step4" style="display:none;">
-      <h2>Upload Pay Stubs</h2>
-      <p>Please provide two pay stubs for employment verification.</p>
-      <label>Pay Stub #1</label><br>
-      <label class="upload-btn camera-btn">📷 Take Photo
-        <input type="file" accept="image/*" capture="environment" onchange="previewFile(event,'preview1')" hidden required>
-      </label>
-      <label class="upload-btn file-btn">📂 Upload File
-        <input type="file" accept="image/*,.pdf" onchange="previewFile(event,'preview1')" hidden required>
-      </label>
-      <div id="preview1" class="preview"></div>
-
-      <label>Pay Stub #2</label><br>
-      <label class="upload-btn camera-btn">📷 Take Photo
-        <input type="file" accept="image/*" capture="environment" onchange="previewFile(event,'preview2')" hidden required>
-      </label>
-      <label class="upload-btn file-btn">📂 Upload File
-        <input type="file" accept="image/*,.pdf" onchange="previewFile(event,'preview2')" hidden required>
-      </label>
-      <div id="preview2" class="preview"></div>
-
-      <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
-      <button type="button" class="btn btn-primary" onclick="nextStep()">Submit</button>
-    </div>
-
-    <!-- Step 5 -->
-    <div class="step" id="step5" style="display:none;">
-      <div class="completed">
-        <h2>🎉 Survey Completed!</h2>
-        <p>Thank you for completing your monthly survey.</p>
-        <div class="next-steps">
-          <h3>Next Steps</h3>
-          <p>Visit the TASK Employment Office to pick up your gift card.</p>
-          <p><strong>Office:</strong> Mon–Fri 9–4<br>
-             <strong>Lunch:</strong> Mon–Sat 10:30–1<br>
-             <strong>Dinner:</strong> Mon–Thu 3:30–5</p>
-          <p><strong>Phone Numbers:</strong> (609) 697-6215 / (609) 697-6166</p>
-        </div>
-      </div>
-    </div>
-  </form>
+  </div>
 </div>
 
 <script>
-  let currentStep = 1;
+  let currentPage = 1;
 
-  function showStep(n) {
-    document.querySelectorAll('.step').forEach((s,i)=> {
-      s.style.display = (i===n-1)?'block':'none';
-    });
-    document.querySelectorAll('.progressbar li').forEach((li,i)=>{
-      li.classList.toggle('active', i < n);
-    });
-    currentStep = n;
+  function showPage(n) {
+    for (let i = 1; i <= 5; i++) {
+      document.getElementById("page" + i).classList.add("hidden");
+      document.getElementById("step" + i).classList.remove("active");
+    }
+    document.getElementById("page" + n).classList.remove("hidden");
+    document.getElementById("step" + n).classList.add("active");
+    currentPage = n;
   }
 
-  function validateStep() {
-    const step = document.querySelector(`#step${currentStep}`);
-    const inputs = step.querySelectorAll("input[required], textarea[required]");
-    for (let input of inputs) {
-      if (!input.value.trim()) {
-        alert("Please complete all required fields before continuing.");
+  function nextPage(n) {
+    if (!validatePage(n)) return;
+    showPage(n + 1);
+  }
+
+  function prevPage(n) { showPage(n - 1); }
+
+  function validatePage(n) {
+    if (n === 1) {
+      if (!document.getElementById("firstName").value ||
+          !document.getElementById("lastName").value ||
+          !document.getElementById("phone").value ||
+          !document.getElementById("email").value) {
+        alert("Please complete all fields.");
+        return false;
+      }
+    }
+    if (n === 2) {
+      if (!document.getElementById("employer").value ||
+          !document.getElementById("jobTitle").value ||
+          !document.getElementById("startDate").value ||
+          !document.getElementById("stillWorking").value) {
+        alert("Please complete all fields.");
+        return false;
+      }
+    }
+    if (n === 4) {
+      let files1 = document.getElementById("payStub1").files.length;
+      let files2 = document.getElementById("payStub2").files.length;
+      if (files1 + files2 < 2) {
+        alert("Please upload at least 2 pay stubs (or 1 image showing both).");
         return false;
       }
     }
     return true;
   }
 
-  function nextStep() {
-    if (!validateStep()) return;
-    if(currentStep<5) showStep(currentStep+1);
+  function formatPhone(input) {
+    let value = input.value.replace(/\D/g, "").substring(0, 10);
+    let formatted = value;
+    if (value.length > 6) {
+      formatted = "(" + value.substring(0,3) + ") " + value.substring(3,6) + "-" + value.substring(6,10);
+    } else if (value.length > 3) {
+      formatted = "(" + value.substring(0,3) + ") " + value.substring(3,6);
+    }
+    input.value = formatted;
   }
 
-  function prevStep() { if(currentStep>1) showStep(currentStep-1); }
+  const translations = {
+    en: {
+      contactTitle: "Contact Information", firstName: "First Name*", lastName: "Last Name*", phone: "Phone Number*", email: "Email*",
+      employmentTitle: "Employment Information", employer: "Employer*", job: "Job Title*", startDate: "Start Date*", still: "Are you still employed?*",
+      surveyTitle: "Survey Questions", impact: "Has TASK support made a difference?", challenge: "Any challenges we can help with?",
+      payStubTitle: "Upload Pay Stubs", payStubBlurb: "Please provide two pay stubs for employment verification."
+    },
+    es: {
+      contactTitle: "Información de contacto", firstName: "Nombre*", lastName: "Apellido*", phone: "Número de teléfono*", email: "Correo electrónico*",
+      employmentTitle: "Información laboral", employer: "Empleador*", job: "Título del trabajo*", startDate: "Fecha de inicio*", still: "¿Sigues empleado?*",
+      surveyTitle: "Preguntas de la encuesta", impact: "¿El apoyo de TASK ha marcado una diferencia?", challenge: "¿Hay desafíos en los que podamos ayudar?",
+      payStubTitle: "Subir talones de pago", payStubBlurb: "Proporcione dos talones de pago para la verificación de empleo."
+    },
+    ht: {
+      contactTitle: "Enfòmasyon Kontak", firstName: "Prenon*", lastName: "Non fanmi*", phone: "Nimewo telefòn*", email: "Imèl*",
+      employmentTitle: "Enfòmasyon Travay", employer: "Anplwayè*", job: "Tit Travay*", startDate: "Dat Kòmanse*", still: "Èske w toujou ap travay?*",
+      surveyTitle: "Kesyon Sondaj", impact: "Èske sipò TASK te fè diferans?", challenge: "Èske gen defi nou ka ede w ak yo?",
+      payStubTitle: "Telechaje fich pey", payStubBlurb: "Tanpri bay de fich pey pou verifikasyon travay."
+    }
+  };
 
-  function previewFile(e, id) {
-    const files = e.target.files;
-    const preview = document.getElementById(id);
-    preview.innerHTML = '';
-    [...files].forEach(file=>{
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        const img = document.createElement('img');
-        img.src = ev.target.result;
-        preview.appendChild(img);
-      }
-      reader.readAsDataURL(file);
-    });
+  function switchLanguage(lang) {
+    document.getElementById("contactTitle").innerText = translations[lang].contactTitle;
+    document.getElementById("firstNameLabel").innerText = translations[lang].firstName;
+    document.getElementById("lastNameLabel").innerText = translations[lang].lastName;
+    document.getElementById("phoneLabel").innerText = translations[lang].phone;
+    document.getElementById("emailLabel").innerText = translations[lang].email;
+
+    document.getElementById("employmentTitle").innerText = translations[lang].employmentTitle;
+    document.getElementById("employerLabel").innerText = translations[lang].employer;
+    document.getElementById("jobLabel").innerText = translations[lang].job;
+    document.getElementById("startDateLabel").innerText = translations[lang].startDate;
+    document.getElementById("stillLabel").innerText = translations[lang].still;
+
+    document.getElementById("surveyTitle").innerText = translations[lang].surveyTitle;
+    document.getElementById("impactLabel").innerText = translations[lang].impact;
+    document.getElementById("challengeLabel").innerText = translations[lang].challenge;
+
+    document.getElementById("payStubTitle").innerText = translations[lang].payStubTitle;
+    document.getElementById("payStubBlurb").innerText = translations[lang].payStubBlurb;
   }
 
-  document.getElementById('phone').addEventListener('input', function(e) {
-    let x = e.target.value.replace(/\D/g,'').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
-    e.target.value = !x[2] ? x[1] : '('+x[1]+') '+x[2]+(x[3] ? '-'+x[3] : '');
-  });
-
-  // Language toggle
-  function setLanguage() {
-    const lang = document.getElementById("languageSelect").value;
-    document.querySelectorAll("[data-en]").forEach(el => {
-      el.innerText = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
-    });
-  }
+  // Show first page
+  showPage(1);
 </script>
+
 </body>
 </html>
