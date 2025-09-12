@@ -52,24 +52,33 @@
       outline: none;
     }
     .btn {
-      padding: 12px 20px;
+      padding: 14px 24px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       font-weight: bold;
       cursor: pointer;
-      margin: 8px 5px 0 0;
+      margin: 10px 5px 0 0;
       transition: transform 0.2s, background 0.3s;
       background: linear-gradient(135deg, #145078, #33a7b5);
       color: white;
     }
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .lang-select {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
     .progress {
       display: flex;
       justify-content: space-between;
-      margin: 20px 0 30px;
+      flex: 1;
+      margin: 0 0 30px 20px;
       counter-reset: step;
     }
     .step {
@@ -121,48 +130,28 @@
       border: 1px solid #b3d7f5;
       text-align: center;
     }
-    .lang-select {
-      float: left;
-      margin-bottom: 10px;
-    }
-    .upload-group {
-      margin-bottom: 20px;
-    }
-    .upload-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .file-input {
-      flex: 1;
-      padding: 10px;
-      border-radius: 10px;
-      border: 2px solid #ccc;
-      font-size: 14px;
-    }
     @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
     @keyframes pop { 0% { transform: scale(0.8); } 100% { transform: scale(1); } }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Language Toggle -->
-    <div class="lang-select">
-      🌐 <select id="langToggle" onchange="setLanguage(this.value)">
-        <option value="en">English</option>
-        <option value="es">Español</option>
-        <option value="ht">Kreyòl</option>
-      </select>
-    </div>
-
-    <!-- Progress bar -->
-    <div class="progress">
-      <div class="step active" id="step1">Contact</div>
-      <div class="step" id="step2">Employment</div>
-      <div class="step" id="step3">Survey</div>
-      <div class="step" id="step4">Pay Stubs</div>
-      <div class="step" id="step5">Complete</div>
+    <!-- Header: Language + Progress -->
+    <div class="header-bar">
+      <div class="lang-select">
+        🌐 <select id="langToggle" onchange="setLanguage(this.value)">
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="ht">Kreyòl</option>
+        </select>
+      </div>
+      <div class="progress">
+        <div class="step active" id="step1">Contact</div>
+        <div class="step" id="step2">Employment</div>
+        <div class="step" id="step3">Survey</div>
+        <div class="step" id="step4">Pay Stubs</div>
+        <div class="step" id="step5">Complete</div>
+      </div>
     </div>
 
     <div id="survey"></div>
@@ -187,9 +176,8 @@
       employer: "Employer *",
       jobTitle: "Job Title *",
       payRate: "Pay Rate/Salary *",
-      fullPart: "Employment Type *",
-      fullTime: "Full Time",
-      partTime: "Part Time",
+      status: "Status *",
+      statusOptions: ["Full-Time", "Part-Time"],
       stillWorking: "Are you still employed? *",
       yes: "Yes", no: "No",
       step3title: "Step 3: Retention Questions",
@@ -201,6 +189,7 @@
       step4blurb: "Upload or take photos of your last two pay stubs to verify employment.",
       stub1: "Pay Stub #1 *",
       stub2: "Pay Stub #2 *",
+      upload: "Choose File",
       takePhoto: "Take Photo",
       submit: "Submit Survey",
       step5title: "🎉 Survey Completed!",
@@ -223,9 +212,8 @@
       employer: "Empleador *",
       jobTitle: "Puesto *",
       payRate: "Salario *",
-      fullPart: "Tipo de Empleo *",
-      fullTime: "Tiempo Completo",
-      partTime: "Medio Tiempo",
+      status: "Estado *",
+      statusOptions: ["Tiempo completo", "Medio tiempo"],
       stillWorking: "¿Sigues empleado? *",
       yes: "Sí", no: "No",
       step3title: "Paso 3: Preguntas de Retención",
@@ -237,6 +225,7 @@
       step4blurb: "Sube o toma fotos de tus dos últimos talonarios de pago.",
       stub1: "Talonario #1 *",
       stub2: "Talonario #2 *",
+      upload: "Elegir archivo",
       takePhoto: "Tomar Foto",
       submit: "Enviar Encuesta",
       step5title: "🎉 ¡Encuesta Completa!",
@@ -259,9 +248,8 @@
       employer: "Anplwayè *",
       jobTitle: "Tit Travay *",
       payRate: "Salè *",
-      fullPart: "Kalite Travay *",
-      fullTime: "Plen Tan",
-      partTime: "Mwatye Tan",
+      status: "Estati *",
+      statusOptions: ["Tan plen", "Mwatye tan"],
       stillWorking: "Èske w ap toujou travay? *",
       yes: "Wi", no: "Non",
       step3title: "Etap 3: Kesyon Retansyon",
@@ -273,6 +261,7 @@
       step4blurb: "Telechaje oswa pran foto de dènye 2 fich peman ou yo.",
       stub1: "Fich Peman #1 *",
       stub2: "Fich Peman #2 *",
+      upload: "Chwazi Fichye",
       takePhoto: "Pran Foto",
       submit: "Soumèt Sondaj",
       step5title: "🎉 Sondaj Konplete!",
@@ -297,102 +286,80 @@
 
     if(page===1){
       html = `
-        <h2>${t.step1title}</h2>
-        <p class="blurb">${t.step1blurb}</p>
-        <label>${t.firstName}</label><input id="firstName">
-        <label>${t.lastName}</label><input id="lastName">
-        <label>${t.phone}</label><input id="phone" oninput="formatPhone(this)">
-        <label>${t.email}</label><input id="email" type="email">
-        <button class="btn" onclick="nextPage()">${t.continue}</button>
-      `;
+        <h2>${t.step1title}</h2><p class="blurb">${t.step1blurb}</p>
+        <label>${t.firstName}</label><input id="firstName" required>
+        <label>${t.lastName}</label><input id="lastName" required>
+        <label>${t.phone}</label><input id="phone" oninput="formatPhone(this)" required>
+        <label>${t.email}</label><input id="email" type="email" required>
+        <button class="btn" onclick="nextPage()">${t.continue}</button>`;
     }
+
     if(page===2){
       html = `
-        <h2>${t.step2title}</h2>
-        <p class="blurb">${t.step2blurb}</p>
-        <label>${t.employer}</label><input id="employer">
-        <label>${t.jobTitle}</label><input id="jobTitle">
-        <label>${t.payRate}</label><input id="payRate">
-        <label>${t.fullPart}</label>
-        <select id="employmentType">
+        <h2>${t.step2title}</h2><p class="blurb">${t.step2blurb}</p>
+        <label>${t.employer}</label><input id="employer" required>
+        <label>${t.jobTitle}</label><input id="jobTitle" required>
+        <label>${t.payRate}</label><input id="payRate" required>
+        <label>${t.status}</label>
+        <select id="status" required>
           <option value="">--</option>
-          <option>${t.fullTime}</option>
-          <option>${t.partTime}</option>
+          ${t.statusOptions.map(s=>`<option>${s}</option>`).join("")}
         </select>
         <label>${t.stillWorking}</label>
-        <select id="stillWorking">
-          <option value="">--</option>
-          <option>${t.yes}</option>
-          <option>${t.no}</option>
+        <select id="stillWorking" required>
+          <option value="">--</option><option>${t.yes}</option><option>${t.no}</option>
         </select>
         <button class="btn" onclick="prevPage()">${t.back}</button>
-        <button class="btn" onclick="nextPage()">${t.continue}</button>
-      `;
+        <button class="btn" onclick="nextPage()">${t.continue}</button>`;
     }
+
     if(page===3){
       html = `
-        <h2>${t.step3title}</h2>
-        <p class="blurb">${t.step3blurb}</p>
-        <label>${t.q1}</label><textarea id="q1"></textarea>
-        <label>${t.q2}</label><textarea id="q2"></textarea>
-        <label>${t.q3}</label><textarea id="q3"></textarea>
+        <h2>${t.step3title}</h2><p class="blurb">${t.step3blurb}</p>
+        <label>${t.q1}</label><textarea id="q1" required></textarea>
+        <label>${t.q2}</label><textarea id="q2" required></textarea>
+        <label>${t.q3}</label><textarea id="q3" required></textarea>
         <button class="btn" onclick="prevPage()">${t.back}</button>
-        <button class="btn" onclick="nextPage()">${t.continue}</button>
-      `;
+        <button class="btn" onclick="nextPage()">${t.continue}</button>`;
     }
+
     if(page===4){
       html = `
-        <h2>${t.step4title}</h2>
-        <p class="blurb">${t.step4blurb}</p>
-
+        <h2>${t.step4title}</h2><p class="blurb">${t.step4blurb}</p>
         <label>${t.stub1}</label>
-        <input type="file" id="stub1" accept="image/*,.pdf" capture="environment"
-               onchange="previewFile(this,'preview1')">
+        <input type="file" id="stub1" accept="image/*,.pdf" capture="environment" onchange="previewFile(this,'preview1')">
         <div id="preview1" class="preview"></div>
         <button class="btn" onclick="openCamera('stub1')">${t.takePhoto}</button>
-
         <label>${t.stub2}</label>
-        <input type="file" id="stub2" accept="image/*,.pdf" capture="environment"
-               onchange="previewFile(this,'preview2')">
+        <input type="file" id="stub2" accept="image/*,.pdf" capture="environment" onchange="previewFile(this,'preview2')">
         <div id="preview2" class="preview"></div>
         <button class="btn" onclick="openCamera('stub2')">${t.takePhoto}</button>
-
         <button class="btn" onclick="prevPage()">${t.back}</button>
-        <button class="btn" onclick="submitSurvey()">${t.submit}</button>
-      `;
+        <button class="btn" onclick="submitSurvey()">${t.submit}</button>`;
     }
+
     if(page===5){
       html = `
-        <div class="success">
-          <h1>${t.step5title}</h1>
-          <p>${t.thanks}</p>
-        </div>
-        <div class="info-box" style="text-align:center;">
-          <h3>${t.next}</h3>
-          <pre>${t.hours}</pre>
-          <p>${t.phoneNumbers}</p>
-        </div>
-      `;
+        <div class="success"><h1>${t.step5title}</h1><p>${t.thanks}</p></div>
+        <div class="info-box"><h3>${t.next}</h3><pre>${t.hours}</pre><p>${t.phoneNumbers}</p></div>`;
     }
+
     document.getElementById("survey").innerHTML = html;
   }
-
-  // auto-format phone as (XXX) XXX-XXXX
   function formatPhone(input){
     let val = input.value.replace(/\D/g,'');
-    if(val.length>3 && val.length<=6){
+    if(val.length > 3 && val.length <= 6) {
       input.value = `(${val.slice(0,3)}) ${val.slice(3)}`;
-    } else if(val.length>6){
+    } else if(val.length > 6) {
       input.value = `(${val.slice(0,3)}) ${val.slice(3,6)}-${val.slice(6,10)}`;
     } else {
       input.value = val;
     }
   }
 
-  // preview uploaded files
   function previewFile(input,previewId){
-    let preview=document.getElementById(previewId);
-    preview.innerHTML="";
+    let preview = document.getElementById(previewId);
+    preview.innerHTML = "";
     Array.from(input.files).forEach(file=>{
       if(file.type.startsWith("image/")){
         let reader=new FileReader();
@@ -400,3 +367,74 @@
           let img=document.createElement("img");
           img.src=e.target.result;
           preview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        let p=document.createElement("p");
+        p.textContent=file.name;
+        preview.appendChild(p);
+      }
+    });
+  }
+
+  function openCamera(targetId){
+    document.getElementById(targetId).click();
+  }
+
+  function validatePage(){
+    let valid = true;
+    if(page===1){
+      ["firstName","lastName","phone","email"].forEach(id=>{
+        if(!document.getElementById(id).value.trim()) valid=false;
+      });
+    }
+    if(page===2){
+      ["employer","jobTitle","payRate","status","stillWorking"].forEach(id=>{
+        if(!document.getElementById(id).value.trim()) valid=false;
+      });
+    }
+    if(page===3){
+      ["q1","q2","q3"].forEach(id=>{
+        if(!document.getElementById(id).value.trim()) valid=false;
+      });
+    }
+    if(page===4){
+      let f1 = document.getElementById("stub1").files.length;
+      let f2 = document.getElementById("stub2").files.length;
+      if(f1 + f2 < 2) valid = false; // any combo of 2 total required
+    }
+    return valid;
+  }
+
+  function nextPage(){
+    if(!validatePage()){
+      alert("Please complete all required fields before continuing.");
+      return;
+    }
+    if(page < 5){
+      page++;
+      renderPage();
+    }
+  }
+
+  function prevPage(){
+    if(page > 1){
+      page--;
+      renderPage();
+    }
+  }
+
+  function submitSurvey(){
+    if(!validatePage()){
+      alert("Please upload at least two pay stubs before submitting.");
+      return;
+    }
+    localStorage.setItem("lastSubmission", new Date().toISOString());
+    page=5;
+    renderPage();
+  }
+
+  renderPage();
+</script>
+</body>
+</html>
