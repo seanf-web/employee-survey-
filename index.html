@@ -1,6 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
+<head><!DOCTYPE html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TASK Monthly Employment Survey</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&family=Open+Sans&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+      margin: 0; padding: 0;
+    }
+    .container {
+      max-width: 700px; margin: 2rem auto; background: #fff;
+      border-radius: 1rem; box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      padding: 2rem;
+    }
+    h1, h2 { font-family: 'Nunito', sans-serif; text-align: center; color: #145078; }
+    .progress { display: flex; height: 10px; background: #d9dad9; border-radius: 5px; margin-bottom: 2rem; }
+    .progress-bar { background: #ff911f; width: 0; transition: width 0.4s ease; }
+    label { font-weight: 600; color: #145078; display: block; margin-bottom: 0.5rem; }
+    input, select, textarea {
+      width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: 2px solid #ccc;
+      margin-bottom: 1.5rem; font-size: 1rem;
+    }
+    input:invalid, select:invalid, textarea:invalid { border-color: #ff911f; }
+    button {
+      background: #145078; color: white; border: none; padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem; font-weight: bold; cursor: pointer;
+    }
+    button:hover { background: #0f3d5f; }
+    .btn-secondary { background: #6b6b6b; }
+    .hidden { display: none; }
+    .success { text-align: center; padding: 2rem; }
+    .success h2 { color: #74ba58; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+    <form id="surveyForm">
+      
+      <!-- Step 1 -->
+      <div class="step" id="step1">
+        <h1>Step 1: Your Information</h1>
+        <label>First Name *</label>
+        <input type="text" id="firstName" required>
+        
+        <label>Last Name *</label>
+        <input type="text" id="lastName" required>
+        
+        <label>Email *</label>
+        <input type="email" id="email" required>
+        
+        <label>Phone *</label>
+        <input type="tel" id="phone" required>
+      </div>
+      
+      <!-- Step 2 -->
+      <div class="step hidden" id="step2">
+        <h1>Step 2: Employment Status</h1>
+        <label>Employer *</label>
+        <input type="text" id="employer" required>
+        
+        <label>Job Title *</label>
+        <input type="text" id="jobTitle" required>
+        
+        <label>Start Date *</label>
+        <input type="date" id="startDate" required>
+        
+        <label>Are you still employed? *</label>
+        <select id="stillEmployed" required>
+          <option value="" disabled selected>Select...</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+      
+      <!-- Step 3 -->
+      <div class="step hidden" id="step3">
+        <h1>Step 3: Verification</h1>
+        <label>Upload Last Two Pay Stubs *</label>
+        <input type="file" id="paystubs" accept=".pdf,image/*" multiple required>
+        <p><em>Or take a picture using your phone camera.</em></p>
+        
+        <label>
+          <input type="checkbox" id="permission" required>
+          I authorize TASK to contact me for monthly check-ins and support.
+        </label>
+      </div>
+      
+      <!-- Step 4 -->
+      <div class="step hidden" id="step4">
+        <div class="success">
+          <h2>🎉 Survey Completed!</h2>
+          <p>Thank you for your commitment to employment success with TASK.</p>
+          <p><strong>Office Hours:</strong><br>
+          Meals: Mon–Fri 10:30am–1:00pm, Mon–Thu 3:30–5:00pm<br>
+          Employment Office: Mon–Fri 9:00am–4:00pm<br>
+          <strong>Phone:</strong> (609) 697-6215<br>
+          <strong>Website:</strong> <a href="https://trentonsoupkitchen.org" target="_blank">trentonsoupkitchen.org</a></p>
+        </div>
+      </div>
+      
+      <!-- Navigation -->
+      <div style="display:flex; justify-content:space-between;">
+        <button type="button" class="btn-secondary hidden" id="prevBtn">Back</button>
+        <button type="button" id="nextBtn">Continue</button>
+      </div>
+    </form>
+  </div>
+  
+  <script>
+    const steps = document.querySelectorAll(".step");
+    const progressBar = document.getElementById("progressBar");
+    const nextBtn = document.getElementById("nextBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const form = document.getElementById("surveyForm");
+    let currentStep = 0;
+
+    // Prevent duplicate submissions
+    if(localStorage.getItem("taskSurveyDone")) {
+      steps.forEach(s => s.classList.add("hidden"));
+      document.querySelector(".container").innerHTML = "<div class='success'><h2>✅ Already Completed</h2><p>You have already submitted this survey. Thank you!</p></div>";
+    }
+
+    function showStep(index) {
+      steps.forEach((step, i) => step.classList.toggle("hidden", i !== index));
+      progressBar.style.width = ((index) / (steps.length-1)) * 100 + "%";
+      prevBtn.classList.toggle("hidden", index === 0);
+      nextBtn.textContent = index === steps.length - 1 ? "Submit" : "Continue";
+    }
+
+    nextBtn.addEventListener("click", () => {
+      const inputs = steps[currentStep].querySelectorAll("input, select");
+      for (let input of inputs) {
+        if (!input.checkValidity()) { input.reportValidity(); return; }
+      }
+      if (currentStep < steps.length - 1) {
+        currentStep++;
+        showStep(currentStep);
+        if (currentStep === steps.length - 1) {
+          // Mark completed in localStorage
+          localStorage.setItem("taskSurveyDone", "true");
+        }
+      }
+    });
+
+    prevBtn.addEventListener("click", () => {
+      if (currentStep > 0) {
+        currentStep--;
+        showStep(currentStep);
+      }
+    });
+
+    showStep(currentStep);
+  </script>
+</body>
+</html>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TASK Monthly Employment Survey</title>
@@ -204,3 +364,4 @@
   </script>
 </body>
 </html>
+
