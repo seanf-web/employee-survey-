@@ -155,10 +155,8 @@
     </div>
 
     <div id="survey"></div>
-  </div>
-<script>
+  </div><script>
   let page = 1;
-  let formData = {};
   let lang = "en";
 
   const translations = {
@@ -189,7 +187,6 @@
       step4blurb: "Upload or take photos of your last two pay stubs to verify employment.",
       stub1: "Pay Stub #1 *",
       stub2: "Pay Stub #2 *",
-      upload: "Choose File",
       takePhoto: "Take Photo",
       submit: "Submit Survey",
       step5title: "🎉 Survey Completed!",
@@ -225,7 +222,6 @@
       step4blurb: "Sube o toma fotos de tus dos últimos talonarios de pago.",
       stub1: "Talonario #1 *",
       stub2: "Talonario #2 *",
-      upload: "Elegir archivo",
       takePhoto: "Tomar Foto",
       submit: "Enviar Encuesta",
       step5title: "🎉 ¡Encuesta Completa!",
@@ -261,7 +257,6 @@
       step4blurb: "Telechaje oswa pran foto de dènye 2 fich peman ou yo.",
       stub1: "Fich Peman #1 *",
       stub2: "Fich Peman #2 *",
-      upload: "Chwazi Fichye",
       takePhoto: "Pran Foto",
       submit: "Soumèt Sondaj",
       step5title: "🎉 Sondaj Konplete!",
@@ -272,10 +267,7 @@
     }
   };
 
-  function setLanguage(l) {
-    lang = l;
-    renderPage();
-  }
+  function setLanguage(l){ lang = l; renderPage(); }
 
   function renderPage() {
     document.querySelectorAll('.step').forEach((el,i)=>{
@@ -329,24 +321,13 @@
         <label>${t.stub1}</label>
         <input type="file" id="stub1" accept="image/*,.pdf" capture="environment" onchange="previewFile(this,'preview1')">
         <div id="preview1" class="preview"></div>
-        <button class="btn" onclick="openCamera('stub1')">${t.takePhoto}</button>
         <label>${t.stub2}</label>
-        <input type="file" id="stub2" accept="image/*,.pdf" capture="environment" onchange="previewFile(this,'preview2')">
+        <input type="file" id="stub2" accept="image/*,.pdf" onchange="previewFile(this,'preview2')">
         <div id="preview2" class="preview"></div>
-        <button class="btn" onclick="openCamera('stub2')">${t.takePhoto}</button>
+        <button class="btn" onclick="openCamera('stub1')">${t.takePhoto}</button>
         <button class="btn" onclick="prevPage()">${t.back}</button>
         <button class="btn" onclick="submitSurvey()">${t.submit}</button>`;
-    }
-
-    if(page===5){
-      html = `
-        <div class="success"><h1>${t.step5title}</h1><p>${t.thanks}</p></div>
-        <div class="info-box"><h3>${t.next}</h3><pre>${t.hours}</pre><p>${t.phoneNumbers}</p></div>`;
-    }
-
-    document.getElementById("survey").innerHTML = html;
-  }
-  function formatPhone(input){
+    }  function formatPhone(input){
     let val = input.value.replace(/\D/g,'');
     if(val.length > 3 && val.length <= 6) {
       input.value = `(${val.slice(0,3)}) ${val.slice(3)}`;
@@ -401,7 +382,7 @@
     if(page===4){
       let f1 = document.getElementById("stub1").files.length;
       let f2 = document.getElementById("stub2").files.length;
-      if(f1 + f2 < 2) valid = false; // any combo of 2 total required
+      if(f1 + f2 < 2) valid = false; // must be at least 2 total
     }
     return valid;
   }
