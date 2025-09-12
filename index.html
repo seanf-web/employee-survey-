@@ -1,367 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><!DOCTYPE html>
-<html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TASK Monthly Employment Survey</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&family=Open+Sans&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>TASK Monthly Employment Check-In</title>
   <style>
     body {
-      font-family: 'Open Sans', sans-serif;
-      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-      margin: 0; padding: 0;
-    }
-    .container {
-      max-width: 700px; margin: 2rem auto; background: #fff;
-      border-radius: 1rem; box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-      padding: 2rem;
-    }
-    h1, h2 { font-family: 'Nunito', sans-serif; text-align: center; color: #145078; }
-    .progress { display: flex; height: 10px; background: #d9dad9; border-radius: 5px; margin-bottom: 2rem; }
-    .progress-bar { background: #ff911f; width: 0; transition: width 0.4s ease; }
-    label { font-weight: 600; color: #145078; display: block; margin-bottom: 0.5rem; }
-    input, select, textarea {
-      width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: 2px solid #ccc;
-      margin-bottom: 1.5rem; font-size: 1rem;
-    }
-    input:invalid, select:invalid, textarea:invalid { border-color: #ff911f; }
-    button {
-      background: #145078; color: white; border: none; padding: 0.75rem 1.5rem;
-      border-radius: 0.5rem; font-weight: bold; cursor: pointer;
-    }
-    button:hover { background: #0f3d5f; }
-    .btn-secondary { background: #6b6b6b; }
-    .hidden { display: none; }
-    .success { text-align: center; padding: 2rem; }
-    .success h2 { color: #74ba58; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
-    <form id="surveyForm">
-      
-      <!-- Step 1 -->
-      <div class="step" id="step1">
-        <h1>Step 1: Your Information</h1>
-        <label>First Name *</label>
-        <input type="text" id="firstName" required>
-        
-        <label>Last Name *</label>
-        <input type="text" id="lastName" required>
-        
-        <label>Email *</label>
-        <input type="email" id="email" required>
-        
-        <label>Phone *</label>
-        <input type="tel" id="phone" required>
-      </div>
-      
-      <!-- Step 2 -->
-      <div class="step hidden" id="step2">
-        <h1>Step 2: Employment Status</h1>
-        <label>Employer *</label>
-        <input type="text" id="employer" required>
-        
-        <label>Job Title *</label>
-        <input type="text" id="jobTitle" required>
-        
-        <label>Start Date *</label>
-        <input type="date" id="startDate" required>
-        
-        <label>Are you still employed? *</label>
-        <select id="stillEmployed" required>
-          <option value="" disabled selected>Select...</option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-        </select>
-      </div>
-      
-      <!-- Step 3 -->
-      <div class="step hidden" id="step3">
-        <h1>Step 3: Verification</h1>
-        <label>Upload Last Two Pay Stubs *</label>
-        <input type="file" id="paystubs" accept=".pdf,image/*" multiple required>
-        <p><em>Or take a picture using your phone camera.</em></p>
-        
-        <label>
-          <input type="checkbox" id="permission" required>
-          I authorize TASK to contact me for monthly check-ins and support.
-        </label>
-      </div>
-      
-      <!-- Step 4 -->
-      <div class="step hidden" id="step4">
-        <div class="success">
-          <h2>🎉 Survey Completed!</h2>
-          <p>Thank you for your commitment to employment success with TASK.</p>
-          <p><strong>Office Hours:</strong><br>
-          Meals: Mon–Fri 10:30am–1:00pm, Mon–Thu 3:30–5:00pm<br>
-          Employment Office: Mon–Fri 9:00am–4:00pm<br>
-          <strong>Phone:</strong> (609) 697-6215<br>
-          <strong>Website:</strong> <a href="https://trentonsoupkitchen.org" target="_blank">trentonsoupkitchen.org</a></p>
-        </div>
-      </div>
-      
-      <!-- Navigation -->
-      <div style="display:flex; justify-content:space-between;">
-        <button type="button" class="btn-secondary hidden" id="prevBtn">Back</button>
-        <button type="button" id="nextBtn">Continue</button>
-      </div>
-    </form>
-  </div>
-  
-  <script>
-    const steps = document.querySelectorAll(".step");
-    const progressBar = document.getElementById("progressBar");
-    const nextBtn = document.getElementById("nextBtn");
-    const prevBtn = document.getElementById("prevBtn");
-    const form = document.getElementById("surveyForm");
-    let currentStep = 0;
-
-    // Prevent duplicate submissions
-    if(localStorage.getItem("taskSurveyDone")) {
-      steps.forEach(s => s.classList.add("hidden"));
-      document.querySelector(".container").innerHTML = "<div class='success'><h2>✅ Already Completed</h2><p>You have already submitted this survey. Thank you!</p></div>";
-    }
-
-    function showStep(index) {
-      steps.forEach((step, i) => step.classList.toggle("hidden", i !== index));
-      progressBar.style.width = ((index) / (steps.length-1)) * 100 + "%";
-      prevBtn.classList.toggle("hidden", index === 0);
-      nextBtn.textContent = index === steps.length - 1 ? "Submit" : "Continue";
-    }
-
-    nextBtn.addEventListener("click", () => {
-      const inputs = steps[currentStep].querySelectorAll("input, select");
-      for (let input of inputs) {
-        if (!input.checkValidity()) { input.reportValidity(); return; }
-      }
-      if (currentStep < steps.length - 1) {
-        currentStep++;
-        showStep(currentStep);
-        if (currentStep === steps.length - 1) {
-          // Mark completed in localStorage
-          localStorage.setItem("taskSurveyDone", "true");
-        }
-      }
-    });
-
-    prevBtn.addEventListener("click", () => {
-      if (currentStep > 0) {
-        currentStep--;
-        showStep(currentStep);
-      }
-    });
-
-    showStep(currentStep);
-  </script>
-</body>
-</html>
-
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TASK Monthly Employment Survey</title>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&family=Open+Sans&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Open Sans', sans-serif;
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      font-family: Arial, sans-serif;
+      background: #f8fafc;
       margin: 0;
       padding: 0;
     }
     .container {
-      max-width: 700px;
-      margin: 2rem auto;
+      max-width: 600px;
+      margin: 30px auto;
       background: #fff;
-      border-radius: 1rem;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-      padding: 2rem;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    h1, h2 {
-      font-family: 'Nunito', sans-serif;
+    h2 {
       text-align: center;
-      margin-bottom: 1rem;
       color: #145078;
     }
     .progress {
-      display: flex;
-      height: 10px;
-      background: #d9dad9;
+      height: 8px;
+      background: #ddd;
       border-radius: 5px;
       overflow: hidden;
-      margin-bottom: 2rem;
+      margin-bottom: 20px;
     }
     .progress-bar {
+      height: 8px;
+      width: 0%;
       background: #ff911f;
-      width: 0;
-      transition: width 0.4s ease;
+      transition: width 0.3s;
+    }
+    .step {
+      display: none;
+    }
+    .step.active {
+      display: block;
     }
     label {
-      font-weight: 600;
-      color: #145078;
       display: block;
-      margin-bottom: 0.5rem;
+      margin-top: 12px;
+      font-weight: bold;
+      color: #145078;
     }
     input, select, textarea {
       width: 100%;
-      padding: 0.75rem;
-      border-radius: 0.5rem;
-      border: 2px solid #ccc;
-      margin-bottom: 1.5rem;
-      font-size: 1rem;
+      padding: 10px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
     }
-    textarea { resize: vertical; }
     button {
-      background: #145078;
-      color: white;
+      margin-top: 20px;
+      padding: 10px 20px;
       border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.5rem;
+      border-radius: 6px;
       font-weight: bold;
       cursor: pointer;
     }
-    button:hover { background: #0f3d5f; }
-    .btn-secondary {
-      background: #6b6b6b;
+    .btn-next {
+      background: #145078;
+      color: #fff;
     }
-    .hidden { display: none; }
+    .btn-back {
+      background: #aaa;
+      color: #fff;
+      margin-right: 10px;
+    }
     .success {
       text-align: center;
-      padding: 2rem;
-    }
-    .success h2 {
-      color: #74ba58;
-      margin-bottom: 1rem;
+      color: green;
+      font-size: 1.2em;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
-    
-    <!-- Step 1 -->
-    <form id="surveyForm">
-      <div class="step" id="step1">
-        <h1>Monthly Employment Check-In</h1>
-        <label>Full Name *</label>
-        <input type="text" required />
-        
-        <label>Phone *</label>
-        <input type="tel" required />
-        
-        <label>Email *</label>
-        <input type="email" required />
-        
-        <label>Preferred Contact Method</label>
-        <select>
-          <option>Phone</option>
-          <option>Email</option>
-          <option>Text</option>
-        </select>
-      </div>
 
-      <!-- Step 2 -->
-      <div class="step hidden" id="step2">
-        <h1>Current Employment Status</h1>
-        <label>Current Employer *</label>
-        <input type="text" required />
-        
-        <label>Job Title</label>
-        <input type="text" />
-        
-        <label>Start Date *</label>
-        <input type="date" required />
-        
-        <label>Hours Per Week</label>
-        <input type="number" />
-        
-        <label>Monthly Income (optional)</label>
-        <input type="number" />
-        
-        <label>Are you still employed?</label>
-        <select>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-        </select>
-      </div>
+<div class="container">
+  <h2>Monthly Employment Check-In</h2>
+  <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
 
-      <!-- Step 3 -->
-      <div class="step hidden" id="step3">
-        <h1>Verification</h1>
-        <label>What helps you stay successful?</label>
-        <textarea rows="3"></textarea>
-        
-        <label>What challenges can TASK help with?</label>
-        <textarea rows="3"></textarea>
-        
-        <label>How has TASK support helped you?</label>
-        <textarea rows="3"></textarea>
-        
-        <label>Upload Your Last Two Pay Stubs *</label>
-        <input type="file" accept=".pdf,image/*" multiple required />
-        <p><em>You may also take a picture if using your phone camera.</em></p>
-        
-        <label>
-          <input type="checkbox" required />
-          I authorize TASK to contact me for monthly check-ins and provide support.
-        </label>
-      </div>
-
-      <!-- Step 4 -->
-      <div class="step hidden" id="step4">
-        <div class="success">
-          <h2>🎉 Survey Completed!</h2>
-          <p>Thank you for your continued commitment to employment success through TASK.</p>
-          <p>Please visit the TASK Employment Office to receive your gift card reward.</p>
-          <p><strong>Office Hours:</strong><br>
-          Meals: Mon–Fri 10:30am–1:00pm, Mon–Thu 3:30–5:00pm<br>
-          Employment Office: Mon–Fri 9:00am–4:00pm<br>
-          <strong>Phone:</strong> (609) 697-6215<br>
-          <strong>Website:</strong> <a href="https://trentonsoupkitchen.org" target="_blank">trentonsoupkitchen.org</a></p>
-        </div>
-      </div>
-
-      <!-- Nav buttons -->
-      <div style="display:flex; justify-content:space-between;">
-        <button type="button" class="btn-secondary hidden" id="prevBtn">Back</button>
-        <button type="button" id="nextBtn">Continue</button>
-      </div>
-    </form>
+  <!-- Step 1 -->
+  <div class="step active" id="step1">
+    <label>Full Name *</label>
+    <input type="text" id="fullName" required>
+    <label>Phone *</label>
+    <input type="tel" id="phone" required>
+    <label>Email *</label>
+    <input type="email" id="email" required>
+    <label>Preferred Contact Method *</label>
+    <select id="contact" required>
+      <option value="">Select...</option>
+      <option>Phone</option>
+      <option>Email</option>
+      <option>Text</option>
+    </select>
+    <button class="btn-next" onclick="nextStep(1)">Continue</button>
   </div>
 
-  <script>
-    const steps = document.querySelectorAll(".step");
-    const progressBar = document.getElementById("progressBar");
-    const nextBtn = document.getElementById("nextBtn");
-    const prevBtn = document.getElementById("prevBtn");
-    let currentStep = 0;
+  <!-- Step 2 -->
+  <div class="step" id="step2">
+    <label>Employer *</label>
+    <input type="text" id="employer" required>
+    <label>Job Title *</label>
+    <input type="text" id="jobTitle" required>
+    <label>Start Date *</label>
+    <input type="date" id="startDate" required>
+    <label>Are you still employed? *</label>
+    <select id="stillWorking" required>
+      <option value="">Select...</option>
+      <option>Yes</option>
+      <option>No</option>
+    </select>
+    <button class="btn-back" onclick="prevStep(2)">Back</button>
+    <button class="btn-next" onclick="nextStep(2)">Continue</button>
+  </div>
 
-    function showStep(index) {
-      steps.forEach((step, i) => step.classList.toggle("hidden", i !== index));
-      progressBar.style.width = ((index) / (steps.length-1)) * 100 + "%";
-      prevBtn.classList.toggle("hidden", index === 0);
-      nextBtn.textContent = index === steps.length - 1 ? "Done" : "Continue";
-    }
+  <!-- Step 3 -->
+  <div class="step" id="step3">
+    <label>Upload Pay Stubs (2 required) *</label>
+    <input type="file" id="paystubs" accept=".pdf,image/*" multiple required>
+    <label>Or Take a Picture *</label>
+    <input type="file" accept="image/*" capture="environment" id="camera">
+    <button class="btn-back" onclick="prevStep(3)">Back</button>
+    <button class="btn-next" onclick="submitSurvey()">Submit</button>
+  </div>
 
-    nextBtn.addEventListener("click", () => {
-      if (currentStep < steps.length - 1) {
-        currentStep++;
-        showStep(currentStep);
+  <!-- Success -->
+  <div class="step" id="success">
+    <p class="success">🎉 Thank you! Your monthly report has been submitted successfully.</p>
+  </div>
+</div>
+
+<script>
+  let currentStep = 1;
+  const totalSteps = 3;
+
+  // Prevent multiple submissions per month (same browser)
+  if (localStorage.getItem("lastSubmittedMonth") === new Date().getMonth().toString()) {
+    document.querySelector(".container").innerHTML = "<p class='success'>✅ You have already submitted this month.</p>";
+  }
+
+  function showStep(step) {
+    document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+    document.getElementById("step" + step)?.classList.add("active");
+    updateProgress(step);
+  }
+
+  function updateProgress(step) {
+    document.getElementById("progress-bar").style.width = ((step-1) / totalSteps) * 100 + "%";
+  }
+
+  function validateStep(step) {
+    let valid = true;
+    document.querySelectorAll("#step" + step + " input, #step" + step + " select").forEach(el => {
+      if (!el.checkValidity()) {
+        el.reportValidity();
+        valid = false;
       }
     });
-    prevBtn.addEventListener("click", () => {
-      if (currentStep > 0) {
-        currentStep--;
-        showStep(currentStep);
-      }
-    });
+    return valid;
+  }
 
+  function nextStep(step) {
+    if (!validateStep(step)) return;
+    currentStep++;
     showStep(currentStep);
-  </script>
+  }
+
+  function prevStep(step) {
+    currentStep--;
+    showStep(currentStep);
+  }
+
+  function submitSurvey() {
+    if (!validateStep(3)) return;
+    localStorage.setItem("lastSubmittedMonth", new Date().getMonth().toString());
+    showStep("success");
+    document.getElementById("progress-bar").style.width = "100%";
+  }
+
+  showStep(1);
+</script>
+
 </body>
 </html>
-
