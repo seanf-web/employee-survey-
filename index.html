@@ -82,80 +82,156 @@
 
     <div id="survey"></div>
   </div>
-
 <script>
   let page = 1;
   let lang = "en";
+  let formValues = {}; // store answers so they aren't lost on language switch
 
   const translations = {
     en: {
-      step1title:"Step 1: Contact Information", step1blurb:"We collect your contact info so TASK can stay in touch and provide support.",
-      firstName:"First Name *", lastName:"Last Name *", phone:"Phone *", email:"Email *", continue:"Continue", back:"Back",
-      step2title:"Step 2: Employment Information", step2blurb:"We ask about your job so we can track placement success and support your growth.",
-      employer:"Employer *", jobTitle:"Job Title *", payRate:"Pay Rate/Salary *", stillWorking:"Are you still employed? *",
-      fullTime:"Employment Type *", full:"Full-time", part:"Part-time", yes:"Yes", no:"No",
-      step3title:"Step 3: Retention Questions", step3blurb:"Please answer these questions to help us understand how to better support you.",
-      q1:"What has helped you stay successful in your job?", q2:"What challenges are you facing?", q3:"How has TASK supported your employment journey?",
-      step4title:"Step 4: Upload Pay Stubs", step4blurb:"Upload or take photos of your last two pay stubs to verify employment.",
+      step1title:"Step 1: Contact Information",
+      step1blurb:"We collect your contact info so TASK can stay in touch and provide support.",
+      firstName:"First Name *", lastName:"Last Name *", phone:"Phone *", email:"Email *",
+      continue:"Continue", back:"Back",
+      step2title:"Step 2: Employment Information",
+      step2blurb:"We ask about your job so we can track placement success and support your growth.",
+      employer:"Employer *", jobTitle:"Job Title *", payRate:"Pay Rate/Salary *",
+      stillWorking:"Are you still employed? *", yes:"Yes", no:"No",
+      fullTime:"Employment Type *", full:"Full-time", part:"Part-time",
+      step3title:"Step 3: Retention Questions",
+      step3blurb:"Please answer these questions to help us understand how to better support you.",
+      q1:"What has helped you stay successful in your job?",
+      q2:"What challenges are you facing?",
+      q3:"How has TASK supported your employment journey?",
+      step4title:"Step 4: Upload Pay Stubs",
+      step4blurb:"Upload or take photos of your last two pay stubs to verify employment.",
       stub1:"Pay Stub #1 *", stub2:"Pay Stub #2 *", takePhoto:"Take Photo", submit:"Submit Survey",
-      step5title:"🎉 Survey Completed!", thanks:"Thank you for completing your monthly survey.",
-      next:"Next Steps", hours:"Office: Mon–Fri 9–4\nLunch: Mon–Sat 10:30–1\nDinner: Mon–Thu 3:30–5", phoneNumbers:"Phone Numbers: (609) 697-6215 / (609) 697-6166"
+      step5title:"🎉 Survey Completed!",
+      thanks:"Thank you for completing your monthly survey.",
+      next:"Next Steps",
+      hours:"Office: Mon–Fri 9–4\nLunch: Mon–Sat 10:30–1\nDinner: Mon–Thu 3:30–5",
+      phoneNumbers:"Phone Numbers: (609) 697-6215 / (609) 697-6166"
+    },
+    es: {
+      step1title:"Paso 1: Información de Contacto",
+      step1blurb:"Recopilamos tu información para poder apoyarte mejor.",
+      firstName:"Nombre *", lastName:"Apellido *", phone:"Teléfono *", email:"Correo electrónico *",
+      continue:"Continuar", back:"Atrás",
+      step2title:"Paso 2: Información de Empleo",
+      step2blurb:"Preguntamos sobre tu empleo para apoyar tu crecimiento.",
+      employer:"Empleador *", jobTitle:"Puesto *", payRate:"Salario *",
+      stillWorking:"¿Sigues empleado? *", yes:"Sí", no:"No",
+      fullTime:"Tipo de Empleo *", full:"Tiempo completo", part:"Medio tiempo",
+      step3title:"Paso 3: Preguntas de Retención",
+      step3blurb:"Tus respuestas nos ayudan a mejorar nuestro apoyo.",
+      q1:"¿Qué te ha ayudado a mantenerte exitoso en tu trabajo?",
+      q2:"¿Qué desafíos estás enfrentando?",
+      q3:"¿Cómo te ha apoyado TASK en tu empleo?",
+      step4title:"Paso 4: Sube tus Talonarios",
+      step4blurb:"Sube o toma fotos de tus dos últimos talonarios de pago.",
+      stub1:"Talonario #1 *", stub2:"Talonario #2 *", takePhoto:"Tomar Foto", submit:"Enviar Encuesta",
+      step5title:"🎉 ¡Encuesta Completa!",
+      thanks:"Gracias por completar tu encuesta mensual.",
+      next:"Próximos Pasos",
+      hours:"Oficina: Lun–Vie 9–4\nAlmuerzo: Lun–Sáb 10:30–1\nCena: Lun–Jue 3:30–5",
+      phoneNumbers:"Teléfonos: (609) 697-6215 / (609) 697-6166"
+    },
+    ht: {
+      step1title:"Etap 1: Enfòmasyon Kontak",
+      step1blurb:"Nou kolekte enfòmasyon ou pou nou ka sipòte ou pi byen.",
+      firstName:"Non *", lastName:"Siyati *", phone:"Nimewo Telefòn *", email:"Imèl *",
+      continue:"Kontinye", back:"Retounen",
+      step2title:"Etap 2: Enfòmasyon Travay",
+      step2blurb:"Nou mande sou travay ou pou nou ka sipòte ou nan avni ou.",
+      employer:"Anplwayè *", jobTitle:"Tit Travay *", payRate:"Salè *",
+      stillWorking:"Èske w ap toujou travay? *", yes:"Wi", no:"Non",
+      fullTime:"Kalite Travay *", full:"Plen tan", part:"Pati tan",
+      step3title:"Etap 3: Kesyon Retansyon",
+      step3blurb:"Tanpri reponn kesyon sa yo pou ede nou sipòte ou.",
+      q1:"Kisa ki ede ou rete stab nan travay la?",
+      q2:"Ki defi w ap fè fas ak yo?",
+      q3:"Kijan TASK te sipòte ou nan travay ou?",
+      step4title:"Etap 4: Telechaje Fich Peman",
+      step4blurb:"Telechaje oswa pran foto de dènye 2 fich peman ou yo.",
+      stub1:"Fich Peman #1 *", stub2:"Fich Peman #2 *", takePhoto:"Pran Foto", submit:"Soumèt Sondaj",
+      step5title:"🎉 Sondaj Konplete!",
+      thanks:"Mèsi paske ou ranpli sondaj chak mwa ou.",
+      next:"Pwoschen Etap",
+      hours:"Biwo: Lendi–Vandredi 9–4\nManje midi: Lendi–Samdi 10:30–1\nDine: Lendi–Jedi 3:30–5",
+      phoneNumbers:"Nimewo Telefòn: (609) 697-6215 / (609) 697-6166"
     }
-    // You would add `es` and `ht` translations here same as before, including Employment Type + Take Photo
   };
 
   function setLanguage(l){ lang=l; renderPage(); }
-
   function renderPage() {
-    document.querySelectorAll('.step').forEach((el,i)=> el.classList.toggle("active", i < page));
-    let t=translations[lang]; let html="";
+    document.querySelectorAll('.step').forEach((el,i)=>{
+      el.classList.toggle("active", i < page);
+    });
+    let t = translations[lang];
+    let html = "";
 
     if(page===1){
-      html=`<h2>${t.step1title}</h2><p class="blurb">${t.step1blurb}</p>
-      <label>${t.firstName}</label><input id="firstName" required>
-      <label>${t.lastName}</label><input id="lastName" required>
-      <label>${t.phone}</label><input id="phone" oninput="formatPhone(this)" required>
-      <label>${t.email}</label><input id="email" type="email" required>
-      <button class="btn" onclick="validatePage1()">${t.continue}</button>`;
+      html = `<h2>${t.step1title}</h2><p class="blurb">${t.step1blurb}</p>
+      <label>${t.firstName}</label><input id="firstName" value="${formValues.firstName||''}">
+      <label>${t.lastName}</label><input id="lastName" value="${formValues.lastName||''}">
+      <label>${t.phone}</label><input id="phone" oninput="formatPhone(this)" value="${formValues.phone||''}">
+      <label>${t.email}</label><input id="email" type="email" value="${formValues.email||''}">
+      <button class="btn" onclick="nextPage()">${t.continue}</button>`;
     }
+
     if(page===2){
-      html=`<h2>${t.step2title}</h2><p class="blurb">${t.step2blurb}</p>
-      <label>${t.employer}</label><input id="employer" required>
-      <label>${t.jobTitle}</label><input id="jobTitle" required>
-      <label>${t.payRate}</label><input id="payRate" required>
+      html = `<h2>${t.step2title}</h2><p class="blurb">${t.step2blurb}</p>
+      <label>${t.employer}</label><input id="employer" value="${formValues.employer||''}">
+      <label>${t.jobTitle}</label><input id="jobTitle" value="${formValues.jobTitle||''}">
+      <label>${t.payRate}</label><input id="payRate" value="${formValues.payRate||''}">
       <label>${t.stillWorking}</label>
-      <select id="stillWorking" required><option value="">--</option><option>${t.yes}</option><option>${t.no}</option></select>
+      <select id="stillWorking"><option value="">--</option>
+        <option ${formValues.stillWorking==='Yes'?'selected':''}>${t.yes}</option>
+        <option ${formValues.stillWorking==='No'?'selected':''}>${t.no}</option></select>
       <label>${t.fullTime}</label>
-      <select id="employmentType" required><option value="">--</option><option>${t.full}</option><option>${t.part}</option></select>
+      <select id="employmentType"><option value="">--</option>
+        <option ${formValues.employmentType==='Full'?'selected':''}>${t.full}</option>
+        <option ${formValues.employmentType==='Part'?'selected':''}>${t.part}</option></select>
       <button class="btn" onclick="prevPage()">${t.back}</button>
-      <button class="btn" onclick="validatePage2()">${t.continue}</button>`;
+      <button class="btn" onclick="nextPage()">${t.continue}</button>`;
     }
+
     if(page===3){
-      html=`<h2>${t.step3title}</h2><p class="blurb">${t.step3blurb}</p>
-      <label>${t.q1}</label><textarea id="q1" required></textarea>
-      <label>${t.q2}</label><textarea id="q2" required></textarea>
-      <label>${t.q3}</label><textarea id="q3" required></textarea>
+      html = `<h2>${t.step3title}</h2><p class="blurb">${t.step3blurb}</p>
+      <label>${t.q1}</label><textarea id="q1">${formValues.q1||''}</textarea>
+      <label>${t.q2}</label><textarea id="q2">${formValues.q2||''}</textarea>
+      <label>${t.q3}</label><textarea id="q3">${formValues.q3||''}</textarea>
       <button class="btn" onclick="prevPage()">${t.back}</button>
-      <button class="btn" onclick="validatePage3()">${t.continue}</button>`;
+      <button class="btn" onclick="nextPage()">${t.continue}</button>`;
     }
+
     if(page===4){
-      html=`<h2>${t.step4title}</h2><p class="blurb">${t.step4blurb}</p>
+      html = `<h2>${t.step4title}</h2><p class="blurb">${t.step4blurb}</p>
       <label>${t.stub1}</label>
-      <input type="file" id="stub1" accept="image/*,.pdf" capture="environment" onchange="previewFile(this,'preview1')">
+      <input type="file" id="stub1" accept="image/*,.pdf" capture="environment" onchange="previewFile(this,'preview1')"><div id="preview1" class="preview"></div>
       <button class="btn" onclick="document.getElementById('stub1').click()">${t.takePhoto}</button>
-      <div id="preview1" class="preview"></div>
       <label>${t.stub2}</label>
-      <input type="file" id="stub2" accept="image/*,.pdf" capture="environment" onchange="previewFile(this,'preview2')">
+      <input type="file" id="stub2" accept="image/*,.pdf" capture="environment" onchange="previewFile(this,'preview2')"><div id="preview2" class="preview"></div>
       <button class="btn" onclick="document.getElementById('stub2').click()">${t.takePhoto}</button>
-      <div id="preview2" class="preview"></div>
       <button class="btn" onclick="prevPage()">${t.back}</button>
-      <button class="btn" onclick="validatePayStubs()">${t.submit}</button>`;
+      <button class="btn" onclick="submitSurvey()">${t.submit}</button>`;
     }
+
     if(page===5){
-      html=`<div class="success"><h1>${t.step5title}</h1><p>${t.thanks}</p></div>
+      html = `<div class="success"><h1>${t.step5title}</h1><p>${t.thanks}</p></div>
       <div class="info-box"><h3>${t.next}</h3><pre>${t.hours}</pre><p>${t.phoneNumbers}</p></div>`;
     }
-    document.getElementById("survey").innerHTML=html;
+
+    document.getElementById("survey").innerHTML = html;
+  }
+
+  function saveValues() {
+    // Save values from inputs so they persist on re-render
+    ['firstName','lastName','phone','email','employer','jobTitle','payRate','stillWorking','employmentType','q1','q2','q3']
+    .forEach(id=>{
+      let el=document.getElementById(id);
+      if(el) formValues[id]=el.value;
+    });
   }
 
   function formatPhone(input){
@@ -166,28 +242,71 @@
   }
 
   function previewFile(input,previewId){
-    let preview=document.getElementById(previewId); preview.innerHTML="";
+    let preview=document.getElementById(previewId);
+    preview.innerHTML="";
     Array.from(input.files).forEach(file=>{
       if(file.type.startsWith("image/")){
         let reader=new FileReader();
-        reader.onload=e=>{ let img=document.createElement("img"); img.src=e.target.result; preview.appendChild(img); };
+        reader.onload=e=>{
+          let img=document.createElement("img");
+          img.src=e.target.result;
+          preview.appendChild(img);
+        };
         reader.readAsDataURL(file);
-      } else { let p=document.createElement("p"); p.textContent=file.name; preview.appendChild(p); }
+      } else {
+        let p=document.createElement("p");
+        p.textContent=file.name;
+        preview.appendChild(p);
+      }
     });
   }
-
-  function validatePage1(){ if(document.getElementById("firstName").value && document.getElementById("lastName").value && document.getElementById("phone").value && document.getElementById("email").value){ page++; renderPage(); } else { alert("Please fill all fields."); } }
-  function validatePage2(){ if(document.getElementById("employer").value && document.getElementById("jobTitle").value && document.getElementById("payRate").value && document.getElementById("stillWorking").value && document.getElementById("employmentType").value){ page++; renderPage(); } else { alert("Please fill all fields."); } }
-  function validatePage3(){ if(document.getElementById("q1").value && document.getElementById("q2").value && document.getElementById("q3").value){ page++; renderPage(); } else { alert("Please answer all questions."); } }
-  function validatePayStubs(){
-    let stub1=document.getElementById("stub1").files.length;
-    let stub2=document.getElementById("stub2").files.length;
-    if((stub1+stub2)>=2){ submitSurvey(); } else { alert("Please upload at least 2 pay stubs."); }
+  function validatePage() {
+    let valid = true;
+    if(page===1){
+      ['firstName','lastName','phone','email'].forEach(id=>{
+        let val=document.getElementById(id).value.trim();
+        if(!val) valid=false;
+      });
+    }
+    if(page===2){
+      ['employer','jobTitle','payRate','stillWorking','employmentType'].forEach(id=>{
+        let val=document.getElementById(id).value.trim();
+        if(!val) valid=false;
+      });
+    }
+    if(page===3){
+      ['q1','q2','q3'].forEach(id=>{
+        let val=document.getElementById(id).value.trim();
+        if(!val) valid=false;
+      });
+    }
+    return valid;
   }
 
-  function prevPage(){ if(page>1){ page--; renderPage(); } }
-  function submitSurvey(){ localStorage.setItem("lastSubmission", new Date().toISOString()); page=5; renderPage(); }
+  function nextPage(){
+    saveValues();
+    if(!validatePage()){ alert("Please complete all required fields."); return; }
+    if(page<5){ page++; renderPage(); }
+  }
 
+  function prevPage(){
+    saveValues();
+    if(page>1){ page--; renderPage(); }
+  }
+
+  function submitSurvey(){
+    saveValues();
+    let stub1=document.getElementById("stub1").files.length;
+    let stub2=document.getElementById("stub2").files.length;
+    if((stub1+stub2)<2){
+      alert("Please upload at least 2 pay stubs.");
+      return;
+    }
+    localStorage.setItem("lastSubmission", new Date().toISOString());
+    page=5; renderPage();
+  }
+
+  // Initialize first page
   renderPage();
 </script>
 </body>
