@@ -1,731 +1,105 @@
-import React, { useState, useRef } from 'react';
-import { ChevronLeft, ChevronRight, Upload, Check, MapPin, Phone, Globe, Heart, Users, Home, Camera, Calendar, DollarSign, Star, Award, TrendingUp, Shield } from 'lucide-react';
+// Thank You Page
+return (
+  <div className="min-h-screen py-8 px-4" style={{ background: `linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)` }}>
+    <div className="max-w-4xl mx-auto">
+      <div className="bg-white rounded-2xl shadow-2xl p-8 border-t-4 border-green-500">
+        <div className="text-center space-y-8">
+          <div className="text-8xl mb-6">🎉</div>
+          <h1 className="text-4xl font-bold text-green-600 mb-4">
+            Monthly Report Submitted Successfully!
+          </h1>
+          <p className="text-xl text-gray-600 mb-6">
+            Thank you for your continued commitment to employment success through TASK!
+          </p>
 
-export default function TaskJobSuccessCheckIn() {
-  const [page, setPage] = useState(1);
-  const [data, setData] = useState({
-    fullName: '',
-    phone: '',
-    email: '',
-    preferredContact: 'Phone',
-    currentEmployer: '',
-    jobTitle: '',
-    startDate: '',
-    hoursPerWeek: '',
-    monthlyIncome: '',
-    stillWorking: '',
-    stayReasons: '',
-    challenges: '',
-    taskSupport: '',
-    permission: false,
-    files: null,
-    photos: [],
-    monthsEmployed: ''
-  });
-
-  const fileInputRef = useRef(null);
-  const cameraInputRef = useRef(null);
-
-  const handleChange = (field, value) => {
-    setData({ ...data, [field]: value });
-  };
-
-  const handlePhotoCapture = (event) => {
-    const files = Array.from(event.target.files);
-    setData({ ...data, photos: [...data.photos, ...files] });
-  };
-
-  const removePhoto = (index) => {
-    const newPhotos = data.photos.filter((_, i) => i !== index);
-    setData({ ...data, photos: newPhotos });
-  };
-
-  const taskColors = {
-    primaryBlue: '#145078',
-    primaryOrange: '#ff911f',
-    logoBlue: '#0085Ca',
-    secondaryGreen: '#74ba58',
-    secondaryTeal: '#33A7B5',
-    secondaryYellow: '#ffc91f',
-    lightGray: '#d9dad9',
-    darkGray: '#6b6b6b'
-  };
-
-  if (page === 1) {
-    return (
-      <div className="min-h-screen py-8 px-4" style={{ background: `linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)` }}>
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 border-t-4 border-orange-500">
-            
-            {/* Progress Bar */}
-            <div className="w-full bg-gray-200 rounded-full h-3 mb-8">
-              <div className="bg-orange-500 h-3 rounded-full w-1/3 transition-all duration-500"></div>
+          {/* Insert Image Right After Thank You Text */}
+          <div className="mb-8">
+            <img
+              src="/your-image-file.png"
+              alt="TASK Employment Office"
+              className="mx-auto rounded-lg shadow-lg"
+            />
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-4 mb-8">
+            <div className="bg-green-100 border-2 border-green-300 rounded-xl p-4">
+              <Check className="h-8 w-8 text-green-600 mx-auto mb-2" />
+              <p className="text-sm font-bold text-green-800">Report Received</p>
+              <p className="text-xs text-green-700">Your monthly check-in is complete</p>
             </div>
-            
-            {/* Header */}
-            <div className="flex justify-between items-center mb-8">
-              <span className="text-sm font-semibold text-gray-600">Monthly Report • Step 1 of 3</span>
-              <div className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                ENGAGE BY CELL
-              </div>
+            <div className="bg-blue-100 border-2 border-blue-300 rounded-xl p-4">
+              <Shield className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+              <p className="text-sm font-bold text-blue-800">Employment Verified</p>
+              <p className="text-xs text-blue-700">Pay stub documentation recorded</p>
+            </div>
+            <div className="bg-purple-100 border-2 border-purple-300 rounded-xl p-4">
+              <Heart className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+              <p className="text-sm font-bold text-purple-800">Support Active</p>
+              <p className="text-xs text-purple-700">Ongoing TASK resources available</p>
+            </div>
+          </div>
+
+          {/* TASK Employment Office Info */}
+          <div className="bg-blue-100 border-3 border-blue-400 rounded-2xl p-8 max-w-3xl mx-auto">
+            <div className="flex justify-center items-center gap-3 mb-6">
+              <div className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold">TASK</div>
+              <span className="text-2xl font-bold text-blue-800">EMPLOYMENT OFFICE</span>
+              <Heart className="h-8 w-8 text-red-500" />
             </div>
 
-            {/* Title Section */}
-            <div className="text-center mb-10">
-              <div className="bg-red-600 text-white px-6 py-3 rounded-full text-lg font-bold mb-6 inline-block">
-                FOR TASK EMPLOYMENT PROGRAM PARTICIPANTS ONLY
+            <div className="bg-red-100 border-2 border-red-400 rounded-xl p-6 mb-6">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <Check className="h-6 w-6 text-red-600" />
+                <span className="text-xl font-bold text-red-800">SURVEY COMPLETED!</span>
+                <Award className="h-6 w-6 text-yellow-500" />
               </div>
-              <h1 className="text-5xl font-bold mb-4 text-blue-800">TASK</h1>
-              <h2 className="text-3xl font-bold mb-3 text-blue-700">Monthly Employment Check-In</h2>
-              <p className="text-xl text-gray-600">Report on the job TASK helped you secure</p>
-            </div>
-
-            {/* Success Message */}
-            <div className="bg-orange-50 border-2 border-orange-300 rounded-xl p-6 mb-8">
-              <div className="flex items-center justify-center gap-3 mb-3">
-                <Award className="h-6 w-6 text-orange-600" />
-                <span className="text-xl font-bold text-blue-800">Celebrating Your Employment Success!</span>
-                <Star className="h-6 w-6 text-yellow-500 fill-current" />
-              </div>
-              <p className="text-blue-800 text-center">
-                You are part of TASK's employment success network! This monthly check-in helps us track your job stability and provide ongoing support.
+              <p className="text-lg font-medium text-center text-red-800">
+                You have successfully completed your monthly employment survey. 
+                <strong> Visit the TASK Employment Office</strong> to receive your gift card reward.
               </p>
             </div>
-
-            {/* Form Fields */}
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
-              <div>
-                <label className="block text-sm font-semibold mb-2 text-blue-800">
-                  Full Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="First Last"
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
-                  value={data.fullName}
-                  onChange={(e) => handleChange('fullName', e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-2 text-blue-800">
-                  Phone <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="tel"
-                  placeholder="(###) ###-####"
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
-                  value={data.phone}
-                  onChange={(e) => handleChange('phone', e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-2 text-blue-800">
-                  Email <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  placeholder="you@example.com"
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
-                  value={data.email}
-                  onChange={(e) => handleChange('email', e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-2 text-blue-800">
-                  Preferred Contact Method
-                </label>
-                <select
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
-                  value={data.preferredContact}
-                  onChange={(e) => handleChange('preferredContact', e.target.value)}
-                >
-                  <option value="Phone">Phone</option>
-                  <option value="Email">Email</option>
-                  <option value="Text">Text Message</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Months Employed */}
-            <div className="bg-yellow-50 border-2 border-yellow-400 rounded-xl p-6 mb-8">
-              <label className="block text-lg font-bold mb-4 text-blue-800">
-                How many months have you been employed through TASK's job placement program? <span className="text-red-500">*</span>
-              </label>
-              <select
-                className="w-full px-4 py-3 border-2 border-yellow-400 rounded-lg text-lg font-semibold"
-                value={data.monthsEmployed}
-                onChange={(e) => handleChange('monthsEmployed', e.target.value)}
-              >
-                <option value="">Select months employed...</option>
-                <option value="1">1 month - Just getting started</option>
-                <option value="2">2 months - Building momentum</option>
-                <option value="3">3 months - First quarter success</option>
-                <option value="4">4 months - Steady progress</option>
-                <option value="5">5 months - Growing strong</option>
-                <option value="6">6 months - Half year milestone</option>
-                <option value="7-12">7-12 months - Established success</option>
-                <option value="12+">Over 1 year - Long-term stability</option>
-              </select>
-            </div>
-
-            {/* Navigation */}
-            <div className="flex justify-end mt-8">
-              <button
-                onClick={() => setPage(2)}
-                className="flex items-center px-8 py-4 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-bold shadow-lg"
-              >
-                Continue to Job Details
-                <ChevronRight className="h-5 w-5 ml-2" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (page === 2) {
-    return (
-      <div className="min-h-screen py-8 px-4" style={{ background: `linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)` }}>
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 border-t-4 border-blue-500">
             
-            {/* Progress Bar */}
-            <div className="w-full bg-gray-200 rounded-full h-3 mb-8">
-              <div className="bg-blue-500 h-3 rounded-full w-2/3 transition-all duration-500"></div>
-            </div>
-            
-            {/* Header */}
-            <div className="flex justify-between items-center mb-8">
-              <span className="text-sm font-semibold text-gray-600">Monthly Report • Step 2 of 3</span>
-              <div className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                TASK JOB PLACEMENT
-              </div>
-            </div>
-
-            {/* Title */}
-            <div className="text-center mb-8">
-              <h2 className="text-4xl font-bold mb-3 text-blue-800">Current Employment Status</h2>
-              <p className="text-xl text-gray-600">Tell us about the job TASK helped you secure</p>
-            </div>
-
-            {/* Form Fields */}
-            <div className="space-y-8">
-              {/* Employer */}
-              <div className="bg-yellow-50 border-2 border-yellow-400 rounded-xl p-6">
-                <label className="block text-lg font-bold mb-4 text-blue-800">
-                  Current Employer (TASK Job Placement) <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="Company name where TASK helped you get hired"
-                  className="w-full px-4 py-3 border-2 border-yellow-400 rounded-lg text-lg"
-                  value={data.currentEmployer}
-                  onChange={(e) => handleChange('currentEmployer', e.target.value)}
-                />
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-semibold mb-2 text-blue-800">Job Title</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Cook, Warehouse Associate"
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500"
-                    value={data.jobTitle}
-                    onChange={(e) => handleChange('jobTitle', e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold mb-2 text-blue-800">
-                    Start Date <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="date"
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500"
-                    value={data.startDate}
-                    onChange={(e) => handleChange('startDate', e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold mb-2 text-blue-800">Hours per Week</label>
-                  <input
-                    type="number"
-                    placeholder="e.g., 40"
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500"
-                    value={data.hoursPerWeek}
-                    onChange={(e) => handleChange('hoursPerWeek', e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold mb-2 text-blue-800">Monthly Income (Optional)</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., $2,400"
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500"
-                    value={data.monthlyIncome}
-                    onChange={(e) => handleChange('monthlyIncome', e.target.value)}
-                  />
-                </div>
-              </div>
-
-              {/* Employment Status */}
-              <div className="bg-green-50 border-2 border-green-400 rounded-xl p-6">
-                <label className="block text-lg font-bold mb-4 text-blue-800">
-                  Are you still employed at this TASK-assisted job? <span className="text-red-500">*</span>
-                </label>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <label className="flex items-center p-4 border-2 border-green-400 rounded-lg cursor-pointer">
-                    <input
-                      type="radio"
-                      name="stillWorking"
-                      value="yes"
-                      className="mr-3 scale-125"
-                      checked={data.stillWorking === 'yes'}
-                      onChange={(e) => handleChange('stillWorking', e.target.value)}
-                    />
-                    <div>
-                      <span className="font-bold text-blue-800">Yes, still employed</span>
-                      <p className="text-sm text-green-600">Great job maintaining employment</p>
-                    </div>
-                  </label>
-                  <label className="flex items-center p-4 border-2 border-red-300 rounded-lg cursor-pointer">
-                    <input
-                      type="radio"
-                      name="stillWorking"
-                      value="no"
-                      className="mr-3 scale-125"
-                      checked={data.stillWorking === 'no'}
-                      onChange={(e) => handleChange('stillWorking', e.target.value)}
-                    />
-                    <div>
-                      <span className="font-bold text-blue-800">No longer employed</span>
-                      <p className="text-sm text-red-600">We are here to help you find another job</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            {/* Navigation */}
-            <div className="flex justify-between mt-8">
-              <button
-                onClick={() => setPage(1)}
-                className="flex items-center px-6 py-3 border-2 border-gray-400 text-gray-700 rounded-lg hover:bg-gray-100"
-              >
-                <ChevronLeft className="h-4 w-4 mr-2" />
-                Back to Contact Info
-              </button>
-              <button
-                onClick={() => setPage(3)}
-                className="flex items-center px-8 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-bold shadow-lg"
-              >
-                Final Step: Documentation
-                <ChevronRight className="h-5 w-5 ml-2" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (page === 3) {
-    return (
-      <div className="min-h-screen py-8 px-4" style={{ background: `linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)` }}>
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 border-t-4 border-purple-500">
-            
-            {/* Progress Bar */}
-            <div className="w-full bg-gray-200 rounded-full h-3 mb-8">
-              <div className="bg-purple-500 h-3 rounded-full w-full transition-all duration-500"></div>
-            </div>
-            
-            {/* Header */}
-            <div className="flex justify-between items-center mb-8">
-              <span className="text-sm font-semibold text-gray-600">Monthly Report • Step 3 of 3</span>
-              <div className="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                EMPLOYMENT VERIFICATION
-              </div>
-            </div>
-
-            {/* Title */}
-            <div className="text-center mb-8">
-              <h2 className="text-4xl font-bold mb-3 text-purple-800">Monthly Documentation & Support</h2>
-              <p className="text-xl text-gray-600">Share your feedback and upload employment verification</p>
-            </div>
-
-            {/* Form Fields */}
-            <div className="space-y-8">
-              <div className="bg-green-50 border-2 border-green-300 rounded-xl p-6">
-                <label className="block text-sm font-semibold mb-3 text-blue-800">
-                  What has helped you stay successful in your TASK-assisted job?
-                </label>
-                <textarea
-                  placeholder="Share your success factors: supportive management, flexible schedule, good pay, transportation solutions..."
-                  rows="4"
-                  className="w-full px-4 py-3 border-2 border-green-300 rounded-lg resize-none"
-                  value={data.stayReasons}
-                  onChange={(e) => handleChange('stayReasons', e.target.value)}
-                />
-              </div>
-
-              <div className="bg-orange-50 border-2 border-orange-300 rounded-xl p-6">
-                <label className="block text-sm font-semibold mb-3 text-blue-800">
-                  What ongoing challenges can TASK help you address?
-                </label>
-                <textarea
-                  placeholder="Current challenges: transportation issues, childcare needs, housing concerns, financial stress..."
-                  rows="4"
-                  className="w-full px-4 py-3 border-2 border-orange-300 rounded-lg resize-none"
-                  value={data.challenges}
-                  onChange={(e) => handleChange('challenges', e.target.value)}
-                />
-              </div>
-
-              <div className="bg-blue-50 border-2 border-blue-300 rounded-xl p-6">
-                <label className="block text-sm font-semibold mb-3 text-blue-800">
-                  How has TASK support made a difference in your employment journey?
-                </label>
-                <textarea
-                  placeholder="Share your TASK impact story: job search assistance, interview preparation, work clothes..."
-                  rows="4"
-                  className="w-full px-4 py-3 border-2 border-blue-300 rounded-lg resize-none"
-                  value={data.taskSupport}
-                  onChange={(e) => handleChange('taskSupport', e.target.value)}
-                />
-              </div>
-
-              {/* Pay Stub Upload */}
-              <div className="bg-yellow-50 border-3 border-yellow-400 rounded-2xl p-8">
-                <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold text-blue-800 mb-2">Monthly Employment Verification</h3>
-                  <p className="text-lg text-blue-700">Required: Upload or photograph your most recent pay stub</p>
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
+              <div className="space-y-4 text-blue-800">
+                <div className="flex items-start">
+                  <MapPin className="h-6 w-6 mr-3 mt-1 text-blue-600" />
+                  <div>
+                    <p className="font-bold text-lg">Trenton Area Soup Kitchen</p>
+                    <p className="text-sm">72½ Escher St</p>
+                    <p className="text-sm">Trenton, NJ 08609</p>
+                  </div>
                 </div>
                 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="bg-white border-2 border-blue-300 rounded-xl p-6 text-center">
-                    <Camera className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                    <h4 className="text-lg font-bold mb-2 text-blue-800">Take Photo Now</h4>
-                    <p className="text-sm mb-4 text-gray-600">Use your phone camera</p>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      capture="environment"
-                      multiple
-                      ref={cameraInputRef}
-                      className="sr-only"
-                      onChange={handlePhotoCapture}
-                    />
-                    <button
-                      onClick={() => cameraInputRef.current?.click()}
-                      className="w-full bg-blue-500 text-white px-4 py-3 rounded-lg hover:bg-blue-600"
-                    >
-                      Open Camera
-                    </button>
-                  </div>
-
-                  <div className="bg-white border-2 border-green-300 rounded-xl p-6 text-center">
-                    <Upload className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                    <h4 className="text-lg font-bold mb-2 text-blue-800">Upload Files</h4>
-                    <p className="text-sm mb-4 text-gray-600">Choose PDF or image files</p>
-                    <input
-                      type="file"
-                      multiple
-                      accept=".pdf,image/*"
-                      ref={fileInputRef}
-                      className="sr-only"
-                      onChange={(e) => handleChange('files', e.target.files)}
-                    />
-                    <button
-                      onClick={() => fileInputRef.current?.click()}
-                      className="w-full bg-green-500 text-white px-4 py-3 rounded-lg hover:bg-green-600"
-                    >
-                      Choose Files
-                    </button>
-                  </div>
-                </div>
-
-                {(data.photos.length > 0 || (data.files && data.files.length > 0)) && (
-                  <div className="mt-6 bg-white border-2 border-green-300 rounded-xl p-6">
-                    <h4 className="text-lg font-bold mb-4 text-green-800">Uploaded Documentation</h4>
-                    
-                    {data.photos.length > 0 && (
-                      <div className="mb-4">
-                        <p className="text-sm font-medium mb-2">Photos: {data.photos.length}</p>
-                        <div className="grid grid-cols-4 gap-2">
-                          {data.photos.map((photo, index) => (
-                            <div key={index} className="relative bg-blue-100 border border-blue-200 rounded-lg p-2 text-center">
-                              <Camera className="h-6 w-6 mx-auto text-blue-600" />
-                              <p className="text-xs mt-1">Photo {index + 1}</p>
-                              <button
-                                onClick={() => removePhoto(index)}
-                                className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 text-xs"
-                              >
-                                ×
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {data.files && data.files.length > 0 && (
-                      <div>
-                        <p className="text-sm font-medium mb-2">Files: {data.files.length}</p>
-                        {Array.from(data.files).map((file, index) => (
-                          <div key={index} className="bg-green-100 border border-green-200 rounded-lg p-3 mb-2">
-                            <span className="text-sm">{file.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Permission */}
-              <div className="bg-blue-100 border-3 border-blue-400 rounded-2xl p-6">
-                <label className="flex items-start cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="mt-2 mr-4 h-5 w-5"
-                    checked={data.permission}
-                    onChange={(e) => handleChange('permission', e.target.checked)}
-                  />
+                <div className="flex items-center">
+                  <Phone className="h-6 w-6 mr-3 text-green-600" />
                   <div>
-                    <span className="text-lg font-bold text-blue-800">
-                      Continued Support Authorization <span className="text-red-500">*</span>
-                    </span>
-                    <div className="text-sm mt-2 text-blue-800">
-                      <p className="mb-2">I authorize TASK to:</p>
-                      <ul className="list-disc list-inside space-y-1">
-                        <li>Contact me monthly for employment check-ins and support</li>
-                        <li>Provide information about additional resources and services</li>
-                        <li>Connect me with emergency assistance if needed</li>
-                        <li>Follow up if employment status changes</li>
-                      </ul>
-                    </div>
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            {/* Navigation */}
-            <div className="flex justify-between mt-8">
-              <button
-                onClick={() => setPage(2)}
-                className="flex items-center px-6 py-3 border-2 border-gray-400 text-gray-700 rounded-lg hover:bg-gray-100"
-              >
-                <ChevronLeft className="h-4 w-4 mr-2" />
-                Back to Job Details
-              </button>
-              <button
-                onClick={() => setPage(4)}
-                className="flex items-center px-10 py-4 bg-purple-500 text-white rounded-lg hover:bg-purple-600 font-bold shadow-lg"
-              >
-                <Check className="h-6 w-6 mr-2" />
-                Submit Monthly Report
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Thank You Page
-  return (
-    <div className="min-h-screen py-8 px-4" style={{ background: `linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)` }}>
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 border-t-4 border-green-500">
-          <div className="text-center space-y-8">
-            <div className="text-8xl mb-6">🎉</div>
-            <h1 className="text-4xl font-bold text-green-600 mb-4">
-              Monthly Report Submitted Successfully!
-            </h1>
-            <p className="text-xl text-gray-600 mb-6">
-              Thank you for your continued commitment to employment success through TASK!
-            </p>
-            
-            <div className="grid md:grid-cols-3 gap-4 mb-8">
-              <div className="bg-green-100 border-2 border-green-300 rounded-xl p-4">
-                <Check className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                <p className="text-sm font-bold text-green-800">Report Received</p>
-                <p className="text-xs text-green-700">Your monthly check-in is complete</p>
-              </div>
-              <div className="bg-blue-100 border-2 border-blue-300 rounded-xl p-4">
-                <Shield className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                <p className="text-sm font-bold text-blue-800">Employment Verified</p>
-                <p className="text-xs text-blue-700">Pay stub documentation recorded</p>
-              </div>
-              <div className="bg-purple-100 border-2 border-purple-300 rounded-xl p-4">
-                <Heart className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                <p className="text-sm font-bold text-purple-800">Support Active</p>
-                <p className="text-xs text-purple-700">Ongoing TASK resources available</p>
-              </div>
-            </div>
-
-            {/* TASK Employment Office Info */}
-            <div className="bg-blue-100 border-3 border-blue-400 rounded-2xl p-8 max-w-3xl mx-auto">
-              <div className="flex justify-center items-center gap-3 mb-6">
-                <div className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold">TASK</div>
-                <span className="text-2xl font-bold text-blue-800">EMPLOYMENT OFFICE</span>
-                <Heart className="h-8 w-8 text-red-500" />
-              </div>
-
-              <div className="bg-red-100 border-2 border-red-400 rounded-xl p-6 mb-6">
-                <div className="flex items-center justify-center gap-2 mb-3">
-                  <Check className="h-6 w-6 text-red-600" />
-                  <span className="text-xl font-bold text-red-800">SURVEY COMPLETED!</span>
-                  <Award className="h-6 w-6 text-yellow-500" />
-                </div>
-                <p className="text-lg font-medium text-center text-red-800">
-                  You have successfully completed your monthly employment survey. 
-                  <strong> Visit the TASK Employment Office</strong> to receive your gift card reward.
-                </p>
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <div className="space-y-4 text-blue-800">
-                  <div className="flex items-start">
-                    <MapPin className="h-6 w-6 mr-3 mt-1 text-blue-600" />
-                    <div>
-                      <p className="font-bold text-lg">Trenton Area Soup Kitchen</p>
-                      <p className="text-sm">72½ Escher St</p>
-                      <p className="text-sm">Trenton, NJ 08609</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center">
-                    <Phone className="h-6 w-6 mr-3 text-green-600" />
-                    <div>
-                      <p className="font-bold">Employment Office</p>
-                      <p className="text-sm">(609) 695-5456</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4 text-blue-800">
-                  <div className="flex items-center">
-                    <Calendar className="h-6 w-6 mr-3 text-purple-600" />
-                    <div>
-                      <p className="font-bold">Office Hours</p>
-                      <p className="text-sm">Monday - Friday</p>
-                      <p className="text-sm">9:00 AM - 4:00 PM</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center">
-                    <Globe className="h-6 w-6 mr-3 text-orange-600" />
-                    <div>
-                      <p className="font-bold">Online</p>
-                      <p className="text-sm">www.trentonkitchen.org</p>
-                    </div>
+                    <p className="font-bold">Employment Office</p>
+                    <p className="text-sm">(609) 697-6215</p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-green-100 border-2 border-green-400 rounded-xl p-6 mb-6">
-                <div className="flex items-center justify-center gap-2 mb-3">
-                  <DollarSign className="h-6 w-6 text-green-600" />
-                  <span className="text-xl font-bold text-green-800">REWARD PROGRAM</span>
-                  <Star className="h-6 w-6 text-yellow-500 fill-current" />
+              <div className="space-y-4 text-blue-800">
+                <div className="flex items-center">
+                  <Calendar className="h-6 w-6 mr-3 text-purple-600" />
+                  <div>
+                    <p className="font-bold">Office Hours</p>
+                    <p className="text-sm">Monday - Friday: 9:00 AM - 4:00 PM</p>
+                    <p className="text-sm">Meals: Mon - Fri 10:30 AM - 1:00 PM</p>
+                    <p className="text-sm">Meals: Mon - Thu 3:30 PM - 5:00 PM</p>
+                  </div>
                 </div>
-                <p className="text-center text-green-800 font-medium">
-                  Complete monthly surveys and maintain employment to earn gift card rewards!
-                  Visit our Employment Office to claim your incentive.
-                </p>
-              </div>
-
-              <div className="bg-white border-2 border-blue-400 rounded-xl p-6">
-                <h3 className="text-xl font-bold text-center text-blue-800 mb-4">
-                  Ongoing Employment Support Services
-                </h3>
-                <div className="grid md:grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center">
-                    <Users className="h-5 w-5 mr-2 text-blue-600" />
-                    <span>Job coaching and mentoring</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Home className="h-5 w-5 mr-2 text-green-600" />
-                    <span>Housing assistance referrals</span>
-                  </div>
-                  <div className="flex items-center">
-                    <TrendingUp className="h-5 w-5 mr-2 text-purple-600" />
-                    <span>Career advancement planning</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Shield className="h-5 w-5 mr-2 text-orange-600" />
-                    <span>Emergency financial assistance</span>
+                
+                <div className="flex items-center">
+                  <Globe className="h-6 w-6 mr-3 text-orange-600" />
+                  <div>
+                    <p className="font-bold">Online</p>
+                    <p className="text-sm">
+                      <a href="https://trentonsoupkitchen.org" target="_blank" rel="noopener noreferrer">
+                        trentonsoupkitchen.org
+                      </a>
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* Call to Action */}
-            <div className="bg-orange-100 border-2 border-orange-400 rounded-xl p-6 mt-8">
-              <h3 className="text-2xl font-bold text-center text-orange-800 mb-4">
-                Need Additional Support?
-              </h3>
-              <p className="text-center text-orange-800 mb-4">
-                Our Employment Team is here to help you succeed! Contact us anytime for:
-              </p>
-              <div className="grid md:grid-cols-3 gap-4 text-sm">
-                <div className="text-center">
-                  <div className="font-bold text-orange-800">Job Issues</div>
-                  <div>Workplace conflicts, scheduling problems</div>
-                </div>
-                <div className="text-center">
-                  <div className="font-bold text-orange-800">Life Challenges</div>
-                  <div>Transportation, childcare, housing</div>
-                </div>
-                <div className="text-center">
-                  <div className="font-bold text-orange-800">Career Growth</div>
-                  <div>Skills training, advancement opportunities</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Reset Button */}
-            <div className="mt-8">
-              <button
-                onClick={() => {
-                  setPage(1);
-                  setData({
-                    fullName: '',
-                    phone: '',
-                    email: '',
-                    preferredContact: 'Phone',
-                    currentEmployer: '',
-                    jobTitle: '',
-                    startDate: '',
-                    hoursPerWeek: '',
-                    monthlyIncome: '',
-                    stillWorking: '',
-                    stayReasons: '',
-                    challenges: '',
-                    taskSupport: '',
-                    permission: false,
-                    files: null,
-                    photos: [],
-                    monthsEmployed: ''
-                  });
-                }}
-                className="px-8 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 font-semibold"
-              >
-                Fill Out Another Report
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
