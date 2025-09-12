@@ -1,108 +1,145 @@
-// Thank You Page
-return (
-  <div className="min-h-screen py-8 px-4" style={{ background: `linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)` }}>
-    <div className="max-w-4xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 border-t-4 border-green-500">
-        <div className="text-center space-y-8">
-          <div className="text-8xl mb-6">🎉</div>
-          <h1 className="text-4xl font-bold text-green-600 mb-4">
-            Monthly Report Submitted Successfully!
-          </h1>
-          <p className="text-xl text-gray-600 mb-6">
-            Thank you for your continued commitment to employment success through TASK!
-          </p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TASK Employment Monthly Survey</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-100">
+  <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-8 mt-8">
+    <h1 class="text-3xl font-bold text-blue-700 text-center mb-6">TASK Monthly Employment Survey</h1>
+    <p class="text-center text-gray-600 mb-6">
+      Complete this form once per month to verify employment and receive your gift card reward.
+    </p>
 
-          {/* Insert Image */}
-          <div className="mb-8">
-            <img
-              src="/your-image-file.png"  // replace with your PNG
-              alt="TASK Employment Office"
-              className="mx-auto rounded-lg shadow-lg"
-            />
-          </div>
-          
-          {/* Status Cards */}
-          <div className="grid md:grid-cols-3 gap-4 mb-8">
-            <div className="bg-green-100 border-2 border-green-300 rounded-xl p-4">
-              <Check className="h-8 w-8 text-green-600 mx-auto mb-2" />
-              <p className="text-sm font-bold text-green-800">Report Received</p>
-              <p className="text-xs text-green-700">Your monthly check-in is complete</p>
-            </div>
-            <div className="bg-blue-100 border-2 border-blue-300 rounded-xl p-4">
-              <Shield className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <p className="text-sm font-bold text-blue-800">Employment Verified</p>
-              <p className="text-xs text-blue-700">Pay stub documentation recorded</p>
-            </div>
-            <div className="bg-purple-100 border-2 border-purple-300 rounded-xl p-4">
-              <Heart className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-              <p className="text-sm font-bold text-purple-800">Support Active</p>
-              <p className="text-xs text-purple-700">Ongoing TASK resources available</p>
-            </div>
-          </div>
+    <form action="/submit" method="POST" enctype="multipart/form-data" class="space-y-6">
+      <!-- Job Title -->
+      <div>
+        <label class="block font-semibold">Current Job Title</label>
+        <input type="text" name="job_title" required class="w-full border rounded-lg p-3">
+      </div>
 
-          {/* TASK Employment Office Info */}
-          <div className="bg-blue-100 border-3 border-blue-400 rounded-2xl p-8 max-w-3xl mx-auto">
-            <div className="flex justify-center items-center gap-3 mb-6">
-              <div className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold">TASK</div>
-              <span className="text-2xl font-bold text-blue-800">EMPLOYMENT OFFICE</span>
-              <Heart className="h-8 w-8 text-red-500" />
-            </div>
+      <!-- Employer -->
+      <div>
+        <label class="block font-semibold">Employer</label>
+        <input type="text" name="employer" required class="w-full border rounded-lg p-3">
+      </div>
 
-            <div className="bg-red-100 border-2 border-red-400 rounded-xl p-6 mb-6">
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <Check className="h-6 w-6 text-red-600" />
-                <span className="text-xl font-bold text-red-800">SURVEY COMPLETED!</span>
-                <Award className="h-6 w-6 text-yellow-500" />
-              </div>
-              <p className="text-lg font-medium text-center text-red-800">
-                You have successfully completed your monthly employment survey. 
-                <strong> Visit the TASK Employment Office</strong> to receive your gift card reward.
-              </p>
-            </div>
-            
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
-              {/* Address & Phone */}
-              <div className="space-y-4 text-blue-800">
-                <div className="flex items-start">
-                  <MapPin className="h-6 w-6 mr-3 mt-1 text-blue-600" />
-                  <div>
-                    <p className="font-bold text-lg">Trenton Area Soup Kitchen</p>
-                    <p className="text-sm">72½ Escher St</p>
-                    <p className="text-sm">Trenton, NJ 08609</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center">
-                  <Phone className="h-6 w-6 mr-3 text-green-600" />
-                  <div>
-                    <p className="font-bold">Employment Office</p>
-                    <p className="text-sm">(609) 697-6215</p>
-                  </div>
-                </div>
-              </div>
+      <!-- Pay Rate -->
+      <div>
+        <label class="block font-semibold">Current Hourly Pay Rate / Salary</label>
+        <input type="text" name="pay_rate" required class="w-full border rounded-lg p-3">
+      </div>
 
-              {/* Hours & Website */}
-              <div className="space-y-4 text-blue-800">
-                <div className="flex items-center">
-                  <Calendar className="h-6 w-6 mr-3 text-purple-600" />
-                  <div>
-                    <p className="font-bold">Office Hours</p>
-                    <p className="text-sm">Monday - Friday: 9:00 AM - 4:00 PM</p>
-                    <p className="text-sm">Meals: Mon - Fri 10:30 AM - 1:00 PM</p>
-                    <p className="text-sm">Meals: Mon - Thu 3:30 PM - 5:00 PM</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center">
-                  <Globe className="h-6 w-6 mr-3 text-orange-600" />
-                  <div>
-                    <p className="font-bold">Online</p>
-                    <p className="text-sm">
-                      <a href="https://trentonsoupkitchen.org" target="_blank" rel="noopener noreferrer">
-                        trentonsoupkitchen.org
-                      </a>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <!-- Rating -->
+      <div>
+        <label class="block font-semibold">Rate TASK Employment Support (1-5)</label>
+        <select name="rating" class="w-full border rounded-lg p-3" required>
+          <option value="1">1 - Poor</option>
+          <option value="2">2 - Fair</option>
+          <option value="3">3 - Good</option>
+          <option value="4">4 - Very Good</option>
+          <option value="5">5 - Excellent</option>
+        </select>
+      </div>
+
+      <!-- Short Answers -->
+      <div>
+        <label class="block font-semibold">How is your job going so far? (Enjoyments & Challenges)</label>
+        <textarea name="job_feedback" rows="3" class="w-full border rounded-lg p-3"></textarea>
+      </div>
+
+      <div>
+        <label class="block font-semibold">Did TASK prepare you well for this job? Why/Why not?</label>
+        <textarea name="prep_feedback" rows="3" class="w-full border rounded-lg p-3"></textarea>
+      </div>
+
+      <div>
+        <label class="block font-semibold">What additional support from TASK would help you succeed?</label>
+        <textarea name="support_feedback" rows="3" class="w-full border rounded-lg p-3"></textarea>
+      </div>
+
+      <!-- File Upload -->
+      <div>
+        <label class="block font-semibold">Upload Your Last Two Pay Stubs (PDF or Image)</label>
+        <input type="file" name="paystubs" accept=".pdf,image/*" multiple required class="w-full">
+      </div>
+
+      <!-- Camera Option -->
+      <div>
+        <label class="block font-semibold">Or Take a Picture</label>
+        <input type="file" name="camera_upload" accept="image/*" capture="environment">
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-bold">
+        Submit Monthly Survey
+      </button>
+    </form>
+  </div>
+</body>
+</html>
+from flask import Flask, render_template, request, redirect, url_for, flash
+from werkzeug.utils import secure_filename
+import os, datetime
+
+app = Flask(__name__)
+app.secret_key = "yoursecret"
+
+UPLOAD_FOLDER = "uploads/"
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+# Track submissions by email (or phone)
+last_submission = {}
+
+@app.route("/")
+def survey():
+    return render_template("survey.html")
+
+@app.route("/submit", methods=["POST"])
+def submit():
+    user_id = request.form.get("employer") + request.form.get("job_title")  # or email/phone field
+    today = datetime.date.today()
+
+    # Prevent multiple submissions within 30 days
+    if user_id in last_submission:
+        delta = today - last_submission[user_id]
+        if delta.days < 30:
+            flash("You can only submit once per month. Please try again later.")
+            return redirect(url_for("survey"))
+
+    # Save files
+    files = request.files.getlist("paystubs")
+    for f in files:
+        if f:
+            filename = secure_filename(f.filename)
+            f.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+
+    # Camera upload
+    camera_file = request.files.get("camera_upload")
+    if camera_file:
+        filename = secure_filename(camera_file.filename)
+        camera_file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+
+    # Record submission date
+    last_submission[user_id] = today
+
+    return render_template("thank_you.html")
+<div class="text-center py-12">
+  <h1 class="text-4xl font-bold text-green-600">Survey Completed 🎉</h1>
+  <p class="mt-4 text-lg text-gray-700">
+    Thank you for your continued commitment! Please visit the TASK Employment Office
+    to claim your gift card reward.
+  </p>
+  <div class="mt-6">
+    <p class="font-bold">Trenton Area Soup Kitchen</p>
+    <p>72½ Escher St, Trenton, NJ 08609</p>
+    <p>(609) 697-6215</p>
+    <p>Office Hours: Mon–Fri 9:00 AM–4:00 PM</p>
+    <p>Meals: Mon–Fri 10:30 AM–1:00 PM, Mon–Thu 3:30–5:00 PM</p>
+    <p><a href="https://trentonsoupkitchen.org" class="text-blue-600">Visit our website</a></p>
+  </div>
+</div>
