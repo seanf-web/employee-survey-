@@ -130,7 +130,6 @@
     }
 
     function renderPage() {
-      // check if already submitted
       const thisMonth = new Date().getMonth();
       if (localStorage.getItem("lastSubmittedMonth") == thisMonth && page !== 4) {
         surveyDiv.innerHTML = `
@@ -214,6 +213,7 @@
             <h3>✅ Next Steps</h3>
             <p>Please visit the <strong>TASK Employment Office</strong> to pick up your gift card reward.</p>
             <p><strong>Hours:</strong><br>
+              Office: Monday–Friday 9:00 AM – 4:00 PM<br>
               Lunch: Monday–Saturday 10:30 AM – 1:00 PM<br>
               Dinner: Monday–Thursday 3:30 PM – 5:00 PM
             </p>
@@ -226,7 +226,6 @@
     }
 
     function nextPage() {
-      // save data
       if (page === 1) {
         formData.fullName = document.getElementById("fullName").value.trim();
         formData.phone = document.getElementById("phone").value.trim();
@@ -248,10 +247,16 @@
         }
       }
       if (page === 3) {
-        formData.payStubs = document.getElementById("payStubs").files;
-        formData.photo = document.getElementById("photo").files[0];
-        if (formData.payStubs.length < 2 && !formData.photo) {
-          alert("Please upload at least 2 pay stubs or take a picture.");
+        const payStubs = document.getElementById("payStubs").files;
+        const photo = document.getElementById("photo").files[0];
+
+        // ✅ FIXED: allow either 2+ paystubs OR 1 photo
+        if (payStubs.length >= 2) {
+          formData.payStubs = payStubs;
+        } else if (photo) {
+          formData.photo = photo;
+        } else {
+          alert("Please upload at least 2 pay stubs OR take 1 picture.");
           return;
         }
       }
