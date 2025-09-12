@@ -1,342 +1,206 @@
-import React, { useState, useRef } from 'react';
-import {
-  ChevronLeft,
-  ChevronRight,
-  Upload,
-  Check,
-  MapPin,
-  Phone,
-  Globe,
-  Heart,
-  Users,
-  Home,
-  Camera,
-  Calendar,
-  DollarSign,
-  Star,
-  Award,
-  TrendingUp,
-  Shield,
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TASK Monthly Employment Survey</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&family=Open+Sans&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 700px;
+      margin: 2rem auto;
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      padding: 2rem;
+    }
+    h1, h2 {
+      font-family: 'Nunito', sans-serif;
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #145078;
+    }
+    .progress {
+      display: flex;
+      height: 10px;
+      background: #d9dad9;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    .progress-bar {
+      background: #ff911f;
+      width: 0;
+      transition: width 0.4s ease;
+    }
+    label {
+      font-weight: 600;
+      color: #145078;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      border: 2px solid #ccc;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+    textarea { resize: vertical; }
+    button {
+      background: #145078;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover { background: #0f3d5f; }
+    .btn-secondary {
+      background: #6b6b6b;
+    }
+    .hidden { display: none; }
+    .success {
+      text-align: center;
+      padding: 2rem;
+    }
+    .success h2 {
+      color: #74ba58;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+    
+    <!-- Step 1 -->
+    <form id="surveyForm">
+      <div class="step" id="step1">
+        <h1>Monthly Employment Check-In</h1>
+        <label>Full Name *</label>
+        <input type="text" required />
+        
+        <label>Phone *</label>
+        <input type="tel" required />
+        
+        <label>Email *</label>
+        <input type="email" required />
+        
+        <label>Preferred Contact Method</label>
+        <select>
+          <option>Phone</option>
+          <option>Email</option>
+          <option>Text</option>
+        </select>
+      </div>
 
-// Define survey steps for a global progress bar
-const steps = [
-  { id: 1, label: 'Contact Info' },
-  { id: 2, label: 'Job Details' },
-  { id: 3, label: 'Verification' },
-  { id: 4, label: 'Thank You' },
-];
+      <!-- Step 2 -->
+      <div class="step hidden" id="step2">
+        <h1>Current Employment Status</h1>
+        <label>Current Employer *</label>
+        <input type="text" required />
+        
+        <label>Job Title</label>
+        <input type="text" />
+        
+        <label>Start Date *</label>
+        <input type="date" required />
+        
+        <label>Hours Per Week</label>
+        <input type="number" />
+        
+        <label>Monthly Income (optional)</label>
+        <input type="number" />
+        
+        <label>Are you still employed?</label>
+        <select>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
 
-export default function TaskJobSuccessCheckIn() {
-  const [page, setPage] = useState(1);
-  const [data, setData] = useState({
-    fullName: '',
-    phone: '',
-    email: '',
-    preferredContact: 'Phone',
-    currentEmployer: '',
-    jobTitle: '',
-    startDate: '',
-    hoursPerWeek: '',
-    monthlyIncome: '',
-    stillWorking: '',
-    stayReasons: '',
-    challenges: '',
-    taskSupport: '',
-    permission: false,
-    files: null,
-    photos: [],
-    monthsEmployed: '',
-  });
+      <!-- Step 3 -->
+      <div class="step hidden" id="step3">
+        <h1>Verification</h1>
+        <label>What helps you stay successful?</label>
+        <textarea rows="3"></textarea>
+        
+        <label>What challenges can TASK help with?</label>
+        <textarea rows="3"></textarea>
+        
+        <label>How has TASK support helped you?</label>
+        <textarea rows="3"></textarea>
+        
+        <label>Upload Your Last Two Pay Stubs *</label>
+        <input type="file" accept=".pdf,image/*" multiple required />
+        <p><em>You may also take a picture if using your phone camera.</em></p>
+        
+        <label>
+          <input type="checkbox" required />
+          I authorize TASK to contact me for monthly check-ins and provide support.
+        </label>
+      </div>
 
-  const fileInputRef = useRef(null);
-  const cameraInputRef = useRef(null);
-
-  const handleChange = (field, value) => {
-    setData({ ...data, [field]: value });
-  };
-
-  const handlePhotoCapture = (event) => {
-    const files = Array.from(event.target.files);
-    setData({ ...data, photos: [...data.photos, ...files] });
-  };
-
-  const removePhoto = (index) => {
-    const newPhotos = data.photos.filter((_, i) => i !== index);
-    setData({ ...data, photos: newPhotos });
-  };
-
-  const ProgressStepper = () => (
-    <div className="flex items-center justify-between mb-10">
-      {steps.map((step) => (
-        <div key={step.id} className="flex-1 text-center relative">
-          <div
-            className={`mx-auto w-10 h-10 flex items-center justify-center rounded-full text-sm font-bold 
-            ${page >= step.id ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-700'}`}
-          >
-            {step.id < page ? <Check size={18} /> : step.id}
-          </div>
-          <p className="text-xs mt-2 font-semibold text-gray-700">{step.label}</p>
-          {step.id < steps.length && (
-            <div
-              className={`absolute top-5 left-1/2 w-full h-1 
-              ${page > step.id ? 'bg-blue-600' : 'bg-gray-300'}`}
-            ></div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-
-  // ------------------- PAGE 1 -------------------
-  if (page === 1) {
-    return (
-      <div className="min-h-screen py-8 px-4 bg-gradient-to-br from-blue-50 to-slate-100">
-        <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 border-t-4 border-orange-500">
-          <ProgressStepper />
-
-          <h1 className="text-3xl font-bold text-center text-blue-800 mb-2">Monthly Employment Check-In</h1>
-          <p className="text-center text-gray-600 mb-8">Step 1 of 3 • Contact Information</p>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-semibold mb-2 text-blue-800">
-                Full Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="First Last"
-                className="w-full px-4 py-3 border rounded-lg focus:border-orange-500"
-                value={data.fullName}
-                onChange={(e) => handleChange('fullName', e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold mb-2 text-blue-800">
-                Phone <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="tel"
-                placeholder="(###) ###-####"
-                className="w-full px-4 py-3 border rounded-lg focus:border-orange-500"
-                value={data.phone}
-                onChange={(e) => handleChange('phone', e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold mb-2 text-blue-800">
-                Email <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                className="w-full px-4 py-3 border rounded-lg focus:border-orange-500"
-                value={data.email}
-                onChange={(e) => handleChange('email', e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold mb-2 text-blue-800">
-                Preferred Contact Method
-              </label>
-              <select
-                className="w-full px-4 py-3 border rounded-lg focus:border-orange-500"
-                value={data.preferredContact}
-                onChange={(e) => handleChange('preferredContact', e.target.value)}
-              >
-                <option value="Phone">Phone</option>
-                <option value="Email">Email</option>
-                <option value="Text">Text Message</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="flex justify-end mt-8">
-            <button
-              onClick={() => setPage(2)}
-              className="flex items-center px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-semibold shadow"
-            >
-              Continue
-              <ChevronRight className="ml-2 h-5 w-5" />
-            </button>
-          </div>
+      <!-- Step 4 -->
+      <div class="step hidden" id="step4">
+        <div class="success">
+          <h2>🎉 Survey Completed!</h2>
+          <p>Thank you for your continued commitment to employment success through TASK.</p>
+          <p>Please visit the TASK Employment Office to receive your gift card reward.</p>
+          <p><strong>Office Hours:</strong><br>
+          Meals: Mon–Fri 10:30am–1:00pm, Mon–Thu 3:30–5:00pm<br>
+          Employment Office: Mon–Fri 9:00am–4:00pm<br>
+          <strong>Phone:</strong> (609) 697-6215<br>
+          <strong>Website:</strong> <a href="https://trentonsoupkitchen.org" target="_blank">trentonsoupkitchen.org</a></p>
         </div>
       </div>
-    );
-  }
 
-  // ------------------- PAGE 2 -------------------
-  if (page === 2) {
-    return (
-      <div className="min-h-screen py-8 px-4 bg-gradient-to-br from-blue-50 to-slate-100">
-        <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 border-t-4 border-blue-500">
-          <ProgressStepper />
-
-          <h1 className="text-3xl font-bold text-center text-blue-800 mb-2">Current Employment Status</h1>
-          <p className="text-center text-gray-600 mb-8">Step 2 of 3 • Job Details</p>
-
-          <div className="space-y-6">
-            <input
-              type="text"
-              placeholder="Employer"
-              className="w-full px-4 py-3 border rounded-lg focus:border-blue-500"
-              value={data.currentEmployer}
-              onChange={(e) => handleChange('currentEmployer', e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Job Title"
-              className="w-full px-4 py-3 border rounded-lg focus:border-blue-500"
-              value={data.jobTitle}
-              onChange={(e) => handleChange('jobTitle', e.target.value)}
-            />
-            <input
-              type="date"
-              className="w-full px-4 py-3 border rounded-lg focus:border-blue-500"
-              value={data.startDate}
-              onChange={(e) => handleChange('startDate', e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Hours per Week"
-              className="w-full px-4 py-3 border rounded-lg focus:border-blue-500"
-              value={data.hoursPerWeek}
-              onChange={(e) => handleChange('hoursPerWeek', e.target.value)}
-            />
-          </div>
-
-          <div className="flex justify-between mt-8">
-            <button
-              onClick={() => setPage(1)}
-              className="flex items-center px-6 py-3 border rounded-lg text-gray-700 hover:bg-gray-100"
-            >
-              <ChevronLeft className="mr-2 h-5 w-5" /> Back
-            </button>
-            <button
-              onClick={() => setPage(3)}
-              className="flex items-center px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 shadow"
-            >
-              Next
-              <ChevronRight className="ml-2 h-5 w-5" />
-            </button>
-          </div>
-        </div>
+      <!-- Nav buttons -->
+      <div style="display:flex; justify-content:space-between;">
+        <button type="button" class="btn-secondary hidden" id="prevBtn">Back</button>
+        <button type="button" id="nextBtn">Continue</button>
       </div>
-    );
-  }
+    </form>
+  </div>
 
-  // ------------------- PAGE 3 -------------------
-  if (page === 3) {
-    return (
-      <div className="min-h-screen py-8 px-4 bg-gradient-to-br from-blue-50 to-slate-100">
-        <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 border-t-4 border-purple-500">
-          <ProgressStepper />
+  <script>
+    const steps = document.querySelectorAll(".step");
+    const progressBar = document.getElementById("progressBar");
+    const nextBtn = document.getElementById("nextBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    let currentStep = 0;
 
-          <h1 className="text-3xl font-bold text-center text-purple-800 mb-2">Employment Verification</h1>
-          <p className="text-center text-gray-600 mb-8">Step 3 of 3 • Upload Paystubs</p>
+    function showStep(index) {
+      steps.forEach((step, i) => step.classList.toggle("hidden", i !== index));
+      progressBar.style.width = ((index) / (steps.length-1)) * 100 + "%";
+      prevBtn.classList.toggle("hidden", index === 0);
+      nextBtn.textContent = index === steps.length - 1 ? "Done" : "Continue";
+    }
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white border p-6 rounded-xl text-center">
-              <Camera className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-              <h4 className="font-semibold">Take Photo</h4>
-              <input
-                type="file"
-                accept="image/*"
-                capture="environment"
-                multiple
-                ref={cameraInputRef}
-                className="sr-only"
-                onChange={handlePhotoCapture}
-              />
-              <button
-                onClick={() => cameraInputRef.current?.click()}
-                className="w-full mt-3 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
-              >
-                Open Camera
-              </button>
-            </div>
+    nextBtn.addEventListener("click", () => {
+      if (currentStep < steps.length - 1) {
+        currentStep++;
+        showStep(currentStep);
+      }
+    });
+    prevBtn.addEventListener("click", () => {
+      if (currentStep > 0) {
+        currentStep--;
+        showStep(currentStep);
+      }
+    });
 
-            <div className="bg-white border p-6 rounded-xl text-center">
-              <Upload className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h4 className="font-semibold">Upload Files</h4>
-              <input
-                type="file"
-                multiple
-                accept=".pdf,image/*"
-                ref={fileInputRef}
-                className="sr-only"
-                onChange={(e) => handleChange('files', e.target.files)}
-              />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full mt-3 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600"
-              >
-                Choose Files
-              </button>
-            </div>
-          </div>
-
-          <div className="flex justify-between mt-8">
-            <button
-              onClick={() => setPage(2)}
-              className="flex items-center px-6 py-3 border rounded-lg text-gray-700 hover:bg-gray-100"
-            >
-              <ChevronLeft className="mr-2 h-5 w-5" /> Back
-            </button>
-            <button
-              onClick={() => setPage(4)}
-              className="flex items-center px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 shadow"
-            >
-              <Check className="mr-2 h-5 w-5" /> Submit
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ------------------- THANK YOU PAGE -------------------
-  return (
-    <div className="min-h-screen py-8 px-4 bg-gradient-to-br from-green-50 to-slate-100">
-      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl p-10 text-center border-t-4 border-green-500">
-        <div className="text-7xl mb-4">🎉</div>
-        <h1 className="text-3xl font-bold text-green-700 mb-3">Report Submitted Successfully</h1>
-        <p className="text-gray-600 mb-6">
-          Thank you for your continued commitment to employment success through TASK!
-        </p>
-
-        <div className="bg-blue-50 border rounded-xl p-6 text-left mb-6">
-          <h2 className="text-lg font-bold text-blue-800 mb-3 flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-blue-600" /> TASK Employment Office
-          </h2>
-          <p className="text-sm text-gray-700">72½ Escher St, Trenton, NJ 08609</p>
-          <p className="text-sm text-gray-700 flex items-center gap-2 mt-2">
-            <Phone className="h-5 w-5 text-green-600" /> (609) 697-6215, (609) 697-6166
-          </p>
-          <p className="text-sm text-gray-700 flex items-center gap-2 mt-2">
-            <Calendar className="h-5 w-5 text-purple-600" /> Meals: Mon–Sat 10:30a–1p, Mon–Thu 3:30–5p
-          </p>
-          <p className="text-sm text-gray-700 flex items-center gap-2 mt-2">
-            <Globe className="h-5 w-5 text-orange-600" />{' '}
-            <a href="https://trentonsoupkitchen.org" className="underline text-blue-600">
-              trentonsoupkitchen.org
-            </a>
-          </p>
-        </div>
-
-        <div className="bg-green-100 border rounded-xl p-6">
-          <h2 className="text-lg font-bold text-green-800 flex items-center gap-2 mb-2">
-            <DollarSign className="h-5 w-5 text-green-600" /> Gift Card Reward
-          </h2>
-          <p className="text-sm text-gray-700">
-            Please visit the TASK Employment Office to pick up your gift card.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
+    showStep(currentStep);
+  </script>
+</body>
+</html>
