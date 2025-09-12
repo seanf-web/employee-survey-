@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TASK Monthly Employment Check-In</title>
+  <title>TASK Monthly Employment Survey</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #f8fafc;
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
     }
-
     .container {
       max-width: 900px;
       margin: 30px auto;
@@ -19,8 +17,19 @@
       padding: 30px;
       border-radius: 16px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      position: relative;
     }
-
+    /* Language Toggle */
+    .language-toggle {
+      position: absolute;
+      top: 15px; left: 15px;
+    }
+    .language-toggle select {
+      padding: 4px 8px;
+      border: 2px solid #ff911f;
+      border-radius: 6px;
+      font-size: 13px;
+    }
     /* Progress bar */
     .progressbar {
       display: flex;
@@ -39,15 +48,14 @@
     .progressbar li::before {
       counter-increment: step;
       content: counter(step);
-      width: 35px;
-      height: 35px;
+      width: 35px; height: 35px;
       line-height: 35px;
       border: 2px solid #ccc;
       display: block;
       text-align: center;
       margin: 0 auto 10px auto;
       border-radius: 50%;
-      background-color: #fff;
+      background: #fff;
     }
     .progressbar li.active::before {
       border-color: #ff911f;
@@ -60,39 +68,47 @@
       width: 100%;
       height: 4px;
       background: #ccc;
-      top: 16px;
-      left: -50%;
+      top: 16px; left: -50%;
       z-index: -1;
     }
-    .progressbar li:first-child::after {
-      content: none;
-    }
-    .progressbar li.active + li::after {
-      background: #ff911f;
-    }
-
-    /* Language toggle */
-    .language-toggle {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-    }
-    .language-toggle select {
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 2px solid #ff911f;
+    .progressbar li:first-child::after { content: none; }
+    .progressbar li.active + li::after { background: #ff911f; }
+    /* Buttons */
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
       font-weight: bold;
+      cursor: pointer;
+      margin: 10px 5px;
+      transition: transform 0.2s;
     }
-
-    /* Center alignment for Completed */
-    .completed {
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: linear-gradient(135deg,#33A7B5,#145078); color:#fff; }
+    .btn-secondary { background: linear-gradient(135deg,#74ba58,#4a9c3c); color:#fff; }
+    /* Upload buttons */
+    .upload-btn {
+      display: inline-block;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
       text-align: center;
+      color: white;
+      margin-right: 10px;
     }
-    .completed h2 {
-      font-size: 28px;
-      color: green;
-      margin-bottom: 10px;
+    .camera-btn { background: linear-gradient(135deg,#33A7B5,#145078); }
+    .file-btn { background: linear-gradient(135deg,#74ba58,#4a9c3c); }
+    .preview img {
+      max-width: 120px;
+      margin: 10px;
+      border-radius: 8px;
+      border: 2px solid #ccc;
     }
+    /* Completed page */
+    .completed { text-align: center; }
+    .completed h2 { font-size: 28px; color: green; margin-bottom: 10px; }
     .next-steps {
       background: #e6f3fc;
       padding: 20px;
@@ -104,40 +120,147 @@
   </style>
 </head>
 <body>
-
-<div class="language-toggle">
-  <select>
-    <option>English</option>
-    <option>Español</option>
-    <option>Kreyòl</option>
-  </select>
-</div>
-
 <div class="container">
+
+  <!-- Language Toggle -->
+  <div class="language-toggle">
+    <select>
+      <option>English</option>
+      <option>Español</option>
+      <option>Kreyòl</option>
+    </select>
+  </div>
+
   <!-- Progress Bar -->
-  <ul class="progressbar">
+  <ul class="progressbar" id="progressbar">
     <li class="active">Contact</li>
-    <li class="active">Employment</li>
-    <li class="active">Survey</li>
-    <li class="active">Pay Stubs</li>
-    <li class="active">Complete</li>
+    <li>Employment</li>
+    <li>Survey</li>
+    <li>Pay Stubs</li>
+    <li>Complete</li>
   </ul>
 
-  <!-- Completion Page -->
-  <div class="completed">
-    <h2>🎉 Survey Completed!</h2>
-    <p>Thank you for completing your monthly survey.</p>
-
-    <div class="next-steps">
-      <h3>Next Steps</h3>
-      <p>Visit the TASK Employment Office to pick up your gift card.</p>
-      <p><strong>Office:</strong> Mon–Fri 9–4<br>
-         <strong>Lunch:</strong> Mon–Sat 10:30–1<br>
-         <strong>Dinner:</strong> Mon–Thu 3:30–5</p>
-      <p><strong>Phone Numbers:</strong> (609) 697-6215 / (609) 697-6166</p>
+  <!-- Survey Form -->
+  <form id="surveyForm">
+    <div class="step" id="step1">
+      <h2>Contact Information</h2>
+      <p>Please provide your contact information so we can stay in touch.</p>
+      <label>First Name*</label><br>
+      <input type="text" required><br><br>
+      <label>Last Name*</label><br>
+      <input type="text" required><br><br>
+      <label>Phone Number*</label><br>
+      <input type="tel" id="phone" maxlength="14" placeholder="(XXX) XXX-XXXX" required><br><br>
+      <label>Email*</label><br>
+      <input type="email" required><br><br>
+      <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
     </div>
-  </div>
+
+    <div class="step" id="step2" style="display:none;">
+      <h2>Employment Information</h2>
+      <p>This helps us understand your current job status.</p>
+      <label>Current Employer*</label><br>
+      <input type="text" required><br><br>
+      <label>Job Title*</label><br>
+      <input type="text" required><br><br>
+      <label>Start Date*</label><br>
+      <input type="date" required><br><br>
+      <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+      <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
+    </div>
+
+    <div class="step" id="step3" style="display:none;">
+      <h2>Survey Questions</h2>
+      <p>Your feedback helps us improve our programs and support.</p>
+      <label>What has helped you stay successful?</label><br>
+      <textarea rows="3"></textarea><br><br>
+      <label>What challenges are you facing?</label><br>
+      <textarea rows="3"></textarea><br><br>
+      <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+      <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
+    </div>
+
+    <div class="step" id="step4" style="display:none;">
+      <h2>Upload Pay Stubs</h2>
+      <p>Please provide two pay stubs for employment verification.</p>
+      <label>Pay Stub #1</label><br>
+      <label class="upload-btn camera-btn">
+        📷 Take Photo
+        <input type="file" accept="image/*" capture="environment" onchange="previewFile(event,'preview1')" hidden>
+      </label>
+      <label class="upload-btn file-btn">
+        📂 Upload File
+        <input type="file" accept="image/*,.pdf" onchange="previewFile(event,'preview1')" hidden>
+      </label>
+      <div id="preview1" class="preview"></div>
+      <br>
+      <label>Pay Stub #2</label><br>
+      <label class="upload-btn camera-btn">
+        📷 Take Photo
+        <input type="file" accept="image/*" capture="environment" onchange="previewFile(event,'preview2')" hidden>
+      </label>
+      <label class="upload-btn file-btn">
+        📂 Upload File
+        <input type="file" accept="image/*,.pdf" onchange="previewFile(event,'preview2')" hidden>
+      </label>
+      <div id="preview2" class="preview"></div>
+      <br>
+      <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+      <button type="button" class="btn btn-primary" onclick="nextStep()">Submit</button>
+    </div>
+
+    <div class="step" id="step5" style="display:none;">
+      <div class="completed">
+        <h2>🎉 Survey Completed!</h2>
+        <p>Thank you for completing your monthly survey.</p>
+        <div class="next-steps">
+          <h3>Next Steps</h3>
+          <p>Visit the TASK Employment Office to pick up your gift card.</p>
+          <p><strong>Office:</strong> Mon–Fri 9–4<br>
+             <strong>Lunch:</strong> Mon–Sat 10:30–1<br>
+             <strong>Dinner:</strong> Mon–Thu 3:30–5</p>
+          <p><strong>Phone Numbers:</strong> (609) 697-6215 / (609) 697-6166</p>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
 
+<script>
+  let currentStep = 1;
+  function showStep(n) {
+    document.querySelectorAll('.step').forEach((s,i)=> {
+      s.style.display = (i===n-1)?'block':'none';
+    });
+    document.querySelectorAll('.progressbar li').forEach((li,i)=>{
+      li.classList.toggle('active', i < n);
+    });
+    currentStep = n;
+  }
+  function nextStep() { if(currentStep<5) showStep(currentStep+1); }
+  function prevStep() { if(currentStep>1) showStep(currentStep-1); }
+
+  // Preview uploads
+  function previewFile(e, id) {
+    const files = e.target.files;
+    const preview = document.getElementById(id);
+    preview.innerHTML = '';
+    [...files].forEach(file=>{
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const img = document.createElement('img');
+        img.src = ev.target.result;
+        preview.appendChild(img);
+      }
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Phone auto-formatting
+  document.getElementById('phone').addEventListener('input', function(e) {
+    let x = e.target.value.replace(/\D/g,'').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+    e.target.value = !x[2] ? x[1] : '('+x[1]+') '+x[2]+(x[3] ? '-'+x[3] : '');
+  });
+</script>
 </body>
 </html>
