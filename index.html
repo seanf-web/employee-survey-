@@ -20,325 +20,304 @@
       border-radius: 18px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.12);
     }
-    .header-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
+    h1,h2 {
+      color:#145078;
+      text-align:center;
     }
-    .lang-select { display: flex; align-items: center; gap: 10px; }
-    .progress { display: flex; justify-content: space-between; flex: 1; margin-left: 30px; }
-    .step {
-      width: 50px; height: 50px; border-radius: 50%;
-      background: #ccc; color: white; display: flex;
-      align-items: center; justify-content: center;
-      font-weight: bold; font-size: 18px;
-    }
-    .step.active { background: #145078; }
-    h1,h2 { color:#145078; text-align:center; }
-    h1{ font-size:2.3em; } h2{ font-size:1.9em; margin-bottom:10px; }
+    h1{ font-size:2.3em; }
+    h2{ font-size:1.9em; margin-bottom:10px; }
 
-    label { font-weight:bold; display:block; margin:12px 0 6px; color:#333; }
+    label {
+      font-weight:bold;
+      display:block;
+      margin:12px 0 6px;
+      color:#333;
+    }
     input, select, textarea {
-      width:100%; padding:14px 16px; border:2px solid #d1d5db;
-      border-radius:14px; font-size:16px; margin-bottom:18px;
-      box-sizing:border-box; transition:all 0.2s ease;
-    }
-    input:focus,select:focus,textarea:focus {
-      border-color:#33a7b5; box-shadow:0 0 6px rgba(51,167,181,0.4);
-      outline:none;
-    }
-    textarea { min-height:100px; resize:vertical; border-radius:14px; }
-
-    .btn {
-      padding:14px 26px; border:none; border-radius:14px;
-      font-weight:bold; cursor:pointer; margin:10px 5px 0 0;
-      background:linear-gradient(135deg,#145078,#33a7b5); color:white;
+      width:100%;
+      padding:14px 16px;
+      border:2px solid #d1d5db;
+      border-radius:14px;
+      font-size:16px;
+      margin-bottom:18px;
+      box-sizing:border-box;
       transition:all 0.2s ease;
     }
-    .btn:hover { transform:translateY(-2px); box-shadow:0 4px 10px rgba(0,0,0,0.2); }
-
-    .highlight-box { border:2px solid #facc15; border-radius:14px; padding:20px; margin:20px 0; background:#fefce8; }
-
-    .radio-card {
-      border:2px solid #d1d5db; border-radius:14px; padding:20px;
-      text-align:center; cursor:pointer; background:#fafafa; transition:all 0.2s ease;
+    input:focus,select:focus,textarea:focus {
+      border-color:#33a7b5;
+      box-shadow:0 0 6px rgba(51,167,181,0.4);
+      outline:none;
     }
-    .radio-card:hover { background:#f1f5f9; }
-    .radio-card input { margin-top:12px; transform:scale(1.3); }
+    textarea {
+      min-height:100px;
+      resize:vertical;
+      border-radius:14px;
+    }
+
+    .btn {
+      padding:14px 26px;
+      border:none;
+      border-radius:14px;
+      font-weight:bold;
+      cursor:pointer;
+      margin:10px 5px 0 0;
+      background:linear-gradient(135deg,#145078,#33a7b5);
+      color:white;
+      transition:all 0.2s ease;
+    }
+    .btn:hover {
+      transform:translateY(-2px);
+      box-shadow:0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .highlight-box {
+      border:2px solid #facc15;
+      border-radius:14px;
+      padding:20px;
+      margin:20px 0;
+      background:#fefce8;
+    }
 
     .upload-box {
-      border:2px dashed #93c5fd; border-radius:14px;
-      padding:25px; text-align:center; cursor:pointer; background:#f9fafb;
+      border:2px dashed #93c5fd;
+      border-radius:14px;
+      padding:25px;
+      text-align:center;
+      cursor:pointer;
+      background:#f9fafb;
     }
     .upload-box:hover { background:#eff6ff; }
-    .preview img { max-width:140px; margin:6px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
-    .preview div.file-name { background:#f3f4f6; border:1px solid #d1d5db; border-radius:6px; padding:8px; margin:5px; font-size:14px; }
+
+    .preview img {
+      max-width:140px;
+      margin:6px;
+      border-radius:10px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.15);
+    }
+    .preview div.file-name {
+      background:#f3f4f6;
+      border:1px solid #d1d5db;
+      border-radius:6px;
+      padding:8px;
+      margin:5px;
+      font-size:14px;
+    }
 
     /* Tutorial overlay */
     #tutorialOverlay {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.7);
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 9999;
+      z-index: 1000;
     }
-    #tutorialContent {
-      background: white;
+    #tutorialBox {
+      background: #fff;
       padding: 30px;
-      border-radius: 18px;
-      max-width: 500px;
-      width: 100%;
+      border-radius: 16px;
+      max-width: 700px;
+      width: 90%;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
       text-align: center;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.25);
     }
-    #tutorialContent h1 { margin-bottom: 20px; }
-    #tutorialContent select {
-      margin: 10px 0 20px;
-      padding: 10px;
-      border-radius: 10px;
-      border: 2px solid #ccc;
-      width: 100%;
+    #tutorialBox h2 { margin-bottom: 15px; }
+    #tutorialBox select {
+      margin: 10px auto;
+      width: 80%;
+      display: block;
     }
-    .tutorial-btn {
-      padding: 14px 22px;
-      border: none;
-      border-radius: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      margin: 10px;
-    }
-    .tutorial-primary { background:#2563eb; color:white; }
-    .tutorial-secondary { background:#6b7280; color:white; }
-    .tutorial-test { background:#facc15; color:#000; margin-bottom:20px; }
   </style>
 </head>
 <body>
-  <!-- Tutorial Overlay -->
-  <div id="tutorialOverlay">
-    <div id="tutorialContent">
-      <h1>👋 Welcome to the Guided Tutorial</h1>
-      <p>Select a tutorial language and guide voice below:</p>
-
-      <h3>Choose Language</h3>
-      <select id="tutorialLang">
-        <option value="en">English</option>
-        <option value="es">Español</option>
-        <option value="ht">Kreyòl</option>
-      </select>
-
-      <h3>Choose Your Guide</h3>
-      <select id="voiceSelect">
-        <option value="Sean">Sean - Calm & Supportive</option>
-        <option value="Diani">Diani - Bright & Encouraging</option>
-        <option value="Marcus">Marcus - Clear & Professional</option>
-      </select>
-
-      <button class="tutorial-btn tutorial-test" onclick="testVoice()">🔊 TEST THIS VOICE</button><br>
-      <button class="tutorial-btn tutorial-primary" onclick="startTutorial()">▶️ Start Tutorial</button>
-      <button class="tutorial-btn tutorial-secondary" onclick="skipTutorial()">⏭ Skip Tutorial</button>
-    </div>
-  </div>
-
-  <!-- Survey Container -->
-  <div class="container">
-    <div id="survey"></div>
+  <div class="container" id="mainContainer">
+    <!-- tutorial OR survey will be injected here -->
   </div>
 <script>
-let page = 1;
-let formData = {};
-let lang = "en";
-
-// Track tutorial state
-let isDemoMode = false;
-let demoStep = 0;
-
 // ===== Translations =====
+let lang = "en";
+let formData = {};
+let page = 1;
+
 const translations = {
   en: {
     continue: "Continue",
     back: "Back",
     submit: "Submit Monthly Report",
-    stillWorking: "Are you still employed at this TASK-assisted job? *",
-    yesEmployed: "Yes, still employed",
-    noEmployed: "No longer employed",
-    yesHelper: "Great job maintaining employment",
-    noHelper: "We are here to help you find another job",
-    completeRequired: "Please complete all required fields before continuing.",
-    stopMessage: "You are no longer eligible to complete this survey. Please contact TASK."
+    tutorialTitle: "Welcome to the TASK Employment Survey",
+    tutorialBlurb: "Before starting, choose your language and guide voice. You can preview voices and decide whether to watch the tutorial or skip straight to the survey.",
+    chooseLang: "Choose Language",
+    chooseVoice: "Choose Voice",
+    startTutorial: "Start Tutorial",
+    skipTutorial: "Skip Tutorial",
+    testVoice: "Test Voice",
+    sampleLine: "This is your TASK guide. I’ll help you complete the survey."
   },
   es: {
     continue: "Continuar",
     back: "Atrás",
     submit: "Enviar Informe Mensual",
-    stillWorking: "¿Sigues empleado en este trabajo asistido por TASK? *",
-    yesEmployed: "Sí, sigo empleado",
-    noEmployed: "Ya no estoy empleado",
-    yesHelper: "¡Excelente trabajo manteniendo el empleo!",
-    noHelper: "Estamos aquí para ayudarte a encontrar otro trabajo",
-    completeRequired: "Por favor completa todos los campos requeridos antes de continuar.",
-    stopMessage: "Ya no eres elegible para completar esta encuesta. Por favor contacta a TASK."
+    tutorialTitle: "Bienvenido a la Encuesta de Empleo de TASK",
+    tutorialBlurb: "Antes de comenzar, elige tu idioma y la voz del guía. Puedes probar voces y decidir si ver el tutorial o pasar directamente a la encuesta.",
+    chooseLang: "Elige Idioma",
+    chooseVoice: "Elige Voz",
+    startTutorial: "Iniciar Tutorial",
+    skipTutorial: "Saltar Tutorial",
+    testVoice: "Probar Voz",
+    sampleLine: "Soy tu guía de TASK. Te ayudaré a completar la encuesta."
   },
   ht: {
     continue: "Kontinye",
     back: "Retounen",
     submit: "Soumèt Rapò Chak Mwa",
-    stillWorking: "Èske w ap toujou travay nan travay TASK te ede w jwenn lan? *",
-    yesEmployed: "Wi, toujou ap travay",
-    noEmployed: "Mwen pa travay ankò",
-    yesHelper: "Bon travay kenbe travay la!",
-    noHelper: "Nou la pou ede ou jwenn yon lòt travay",
-    completeRequired: "Tanpri ranpli tout chan obligatwa yo anvan ou kontinye.",
-    stopMessage: "Ou pa elijib pou konplete sondaj sa ankò. Tanpri kontakte TASK."
+    tutorialTitle: "Byenvini nan Sondaj Travay TASK",
+    tutorialBlurb: "Anvan ou kòmanse, chwazi lang ou ak vwa gid la. Ou ka teste vwa yo epi deside si ou vle gade leson patikilye a oswa sote dirèkteman nan sondaj la.",
+    chooseLang: "Chwazi Lang",
+    chooseVoice: "Chwazi Vwa",
+    startTutorial: "Kòmanse Tutorial",
+    skipTutorial: "Sote Tutorial",
+    testVoice: "Teste Vwa",
+    sampleLine: "Mwen gid TASK ou. Mwen pral ede ou ranpli sondaj la."
   }
 };
 
-// ===== Voice Data =====
-const voiceData = {
-  Sean: {
-    intro: {
-      en: "Hi, I’m Sean. I’ll guide you through filling out this survey step by step.",
-      es: "Hola, soy Sean. Te guiaré paso a paso para completar esta encuesta.",
-      ht: "Bonjou, mwen se Sean. M ap gide ou etap pa etap pou ranpli sondaj sa a."
-    }
-  },
-  Diani: {
-    intro: {
-      en: "Hello, I’m Diani. Let’s walk through this survey together.",
-      es: "Hola, soy Diani. Vamos a recorrer esta encuesta juntos.",
-      ht: "Bonjou, mwen se Diani. Ann pase ansanm nan sondaj sa a."
-    }
-  },
-  Marcus: {
-    intro: {
-      en: "Greetings, I’m Marcus. I’ll explain how to complete this survey clearly.",
-      es: "Saludos, soy Marcus. Te explicaré claramente cómo completar esta encuesta.",
-      ht: "Bonjou, mwen se Marcus. M ap eksplike w klèman kijan pou ranpli sondaj sa a."
-    }
-  }
-};
+// ===== Voices =====
+const voices = [
+  { id: "male_calm", label: "Male – Calm" },
+  { id: "male_energetic", label: "Male – Energetic" },
+  { id: "female_calm", label: "Female – Calm" },
+  { id: "female_energetic", label: "Female – Energetic" },
+  { id: "neutral", label: "Neutral (system voice)" }
+];
 
-// ===== Voice Functions =====
-function speak(text, cb) {
-  speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = lang === "es" ? "es-ES" : lang === "ht" ? "ht-HT" : "en-US";
-  utter.onend = () => { if (cb) cb(); };
-  speechSynthesis.speak(utter);
+let selectedVoice = "neutral";
+
+// ===== Tutorial Overlay Renderer =====
+function renderTutorialOverlay() {
+  const t = translations[lang];
+  document.getElementById("mainContainer").innerHTML = `
+    <div id="tutorialOverlay">
+      <div id="tutorialBox">
+        <h2>${t.tutorialTitle}</h2>
+        <p>${t.tutorialBlurb}</p>
+
+        <label for="langSelect">${t.chooseLang}</label>
+        <select id="langSelect" onchange="setLanguage(this.value)">
+          <option value="en" ${lang==="en"?"selected":""}>English</option>
+          <option value="es" ${lang==="es"?"selected":""}>Español</option>
+          <option value="ht" ${lang==="ht"?"selected":""}>Kreyòl</option>
+        </select>
+
+        <label for="voiceSelect">${t.chooseVoice}</label>
+        <select id="voiceSelect" onchange="selectedVoice=this.value">
+          ${voices.map(v=>`<option value="${v.id}" ${v.id===selectedVoice?"selected":""}>${v.label}</option>`).join("")}
+        </select>
+
+        <div style="margin-top:20px;">
+          <button class="btn" onclick="testVoice()">${t.testVoice}</button>
+          <button class="btn" onclick="startTutorial()">${t.startTutorial}</button>
+          <button class="btn" onclick="skipTutorial()">${t.skipTutorial}</button>
+        </div>
+      </div>
+    </div>
+  `;
 }
-
+// ===== Voice Playback =====
 function testVoice() {
-  const tutorialLang = document.getElementById("tutorialLang").value;
-  const voiceSelect = document.getElementById("voiceSelect").value;
-  const sample = voiceData[voiceSelect]?.intro[tutorialLang] || "This is a test voice sample.";
-  speak(sample);
+  const t = translations[lang];
+  const msg = new SpeechSynthesisUtterance(t.sampleLine);
+  
+  // Map selectedVoice to pitch/rate tweaks
+  switch(selectedVoice) {
+    case "male_calm":
+      msg.pitch = 0.8; msg.rate = 0.9; msg.voice = speechSynthesis.getVoices().find(v=>v.name.toLowerCase().includes("male")) || null;
+      break;
+    case "male_energetic":
+      msg.pitch = 1.0; msg.rate = 1.2;
+      break;
+    case "female_calm":
+      msg.pitch = 1.2; msg.rate = 0.9; msg.voice = speechSynthesis.getVoices().find(v=>v.name.toLowerCase().includes("female")) || null;
+      break;
+    case "female_energetic":
+      msg.pitch = 1.4; msg.rate = 1.2;
+      break;
+    default:
+      msg.pitch = 1; msg.rate = 1;
+  }
+  speechSynthesis.speak(msg);
 }
 
-// ===== Tutorial Flow =====
+// ===== Tutorial Logic =====
+let tutorialStep = 0;
+
 function startTutorial() {
-  const tutorialLang = document.getElementById('tutorialLang').value;
-  const voiceSelect = document.getElementById('voiceSelect').value;
-
-  // Save language
-  lang = tutorialLang;
-  localStorage.setItem("taskLanguage", lang);
-
-  // Reset state
-  isDemoMode = true;
-  demoStep = 0;
-  page = 1;
-  formData = {};
-
-  renderPage();
-  document.getElementById("tutorialOverlay").style.display = "none";
-
-  // Intro line
-  const introText = voiceData[voiceSelect]?.intro[tutorialLang] 
-    || voiceData.Sean.intro.en;
-
-  setTimeout(() => {
-    speak(introText, () => {
-      setTimeout(() => runTutorialStep(), 800);
-    });
-  }, 500);
+  tutorialStep = 1;
+  showTutorialStep();
 }
 
+function showTutorialStep() {
+  const steps = [
+    { text: "Welcome! This tutorial will show you how to complete the TASK survey.", highlight: null },
+    { text: "First, you will confirm if you are still working at your TASK-assisted job.", highlight: "step1" },
+    { text: "Next, you will enter your contact information.", highlight: "step2" },
+    { text: "Then, you will upload your last two pay stubs for verification.", highlight: "step3" },
+    { text: "Finally, you will submit your monthly report and view the confirmation.", highlight: "step4" }
+  ];
+  if (tutorialStep > steps.length) {
+    endTutorial();
+    return;
+  }
+  const step = steps[tutorialStep-1];
+  const t = translations[lang];
+  document.getElementById("tutorialBox").innerHTML = `
+    <h2>${t.tutorialTitle}</h2>
+    <p>${step.text}</p>
+    <div style="margin-top:20px;">
+      <button class="btn" onclick="prevTutorialStep()">${t.back}</button>
+      <button class="btn" onclick="nextTutorialStep()">${t.continue}</button>
+    </div>
+  `;
+  
+  // Speak it out
+  const msg = new SpeechSynthesisUtterance(step.text);
+  msg.rate = 1; msg.pitch = 1;
+  speechSynthesis.speak(msg);
+}
+
+function nextTutorialStep() {
+  tutorialStep++;
+  showTutorialStep();
+}
+
+function prevTutorialStep() {
+  if (tutorialStep > 1) {
+    tutorialStep--;
+    showTutorialStep();
+  }
+}
+
+function endTutorial() {
+  // clear overlay and start survey
+  document.getElementById("tutorialOverlay").remove();
+  renderSurvey();
+}
+
+// ===== Skip Tutorial =====
 function skipTutorial() {
-  const tutorialLang = document.getElementById('tutorialLang').value;
-  lang = tutorialLang;
-  localStorage.setItem("taskLanguage", lang);
-
-  isDemoMode = false;
-  document.getElementById("tutorialOverlay").style.display = "none";
-  page = 1;
-  formData = {};
-  renderPage();
+  document.getElementById("tutorialOverlay").remove();
+  renderSurvey();
 }
-
-function exitTutorial() {
-  isDemoMode = false;
-  speechSynthesis.cancel();
-  clearHighlights();
-  page = 1;
-  formData = {};
-  renderPage();
-}
-
-// highlight utility
-function highlightElement(selector) {
-  clearHighlights();
-  const el = document.querySelector(selector);
-  if (el) {
-    el.style.boxShadow = "0 0 12px 4px rgba(250,204,21,0.9)";
-    el.style.transition = "box-shadow 0.3s ease";
-  }
-}
-function clearHighlights() {
-  document.querySelectorAll("*").forEach(el => {
-    el.style.boxShadow = "";
-  });
-}
-
-// tutorial steps engine
-function runTutorialStep() {
-  if (!isDemoMode) return;
-  demoStep++;
-
-  if (demoStep === 1) {
-    highlightElement("input, select, textarea");
-    speak("This is where you’ll enter information, like your contact details or feedback.", () => {
-      setTimeout(runTutorialStep, 1200);
-    });
-  }
-  else if (demoStep === 2) {
-    highlightElement(".btn");
-    speak("These buttons help you continue, go back, or submit your report.", () => {
-      setTimeout(runTutorialStep, 1200);
-    });
-  }
-  else if (demoStep === 3) {
-    highlightElement(".upload-box");
-    speak("Here you’ll upload your pay stubs to verify employment.", () => {
-      setTimeout(runTutorialStep, 1200);
-    });
-  }
-  else {
-    clearHighlights();
-    speak("That’s the end of the tutorial. You can now complete the survey on your own.", () => {
-      exitTutorial();
-    });
-  }
-}
-function renderPage() {
+// ===== Survey Renderer =====
+function renderSurvey() {
   const t = translations[lang];
   let html = "";
 
-  // ===== STEP 1: Employment Status =====
+  // STEP 1: Employment Status
   if (page === 1) {
     html = `
-      <div class="header-bar">
+      <div class="header-bar" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
         <div class="lang-select">
           🌐 <select id="langToggle" onchange="setLanguage(this.value)">
             <option value="en" ${lang === 'en' ? 'selected' : ''}>English</option>
@@ -346,28 +325,28 @@ function renderPage() {
             <option value="ht" ${lang === 'ht' ? 'selected' : ''}>Kreyòl</option>
           </select>
         </div>
-        <div class="progress">
-          <div class="step active">1</div>
-          <div class="step">2</div>
-          <div class="step">3</div>
-          <div class="step">4</div>
+        <div class="progress" style="display:flex; justify-content:space-between; flex:1; margin-left:30px;">
+          <div class="step active" style="width:50px;height:50px;border-radius:50%;background:#145078;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:18px;">1</div>
+          <div class="step" style="width:50px;height:50px;border-radius:50%;background:#ccc;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:18px;">2</div>
+          <div class="step" style="width:50px;height:50px;border-radius:50%;background:#ccc;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:18px;">3</div>
+          <div class="step" style="width:50px;height:50px;border-radius:50%;background:#ccc;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:18px;">4</div>
         </div>
       </div>
 
-      <h2>${t.stillWorking}</h2>
+      <h2>${t.stillWorking || "Are you still employed at this TASK-assisted job?"}</h2>
 
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px;">
-        <label class="radio-card">
-          <div style="font-weight:bold; color:#145078;">${t.yesEmployed}</div>
-          <div style="font-size:13px; color:#16a34a;">${t.yesHelper}</div>
+        <label class="radio-card" style="border:2px solid #d1d5db; border-radius:14px; padding:20px; text-align:center; cursor:pointer; background:#fafafa;">
+          <div style="font-weight:bold; color:#145078;">${t.yesEmployed || "Yes, still employed"}</div>
+          <div style="font-size:13px; color:#16a34a;">${t.yesHelper || "Great job maintaining employment"}</div>
           <input type="radio" name="stillWorking" value="yes"
             ${formData.stillWorking === 'yes' ? 'checked' : ''}
             onchange="toggleEmployment(true)">
         </label>
 
-        <label class="radio-card" style="border-color:#fca5a5;">
-          <div style="font-weight:bold; color:#145078;">${t.noEmployed}</div>
-          <div style="font-size:13px; color:#dc2626;">${t.noHelper}</div>
+        <label class="radio-card" style="border:2px solid #fca5a5; border-radius:14px; padding:20px; text-align:center; cursor:pointer; background:#fafafa;">
+          <div style="font-weight:bold; color:#145078;">${t.noEmployed || "No longer employed"}</div>
+          <div style="font-size:13px; color:#dc2626;">${t.noHelper || "We are here to help you find another job"}</div>
           <input type="radio" name="stillWorking" value="no"
             ${formData.stillWorking === 'no' ? 'checked' : ''}
             onchange="toggleEmployment(false)">
@@ -379,12 +358,14 @@ function renderPage() {
       </div>
 
       <div id="stopMessage" style="color:#dc2626; font-weight:bold; text-align:center; margin-top:20px; ${formData.stillWorking === 'no' ? '' : 'display:none;'}">
-        ${t.stopMessage}
+        ${t.stopMessage || "You are no longer eligible to complete this survey. Please contact TASK."}
       </div>
     `;
   }
 
-  // ===== STEP 2: Contact Info =====
+  document.getElementById("mainContainer").innerHTML = html;
+}
+  // STEP 2: Contact Information
   if (page === 2) {
     const labels = {
       en: {
@@ -427,7 +408,7 @@ function renderPage() {
       for (let i = 1; i <= 120; i++) {
         let label;
         if (i < 12) {
-          label = `${i} ${lang==='es'?'mes':'month'}${i>1?(lang==='es'?'es':'s'):''}`;
+          label = `${i} ${lang==='es'?'mes':lang==='ht'?'mwa':'month'}${i>1?(lang==='es'?'es':lang==='ht'?'':'s'):''}`;
         } else {
           const years = Math.floor(i / 12);
           const rem = i % 12;
@@ -447,7 +428,7 @@ function renderPage() {
     }
 
     html = `
-      <div class="header-bar">
+      <div class="header-bar" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
         <div class="lang-select">
           🌐 <select id="langToggle" onchange="setLanguage(this.value)">
             <option value="en" ${lang === 'en' ? 'selected' : ''}>English</option>
@@ -455,9 +436,9 @@ function renderPage() {
             <option value="ht" ${lang === 'ht' ? 'selected' : ''}>Kreyòl</option>
           </select>
         </div>
-        <div class="progress">
-          <div class="step active">1</div>
-          <div class="step active">2</div>
+        <div class="progress" style="display:flex; justify-content:space-between; flex:1; margin-left:30px;">
+          <div class="step active" style="background:#145078;">1</div>
+          <div class="step active" style="background:#145078;">2</div>
           <div class="step">3</div>
           <div class="step">4</div>
         </div>
@@ -504,10 +485,7 @@ function renderPage() {
       </div>
     `;
   }
-
-  document.getElementById("survey").innerHTML = html;
-}
-  // ===== STEP 3: Monthly Documentation =====
+  // STEP 3: Monthly Documentation & Upload
   if (page === 3) {
     const labels = {
       en: {
@@ -570,7 +548,7 @@ function renderPage() {
     }[lang];
 
     html = `
-      <div class="header-bar">
+      <div class="header-bar" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
         <div class="lang-select">
           🌐 <select id="langToggle" onchange="setLanguage(this.value)">
             <option value="en" ${lang === 'en' ? 'selected' : ''}>English</option>
@@ -578,10 +556,10 @@ function renderPage() {
             <option value="ht" ${lang === 'ht' ? 'selected' : ''}>Kreyòl</option>
           </select>
         </div>
-        <div class="progress">
-          <div class="step active">1</div>
-          <div class="step active">2</div>
-          <div class="step active">3</div>
+        <div class="progress" style="display:flex; justify-content:space-between; flex:1; margin-left:30px;">
+          <div class="step active" style="background:#145078;">1</div>
+          <div class="step active" style="background:#145078;">2</div>
+          <div class="step active" style="background:#145078;">3</div>
           <div class="step">4</div>
         </div>
       </div>
@@ -635,7 +613,7 @@ function renderPage() {
       </div>
     `;
   }
-  // ===== STEP 4: Success Page =====
+  // STEP 4: Success Page
   if (page === 4) {
     const labels = {
       en: {
@@ -697,7 +675,7 @@ function renderPage() {
         <div class="highlight-box" style="text-align:left; background:#f0fdf4; border-color:#86efac;">
           <h2 style="color:#145078; margin-bottom:15px;">${labels.office}</h2>
 
-          <div class="contact-item" style="margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+          <div style="margin-bottom:10px; display:flex; align-items:center; gap:8px;">
             <span style="font-size:20px;">📍</span>
             <div>
               <div style="font-weight:bold; font-size:16px;">${labels.location}</div>
@@ -705,7 +683,7 @@ function renderPage() {
             </div>
           </div>
 
-          <div class="contact-item" style="margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+          <div style="margin-bottom:10px; display:flex; align-items:center; gap:8px;">
             <span style="font-size:20px;">📞</span>
             <div>
               <div style="font-weight:bold;">${labels.phoneLabel}</div>
@@ -713,7 +691,7 @@ function renderPage() {
             </div>
           </div>
 
-          <div class="contact-item" style="margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+          <div style="margin-bottom:10px; display:flex; align-items:center; gap:8px;">
             <span style="font-size:20px;">🕐</span>
             <div>
               <div style="font-weight:bold;">${labels.hours}</div>
@@ -722,7 +700,7 @@ function renderPage() {
             </div>
           </div>
 
-          <div class="contact-item" style="display:flex; align-items:center; gap:8px;">
+          <div style="display:flex; align-items:center; gap:8px;">
             <span style="font-size:20px;">🌐</span>
             <div>
               <div style="font-weight:bold;">${labels.online}</div>
@@ -741,16 +719,8 @@ function renderPage() {
     `;
   }
 
-  // Inject into survey container
-  document.getElementById("survey").innerHTML = html;
+  document.getElementById("mainContainer").innerHTML = html;
 }
-// ===== Language Setter =====
-function setLanguage(newLang) {
-  lang = newLang;
-  localStorage.setItem("taskLanguage", lang);
-  renderPage();
-}
-
 // ===== Employment Toggle =====
 function toggleEmployment(isEmployed) {
   formData.stillWorking = isEmployed ? "yes" : "no";
@@ -766,56 +736,59 @@ function toggleEmployment(isEmployed) {
 // ===== Save Current Step Data =====
 function saveFormData() {
   if (page === 2) {
-    formData.firstName = document.getElementById("firstName").value.trim();
-    formData.lastName = document.getElementById("lastName").value.trim();
-    formData.phone = document.getElementById("phone").value.trim();
-    formData.email = document.getElementById("email").value.trim();
-    formData.preferredContact = document.getElementById("preferredContact").value;
-    formData.monthsEmployed = document.getElementById("monthsEmployed").value;
+    formData.firstName = document.getElementById("firstName")?.value || "";
+    formData.lastName = document.getElementById("lastName")?.value || "";
+    formData.phone = document.getElementById("phone")?.value || "";
+    formData.email = document.getElementById("email")?.value || "";
+    formData.preferredContact = document.getElementById("preferredContact")?.value || "";
+    formData.monthsEmployed = document.getElementById("monthsEmployed")?.value || "";
   }
   if (page === 3) {
-    formData.q1 = document.getElementById("q1").value.trim();
-    formData.q2 = document.getElementById("q2").value.trim();
-    formData.q3 = document.getElementById("q3").value.trim();
-    formData.authorization = document.getElementById("authorization").checked;
-    const fileInput = document.getElementById("payStubInput");
-    formData.payStubs = fileInput.files ? Array.from(fileInput.files).map(f=>f.name) : [];
+    formData.q1 = document.getElementById("q1")?.value || "";
+    formData.q2 = document.getElementById("q2")?.value || "";
+    formData.q3 = document.getElementById("q3")?.value || "";
+    formData.authorization = document.getElementById("authorization")?.checked || false;
   }
 }
 
 // ===== Validation =====
 function validatePage() {
   const t = translations[lang];
+
   if (page === 1 && !formData.stillWorking) {
-    alert(t.completeRequired);
+    alert(t.completeRequired || "Please complete all required fields before continuing.");
     return false;
   }
+
   if (page === 2) {
-    if (!document.getElementById("firstName").value.trim()
-        || !document.getElementById("lastName").value.trim()
-        || !document.getElementById("phone").value.trim()
-        || !document.getElementById("email").value.trim()
-        || !document.getElementById("monthsEmployed").value) {
-      alert(t.completeRequired);
-      return false;
+    const required = ["firstName","lastName","phone","email","monthsEmployed"];
+    for (let field of required) {
+      const el = document.getElementById(field);
+      if (!el?.value.trim()) {
+        alert(t.completeRequired || "Please complete all required fields before continuing.");
+        el?.focus();
+        return false;
+      }
     }
   }
+
   if (page === 3) {
-    if (!document.getElementById("authorization").checked) {
-      alert(t.completeRequired);
-      return false;
-    }
-    const files = document.getElementById("payStubInput").files;
-    if (!files || files.length < 2) {
+    const files = document.getElementById("payStubInput")?.files || [];
+    if (files.length < 2) {
       alert(lang==="es"
-        ? "Por favor sube dos talones de pago"
+        ? "Por favor sube al menos dos talones de pago."
         : lang==="ht"
-          ? "Tanpri telechaje de fich peman"
-          : "Please upload two pay stubs"
+          ? "Tanpri telechaje omwen 2 fich peman."
+          : "Please upload at least two pay stubs."
       );
       return false;
     }
+    if (!document.getElementById("authorization")?.checked) {
+      alert(t.completeRequired || "Please complete all required fields before continuing.");
+      return false;
+    }
   }
+
   return true;
 }
 
@@ -824,19 +797,21 @@ function nextPage() {
   if (!validatePage()) return;
   saveFormData();
   page++;
-  renderPage();
+  renderSurvey();
 }
+
 function prevPage() {
+  saveFormData();
   if (page > 1) {
     page--;
-    renderPage();
+    renderSurvey();
   }
 }
 // ===== Submit Survey =====
 function submitSurvey() {
   if (!validatePage()) return;
 
-  // Prevent resubmission within 30 days
+  // Prevent resubmissions within 30 days
   const lastSubmission = localStorage.getItem("taskFormSubmitted");
   if (lastSubmission) {
     const daysSince = Math.floor((Date.now() - parseInt(lastSubmission)) / (1000*60*60*24));
@@ -859,7 +834,7 @@ function submitSurvey() {
   console.log("Form submitted:", formData);
 
   page = 4;
-  renderPage();
+  renderSurvey();
 }
 
 // ===== Phone Formatting =====
@@ -922,7 +897,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (savedLang && translations[savedLang]) {
     lang = savedLang;
   }
-  renderPage();
+  renderTutorialOverlay(); // always start with tutorial overlay
 });
 </script>
 </body>
