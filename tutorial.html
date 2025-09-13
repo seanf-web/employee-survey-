@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TASK Monthly Employment Check-In Tutorial</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+    .demo-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .demo-content {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 600px;
+      margin: 20px;
+    }
+
+    .voice-selector {
+      background: #e0f2fe;
+      border: 3px solid #0284c7;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    .btn {
+      padding: 14px 26px;
+      border: none;
+      border-radius: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 10px;
+      background: linear-gradient(135deg, #145078, #33a7b5);
+      color: white;
+      transition: all 0.2s ease;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .lang-select { display: flex; align-items: center; gap: 10px; }
+    .progress { display: flex; justify-content: space-between; flex: 1; margin-left: 30px; }
+    .step {
+      width: 50px; height: 50px; border-radius: 50%;
+      background: #ccc; color: white; display: flex;
+      align-items: center; justify-content: center;
+      font-weight: bold; font-size: 18px;
+    }
+    .step.active { background: #145078; }
+    h1,h2 { color:#145078; text-align:center; }
+    h1{ font-size:2.3em; } h2{ font-size:1.9em; margin-bottom:10px; }
+
+    label { font-weight:bold; display:block; margin:12px 0 6px; color:#333; }
+    input, select, textarea {
+      width:100%; padding:14px 16px; border:2px solid #d1d5db;
+      border-radius:14px; font-size:16px; margin-bottom:18px;
+      box-sizing:border-box; transition:all 0.2s ease;
+    }
+    input:focus,select:focus,textarea:focus {
+      border-color:#33a7b5; box-shadow:0 0 6px rgba(51,167,181,0.4);
+      outline:none;
+    }
+    textarea { min-height:100px; resize:vertical; border-radius:14px; }
+
+    .highlight-box { border:2px solid #facc15; border-radius:14px; padding:20px; margin:20px 0; background:#fefce8; }
+
+    .radio-card {
+      border:2px solid #d1d5db; border-radius:14px; padding:20px;
+      text-align:center; cursor:pointer; background:#fafafa; transition:all 0.2s ease;
+    }
+    .radio-card:hover { background:#f1f5f9; }
+    .radio-card input { margin-top:12px; transform:scale(1.3); }
+
+    .upload-box {
+      border:2px dashed #93c5fd; border-radius:14px;
+      padding:25px; text-align:center; cursor:pointer; background:#f9fafb;
+    }
+    .upload-box:hover { background:#eff6ff; }
+
+    /* Demo styling */
+    .demo-highlight {
+      animation: pulse 2s infinite;
+      border-color: #f59e0b !important;
+      background-color: #fffbeb !important;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.5) !important;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.5); }
+      50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.8); }
+      100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.5); }
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    .typing-cursor::after {
+      content: '|';
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="survey">
+      <h2 style="color: #145078; text-align: center;">Loading TASK Survey...</h2>
+    </div>
+  </div>
+
+  <!-- Demo overlay -->
+  <div id="demoOverlay" class="demo-overlay" style="display: flex;">
+    <div class="demo-content">
+      <h2 style="color: #145078; margin-bottom: 20px;">Welcome to TASK Monthly Survey</h2>
+      <p style="font-size: 18px; margin-bottom: 20px;">Would you like a guided tutorial?</p>
+      
+      <!-- VOICE SELECTOR -->
+      <div class="voice-selector">
+        <h3 style="color: #0284c7; margin-bottom: 15px;">Choose Your Tutorial Voice</h3>
+        <select id="voiceSelect" style="width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; margin-bottom: 15px;">
+          <option value="0">Loading voices...</option>
+        </select>
+        <button id="testButton" onclick="toggleVoiceTest()" style="width: 100%; padding: 12px; background: #16a34a; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;">
+          🔊 TEST THIS VOICE
+        </button>
+      </div>
+      
+      <div style="margin-bottom: 25px;">
+        <h3 style="color: #145078;">What you'll need:</h3>
+        <div style="text-align: left; display: inline-block; margin-top: 10px;">
+          <div style="margin: 8px 0;">📱 Your phone or computer</div>
+          <div style="margin: 8px 0;">💰 Your last 2 pay stubs</div>
+          <div style="margin: 8px 0;">⏰ About 5-10 minutes</div>
+        </div>
+      </div>
+      
+      <button class="btn" onclick="startTutorial()" style="font-size: 18px; padding: 16px 32px;">
+        🎬 Start Tutorial with Voice
+      </button>
+      
+      <button class="btn" onclick="skipTutorial()" style="background: #6b7280; margin-top: 10px;">
+        Skip Tutorial & Start Survey
+      </button>
+    </div>
+  </div>
+
+<script>
+let availableVoices = [];
+let selectedVoice = null;
+let isCurrentlySpeaking = false;
+let currentUtterance = null;
+let isDemoMode = false;
+let demoStep = 0;
+let demoTimeout;
+let isPaused = false;
+let page = 1;
+let formData = {};
+let lang = "en";
+
+// Simple voice names
+const maleNames = ['John', 'David', 'Michael', 'James', 'Robert', 'Chris', 'Mark', 'Paul', 'Steve', 'Daniel'];
+const femaleNames = ['Sarah', 'Emma', 'Jessica', 'Lisa', 'Maria', 'Anna', 'Kate', 'Susan', 'Amy', 'Claire'];
+
+const translations = {
+  en: {
+    continue: "Continue",
+    back: "Back",
+    submit: "Submit Monthly Report",
+    stillWorking: "Are you still employed at this TASK-assisted job? *",
+    yesEmployed: "Yes, still employed",
+    noEmployed: "No longer employed",
+    yesHelper: "Great job maintaining employment",
+    noHelper: "We are here to help you find another job",
+    completeRequired: "Please complete all required fields before continuing.",
+    stopMessage: "You are no longer eligible to complete this survey. Please contact TASK."
+  }
+};
+
+const demoSteps = [
+  {
+    page: 1,
+    message: "Alright, let's start with the first question. You'll need to select whether you're still employed at your TASK-assisted job. Since you're here taking this survey, you're probably still working, so let's click 'Yes, still employed'.",
+    action: () => {
+      page = 1;
+      renderSurveyPage();
+      setTimeout(() => {
+        const yesCard = document.querySelector('.radio-card');
+        if (yesCard) {
+          yesCard.classList.add('demo-highlight');
+          speak("Alright, let's start with the first question. You'll need to select whether you're still employed at your TASK-assisted job. Since you're here taking this survey, you're probably still working, so let's click 'Yes, still employed'.");
+        }
+      }, 1000);
+    }
+  },
+  {
+    page: 1,
+    message: "Perfect! See how the continue button appeared? That's how the survey guides you through each section. Now let's move to the next step.",
+    action: () => {
+      setTimeout(() => {
+        const radio = document.querySelector('input[value="yes"]');
+        if (radio) {
+          radio.checked = true;
+          formData.stillWorking = 'yes';
+          toggleEmployment(true);
+          clearHighlights();
+          speak("Perfect! See how the continue button appeared? That's how the survey guides you through each section. Now let's move to the next step.");
+        }
+      }, 2000);
+    }
+  },
+  {
+    page: 2,
+    message: "Now we're on step 2 where you'll enter your contact information. This helps TASK stay in touch and provide ongoing support. Let's fill out these fields with some example information.",
+    action: () => {
+      page = 2;
+      renderSurveyPage();
+      setTimeout(() => {
+        speak("Now we're on step 2 where you'll enter your contact information. This helps TASK stay in touch and provide ongoing support. Let's fill out these fields with some example information.");
+      }, 1000);
+    }
+  },
+  {
+    page: 2,
+    message: "First, let's enter a first name. I'll type 'John' as an example.",
+    action: () => {
+      setTimeout(() => {
+        const firstName = document.getElementById('firstName');
+        if (firstName) {
+          firstName.classList.add('demo-highlight');
+          speak("First, let's enter a first name. I'll type 'John' as an example.", () => {
+            typeInField(firstName, "John");
+          });
+        }
+      }, 2000);
+    }
+  },
+  {
+    page: 2,
+    message: "Now the last name. I'll add 'Smith'.",
+    action: () => {
+      setTimeout(() => {
+        clearHighlights();
+        const lastName = document.getElementById('lastName');
+        if (lastName) {
+          lastName.classList.add('demo-highlight');
+          speak("Now the last name. I'll add 'Smith'.", () => {
+            typeInField(lastName, "Smith");
+          });
+        }
+      }, 1000);
+    }
+  },
+  {
+    page: 2,
+    message: "For the phone number, watch how it formats automatically as I type the numbers.",
+    action: () => {
+      setTimeout(() => {
+        clearHighlights();
+        const phone = document.getElementById('phone');
+        if (phone) {
+          phone.classList.add('demo-highlight');
+          speak("For the phone number, watch how it formats automatically as I type the numbers.", () => {
+            typeInField(phone, "6095551234");
+          });
+        }
+      }, 1000);
+    }
+  },
+  {
+    page: 2,
+    message: "Now let's add an email address.",
+    action: () => {
+      setTimeout(() => {
+        clearHighlights();
+        const email = document.getElementById('email');
+        if (email) {
+          email.classList.add('demo-highlight');
+          speak("Now let's add an email address.", () => {
+            typeInField(email, "john.smith@email.com");
+          });
+        }
+      }, 1000);
+    }
+  },
+  {
+    page: 2,
+    message: "Finally, select how many months you've been employed through TASK. I'll choose 6 months.",
+    action: () => {
+      setTimeout(() => {
+        clearHighlights();
+        const monthsSelect = document.getElementById('monthsEmployed');
+        if (monthsSelect) {
+          monthsSelect.classList.add('demo-highlight');
+          speak("Finally, select how many months you've been employed through TASK. I'll choose 6 months.", () => {
+            monthsSelect.value = "6";
+            formData.monthsEmployed = "6";
+          });
+        }
+      }, 1000);
+    }
+  },
+  {
+    page: 3,
+    message: "Great! Now we're on step 3 where you share your feedback and upload pay stubs. This is where you tell TASK about your experience and provide proof of employment.",
+    action: () => {
+      clearHighlights();
+      page = 3;
+      renderSurveyPage();
+      setTimeout(() => {
+        speak("Great! Now we're on step 3 where you share your feedback and upload pay stubs. This is where you tell TASK about your experience and provide proof of employment.");
+      }, 1000);
+    }
+  },
+  {
+    page: 3,
+    message: "Let me fill in what has helped you stay successful in your job.",
+    action: () => {
+      setTimeout(() => {
+        const q1 = document.getElementById('q1');
+        if (q1) {
+          q1.classList.add('demo-highlight');
+          speak("Let me fill in what has helped you stay successful in your job.", () => {
+            typeInField(q1, "My manager is very supportive and the flexible schedule works well with my family needs.");
+          });
+        }
+      }, 2000);
+    }
+  },
+  {
+    page: 3,
+    message: "Now I'll describe any challenges you might be facing.",
+    action: () => {
+      setTimeout(() => {
+        clearHighlights();
+        const q2 = document.getElementById('q2');
+        if (q2) {
+          q2.classList.add('demo-highlight');
+          speak("Now I'll describe any challenges you might be facing.", () => {
+            typeInField(q2, "Transportation can be challenging on rainy days, but overall things are going well.");
+          });
+        }
+      }, 1000);
+    }
+  },
+  {
+    page: 3,
+    message: "This upload section is where you'll add photos of your two most recent pay stubs. You can either upload files from your device or take photos directly with your phone camera.",
+    action: () => {
+      setTimeout(() => {
+        clearHighlights();
+        const uploadBox = document.querySelector('.upload-box');
+        if (uploadBox) {
+          uploadBox.classList.add('demo-highlight');
+          speak("This upload section is where you'll add photos of your two most recent pay stubs. You can either upload files from your device or take photos directly with your phone camera.");
+        }
+      }, 1000);
+    }
+  },
+  {
+    page: 3,
+    message: "Finally, you need to check this authorization box to allow TASK to provide ongoing support and follow up with you.",
+    action: () => {
+      setTimeout(() => {
+        clearHighlights();
+        const auth = document.getElementById('authorization');
+        if (auth) {
+          const authContainer = auth.closest('label');
+          if (authContainer) {
+            authContainer.classList.add('demo-highlight');
+          }
+          speak("Finally, you need to check this authorization box to allow TASK to provide ongoing support and follow up with you.", () => {
+            auth.checked = true;
+            formData.authorization = true;
+          });
+        }
+      }, 2000);
+    }
+  },
+  {
+    page: 4,
+    message: "Excellent! Your survey is complete. You'll see this success page with all the contact information for the TASK employment office and details about the reward program.",
+    action: () => {
+      clearHighlights();
+      page = 4;
+      renderSurveyPage();
+      setTimeout(() => {
+        speak("Excellent! Your survey is complete. You'll see this success page with all the contact information for the TASK employment office and details about the reward program.", () => {
+          setTimeout(() => {
+            speak("That's the complete tutorial! You now know exactly how to fill out your monthly TASK survey. Click 'Exit Tutorial' when you're ready to fill out your real information.");
+          }, 3000);
+        });
+      }, 1000);
+    }
+  }
+];
+
+function loadVoices() {
+  availableVoices = speechSynthesis.getVoices();
+  
+  if (availableVoices.length === 0) {
+    setTimeout(loadVoices, 100);
+    return;
+  }
+  
+  const voiceSelect = document.getElementById('voiceSelect');
+  voiceSelect.innerHTML = '';
+  
+  const englishVoices = availableVoices.filter(voice => voice.lang.includes('en'));
+  
+  let maleIndex = 0;
+  let femaleIndex = 0;
+  
+  englishVoices.forEach((voice, index) => {
+    const option = document.createElement('option');
+    option.value = index;
+    
+    const voiceName = voice.name.toLowerCase();
+    let displayName, gender;
+    
+    if (voiceName.includes('female') || 
+        ['samantha', 'victoria', 'karen', 'zira', 'eva', 'susan', 'allison', 'ava'].some(name => voiceName.includes(name))) {
+      displayName = femaleNames[femaleIndex] || `Female Voice ${femaleIndex + 1}`;
+      gender = 'Female';
+      femaleIndex++;
+    } else if (voiceName.includes('male') || 
+               ['alex', 'daniel', 'fred', 'david', 'mark', 'tom'].some(name => voiceName.includes(name))) {
+      displayName = maleNames[maleIndex] || `Male Voice ${maleIndex + 1}`;
+      gender = 'Male';
+      maleIndex++;
+    } else {
+      if (maleIndex <= femaleIndex) {
+        displayName = maleNames[maleIndex] || `Voice ${maleIndex + 1}`;
+        gender = 'Male';
+        maleIndex++;
+      } else {
+        displayName = femaleNames[femaleIndex] || `Voice ${femaleIndex + 1}`;
+        gender = 'Female';
+        femaleIndex++;
+      }
+    }
+    
+    const icon = gender === 'Male' ? '♂️' : '♀️';
+    option.textContent = `${icon} ${displayName} (${gender})`;
+    voiceSelect.appendChild(option);
+  });
+  
+  if (englishVoices.length > 0) {
+    selectedVoice = englishVoices[0];
+  }
+}
+
+function speak(text, callback) {
+  if (isDemoMode && selectedVoice) {
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+    }
+    
+    currentUtterance = new SpeechSynthesisUtterance(text);
+    currentUtterance.voice = selectedVoice;
+    currentUtterance.rate = 0.95;
+    currentUtterance.pitch = 1.0;
+    currentUtterance.volume = 0.8;
+    
+    currentUtterance.onend = () => {
+      if (callback) callback();
+    };
+    
+    speechSynthesis.speak(currentUtterance);
+  } else if (callback) {
+    callback();
+  }
+}
+
+function toggleVoiceTest() {
+  const testButton = document.getElementById('testButton');
+  const voiceSelect = document.getElementById('voiceSelect');
+  
+  if (isCurrentlySpeaking) {
+    speechSynthesis.cancel();
+    isCurrentlySpeaking = false;
+    testButton.textContent = '🔊 TEST THIS VOICE';
+    testButton.style.background = '#16a34a';
+    return;
+  }
+  
+  const selectedIndex = parseInt(voiceSelect.value);
+  const englishVoices = availableVoices.filter(voice => voice.lang.includes('en'));
+  selectedVoice = englishVoices[selectedIndex];
+  
+  if (!selectedVoice) {
+    alert('Please select a voice first.');
+    return;
+  }
+  
+  const testText = `Hey there! I'm your friendly guide for today's TASK survey tutorial. We'll take this nice and easy, step by step. I'll walk you through everything you need to know, and it should only take about five minutes. Don't worry about a thing - I've got you covered! Ready to get started whenever you are.`;
+  
+  currentUtterance = new SpeechSynthesisUtterance(testText);
+  currentUtterance.voice = selectedVoice;
+  currentUtterance.rate = 0.95;
+  currentUtterance.pitch = 1.0;
+  currentUtterance.volume = 0.8;
+  
+  currentUtterance.onstart = () => {
+    isCurrentlySpeaking = true;
+    testButton.textContent = '⏸️ STOP VOICE';
+    testButton.style.background = '#dc2626';
+  };
+  
+  currentUtterance.onend = () => {
+    isCurrentlySpeaking = false;
+    testButton.textContent = '🔊 TEST THIS VOICE';
+    testButton.style.background = '#16a34a';
+  };
+  
+  currentUtterance.onerror = () => {
+    isCurrentlySpeaking = false;
+    testButton.textContent = '🔊 TEST THIS VOICE';
+    testButton.style.background = '#16a34a';
+  };
+  
+  speechSynthesis.speak(currentUtterance);
+}
+
+function startTutorial() {
+  const voiceSelect = document.getElementById('voiceSelect');
+  const selectedIndex = parseInt(voiceSelect.value);
+  const englishVoices = availableVoices.filter(voice => voice.lang.includes('en'));
+  selectedVoice = englishVoices[selectedIndex];
+  
+  document.getElementById('demoOverlay').style.display = 'none';
+  isDemoMode = true;
+  demoStep = 0;
+  page = 1;
+  formData = {};
+  
+  // Add demo controls
+  const controls = document.createElement('div');
+  controls.id = 'demoControls';
+  controls.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #145078;
+    color: white;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 1001;
+  `;
+  controls.innerHTML = `
+    <div style="font-weight: bold; margin-bottom: 10px;">Tutorial Controls</div>
+    <button onclick="pauseDemo()" style="background: #33a7b5; color: white; border: none; padding: 8px 16px; border-radius: 6px; margin: 3px; cursor: pointer;">⏸️ Pause</button>
+    <button onclick="nextStep()" style="background: #33a7b5; color: white; border: none; padding: 8px 16px; border-radius: 6px; margin: 3px; cursor: pointer;">⏭️ Next</button>
+    <button onclick="exitTutorial()" style="background: #dc2626; color: white; border: none; padding: 8px 16px; border-radius: 6px; margin: 3px; cursor: pointer;">⏹️ Exit</button>
+  `;
+  document.body.appendChild(controls);
+  
+  runDemoStep();
+}
+
+function runDemoStep() {
+  if (isPaused || demoStep >= demoSteps.length) return;
+  
+  const step = demoSteps[demoStep];
+  step.action();
+  
+  demoTimeout = setTimeout(() => {
+    demoStep++;
+    runDemoStep();
+  }, 8000);
+}
+
+function pauseDemo() {
+  isPaused = !isPaused;
+  const pauseBtn = document.querySelector('#demoControls button');
+  if (isPaused) {
+    clearTimeout(demoTimeout);
+    speechSynthesis.cancel();
+    pauseBtn.textContent = '▶️ Resume';
+  } else {
+    pauseBtn.textContent = '⏸️ Pause';
+    runDemoStep();
+  }
+}
+
+function nextStep() {
+  clearTimeout(demoTimeout);
+  speechSynthesis.cancel();
+  demoStep++;
+  runDemoStep();
+}
+
+function exitTutorial() {
+  isDemoMode = false;
+  clearTimeout(demoTimeout);
+  speechSynthesis.cancel();
+  const controls = document.getElementById('demoControls');
+  if (controls) controls.remove();
+  page = 1;
+  formData = {};
+  clearHighlights();
+  renderSurveyPage();
+}
+
+function skipTutorial() {
+  document.getElementById('demoOverlay').style.display = 'none';
+  page = 1;
+  renderSurveyPage();
+}
+
+function clearHighlights() {
+  document.querySelectorAll('.demo-highlight').forEach(el => {
+    el.classList.remove('demo-highlight');
+  });
+}
+
+function typeInField(element, text) {
+  if (!element) return;
+  
+  element.value = '';
+  element.classList.add('typing-cursor');
+  
+  let i = 0;
+  const typeInterval = setInterval(() => {
+    element.value += text.charAt(i);
+    
+    // Handle phone formatting
+    if (element.type === 'tel') {
+      formatPhone(element);
+    }
+    
+    i++;
+    if (i >= text.length) {
+      clearInterval(typeInterval);
+      element.classList.remove('typing-cursor');
+      setTimeout(() => {
+        clearHighlights();
+      }, 1000);
+    }
+  }, 100);
+}
+
+function renderSurveyPage() {
+  const survey = document.getElementById('survey');
+  
+  if (page === 1) {
+    survey.innerHTML = `
+      <div class="header-bar" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          🌐 <select><option>English</option></select>
+        </div>
+        <div style="display: flex; justify-content: space-between; flex: 1; margin-left: 30px;">
+          <div class="step active" style="width: 50px; height: 50px; border-radius: 50%; background: #145078; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">1</div>
+          <div class="step" style="width: 50px; height: 50px; border-radius: 50%; background: #ccc; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">2</div>
+          <div class="step" style="width: 50px; height: 50px; border-radius: 50%; background: #ccc; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">3</div>
+          <div class="step" style="width: 50px; height: 50px; border-radius: 50%; background: #ccc; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">4</div>
+        </div>
+      </div>
+      <h2 style="color:#145078; text-align:center;">Are you still employed at this TASK-assisted job? *</h2>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px;">
+        <label class="radio-card" style="border:2px solid #d1d5db; border-radius:14px; padding:20px; text-align:center; cursor:pointer; background:#fafafa; transition:all 0.2s ease;">
+          <div style="font-weight:bold; color:#145078;">Yes, still employed</div>
+          <div style="font-size:13px; color:#16a34a;">Great job maintaining employment</div>
+          <input type="radio" name="stillWorking" value="yes" onchange="toggleEmployment(true)" style="margin-top:12px; transform:scale(1.3);">
+        </label>
+        <label class="radio-card" style="border:2px solid #fca5a5; border-radius:14px; padding:20px; text-align:center; cursor:pointer; background:#fafafa; transition:all 0.2s ease;">
+          <div style="font-weight:bold; color:#145078;">No longer employed</div>
+          <div style="font-size:13px; color:#dc2626;">We are here to help you find another job</div>
+          <input type="radio" name="stillWorking" value="no" onchange="toggleEmployment(false)" style="margin-top:12px; transform:scale(1.3);">
+        </label>
+      </div>
+      <div id="continueBtn" style="text-align:right; margin-top:20px; display:none;">
+        <button class="btn" onclick="nextPage()">Continue →</button>
+      </div>
+    `;
+  } else if (page === 2) {
+    survey.innerHTML = `
+      <div class="header-bar" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; gap: 10px;">🌐 <select><option>English</option></select></div>
+        <div style="display: flex; justify-content: space-between; flex: 1; margin-left: 30px;">
+          <div class="step active" style="width: 50px; height: 50px; border-radius: 50%; background: #145078; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">1</div>
+          <div class="step active" style="width: 50px; height: 50px; border-radius: 50%; background: #145078; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">2</div>
+          <div class="step" style="width: 50px; height: 50px; border-radius: 50%; background: #ccc; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">3</div>
+          <div class="step" style="width: 50px; height: 50px; border-radius: 50%; background: #ccc; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">4</div>
+        </div>
+      </div>
+      <h2 style="color:#145078; text-align:center;">Step 2: Contact Information</h2>
+      <p>We collect your contact info so TASK can stay in touch and provide support.</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div>
+          <label style="font-weight:bold; display:block; margin:12px 0 6px; color:#333;">First Name *</label>
+          <input id="firstName" required style="width:100%; padding:14px 16px; border:2px solid #d1d5db; border-radius:14px; font-size:16px; margin-bottom:18px; box-sizing:border-box; transition:all 0.2s ease;">
+        </div>
+        <div>
+          <label style="font-weight:bold; display:block; margin:12px 0 6px; color:#333;">Last Name *</label>
+          <input id="lastName" required style="width:100%; padding:14px 16px; border:2px solid #d1d5db; border-radius:14px; font-size:16px; margin-bottom:18px; box-sizing:border-box; transition:all 0.2s ease;">
+        </div>
+        <div>
+          <label style="font-weight:bold; display:block; margin:12px 0 6px; color:#333;">Phone Number *</label>
+          <input id="phone" type="tel" required oninput="formatPhone(this)" style="width:100%; padding:14px 16px; border:2px solid #d1d5db; border-radius:14px; font-size:16px; margin-bottom:18px; box-sizing:border-box; transition:all 0.2s ease;">
+        </div>
+        <div>
+          <label style="font-weight:bold; display:block; margin:12px 0 6px; color:#333;">Email *</label>
+          <input id="email" type="email" required style="width:100%; padding:14px 16px; border:2px solid #d1d5db; border-radius:14px; font-size:16px; margin-bottom:18px; box-sizing:border-box; transition:all 0.2s ease;">
+        </div>
+      </div>
+      <label style="font-weight:bold; display:block; margin:12px 0 6px; color:#333;">Preferred Contact Method</label>
+      <select style="width:100%; padding:14px 16px; border:2px solid #d1d5db; border-radius:14px; font-size:16px; margin-bottom:18px; box-sizing:border-box;">
+        <option>Phone</option><option>Email</option><option>Text Message</option>
+      </select>
+      <div style="border:2px solid #facc15; border-radius:14px; padding:20px; margin:20px 0; background:#fefce8;">
+        <label style="font-size:18px; font-weight:bold;">How many months have you been employed through TASK's job placement program? *</label>
+        <select id="monthsEmployed" required style="width:100%; padding:14px 16px; border:2px solid #d1d5db; border-radius:14px; font-size:16px; margin-bottom:18px; box-sizing:border-box;">
+          <option value="">Select...</option>
+          <option value="6">6 months</option>
+          <option value="12">12 months (1 year)</option>
+        </select>
+      </div>
+      <div style="display:flex; justify-content:space-between;">
+        <button class="btn" onclick="prevPage()">← Back</button>
+        <button class="btn" onclick="nextPage()">Continue →</button>
+      </div>
+    `;
+  } else if (page === 3) {
+    survey.innerHTML = `
+      <div class="header-bar" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; gap: 10px;">🌐 <select><option>English</option></select></div>
+        <div style="display: flex; justify-content: space-between; flex: 1; margin-left: 30px;">
+          <div class="step active" style="width: 50px; height: 50px; border-radius: 50%; background: #145078; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">1</div>
+          <div class="step active" style="width: 50px; height: 50px; border-radius: 50%; background: #145078; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">2</div>
+          <div class="step active" style="width: 50px; height: 50px; border-radius: 50%; background: #145078; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">3</div>
+          <div class="step" style="width: 50px; height: 50px; border-radius: 50%; background: #ccc; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">4</div>
+        </div>
+      </div>
+      <h2 style="color:#145078; text-align:center;">Step 3: Monthly Documentation & Support</h2>
+      <p>Share your feedback and upload employment verification</p>
+      <div style="border:2px solid #facc15; border-radius:14px; padding:20px; margin:20px 0; background:#fefce8;">
+        <label>What has helped you stay successful in your TASK-assisted job?</label>
+        <textarea id="q1" rows="4" placeholder="Supportive management, flexible schedule, good pay..." style="width:100%; padding:14px 16px; border:2px solid #d1d5db; border-radius:14px; font-size:16px; margin-bottom:18px; box-sizing:border-box; min-height:100px; resize:vertical;"></textarea>
+      </div>
+      <div style="border:2px solid #facc15; border-radius:14px; padding:20px; margin:20px 0; background:#fefce8;">
+        <label>What ongoing challenges can TASK help you address?</label>
+        <textarea id="q2" rows="4" placeholder="Transportation, childcare, housing, financial stress..." style="width:100%; padding:14px 16px; border:2px solid #d1d5db; border-radius:14px; font-size:16px; margin-bottom:18px; box-sizing:border-box; min-height:100px; resize:vertical;"></textarea>
+      </div>
+      <div style="border:2px solid #facc15; border-radius:14px; padding:20px; margin:20px 0; background:#fefce8;">
+        <h3 style="font-size:20px; color:#145078;">Upload Your Last Two Pay Stubs *</h3>
+        <p style="font-size:16px; color:#555;">You can upload files or take photos. Please upload both stubs.</p>
+        <div class="upload-box" style="border:2px dashed #93c5fd; border-radius:14px; padding:25px; text-align:center; cursor:pointer; background:#f9fafb;">
+          <div style="font-size:38px; margin-bottom:10px;">📷 📁</div>
+          <p>Click to upload or take photos</p>
+        </div>
+      </div>
+      <div style="border:2px solid #facc15; border-radius:14px; padding:20px; margin:20px 0; background:#fefce8;">
+        <label style="display:flex; align-items:start; cursor:pointer;">
+          <input type="checkbox" id="authorization" style="margin-top:6px; margin-right:12px; transform:scale(1.2); width:auto;">
+          <div>
+            <span style="font-size:18px; font-weight:bold; color:#145078;">Authorization *</span>
+            <div style="font-size:14px; margin-top:8px; color:#145078;">
+              <div>• Contact me monthly for employment check-ins and support</div>
+              <div>• Provide information about additional resources and services</div>
+              <div>• Connect me with emergency assistance if needed</div>
+              <div>• Follow up if employment status changes</div>
+            </div>
+          </div>
+        </label>
+      </div>
+      <div style="display:flex; justify-content:space-between;">
+        <button class="btn" onclick="prevPage()">← Back</button>
+        <button class="btn" onclick="nextPage()">Submit Monthly Report</button>
+      </div>
+    `;
+  } else if (page === 4) {
+    survey.innerHTML = `
+      <div style="text-align:center;">
+        <div style="font-size:80px; margin-bottom:20px;">🎉</div>
+        <h1 style="color:#16a34a;">Monthly Report Submitted Successfully!</h1>
+        <p style="font-size:20px; color:#6b7280; margin-bottom:30px;">Thank you for your continued commitment to employment success through TASK!</p>
+
+        <div style="text-align:left; background:#f0fdf4; border:2px solid #86efac; border-radius:14px; padding:30px; margin:30px 0;">
+          <h2 style="color:#145078; margin-bottom:15px;">TASK Employment Office</h2>
+
+          <div style="margin-bottom:15px; display:flex; align-items:center; gap:12px;">
+            <span style="font-size:24px;">📍</span>
+            <div>
+              <div style="font-weight:bold; font-size:18px;">Trenton Area Soup Kitchen</div>
+              <div style="font-size:16px;">72½ Escher St, Trenton, NJ 08609</div>
+            </div>
+          </div>
+
+          <div style="margin-bottom:15px; display:flex; align-items:center; gap:12px;">
+            <span style="font-size:24px;">📞</span>
+            <div>
+              <div style="font-weight:bold; font-size:18px;">Employment Office</div>
+              <div style="font-size:16px;">609-697-6215 or 609-697-6166</div>
+            </div>
+          </div>
+
+          <div style="margin-bottom:15px; display:flex; align-items:center; gap:12px;">
+            <span style="font-size:24px;">🕐</span>
+            <div>
+              <div style="font-weight:bold; font-size:18px;">Meal Time Hours</div>
+              <div style="font-size:16px;">Mon-Fri: 10:30 AM - 1:00 PM</div>
+              <div style="font-size:16px;">Mon-Thu: 3:30 PM - 5:00 PM</div>
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span style="font-size:24px;">🌐</span>
+            <div>
+              <div style="font-weight:bold; font-size:18px;">Online</div>
+              <div style="font-size:16px;">trentonsoupkitchen.org</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align:center; background:#fff7ed; border:2px solid #fdba74; border-radius:14px; padding:25px; margin-top:20px;">
+          <div style="font-size:24px; font-weight:bold; color:#166534; margin-bottom:15px;">
+            💵 Reward Program
+          </div>
+          <p style="color:#166534; font-weight:500; font-size:18px;">Complete monthly surveys and maintain employment to earn gift card rewards! Visit our Employment Office to claim your incentive.</p>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// Toggle employment eligibility
+function toggleEmployment(isEmployed) {
+  formData.stillWorking = isEmployed ? "yes" : "no";
+  if (isEmployed) {
+    document.getElementById("continueBtn").style.display = "";
+  } else {
+    document.getElementById("continueBtn").style.display = "none";
+  }
+}
+
+// Navigation
+function nextPage() {
+  page++;
+  renderSurveyPage();
+}
+
+function prevPage() {
+  page--;
+  renderSurveyPage();
+}
+
+// Phone formatting
+function formatPhone(input) {
+  let val = input.value.replace(/\D/g, "");
+  if (val.length > 3 && val.length <= 6) {
+    input.value = `(${val.slice(0, 3)}) ${val.slice(3)}`;
+  } else if (val.length > 6) {
+    input.value = `(${val.slice(0, 3)}) ${val.slice(3, 6)}-${val.slice(6, 10)}`;
+  } else {
+    input.value = val;
+  }
+}
+
+// Stop speech when voice changes
+document.addEventListener('change', function(e) {
+  if (e.target.id === 'voiceSelect' && isCurrentlySpeaking) {
+    speechSynthesis.cancel();
+    isCurrentlySpeaking = false;
+    const testButton = document.getElementById('testButton');
+    testButton.textContent = '🔊 TEST THIS VOICE';
+    testButton.style.background = '#16a34a';
+  }
+});
+
+// Initialize
+loadVoices();
+speechSynthesis.onvoiceschanged = loadVoices;
+renderSurveyPage();
+</script>
+</body>
+</html>
