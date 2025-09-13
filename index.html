@@ -1,5 +1,3 @@
-Original survey code
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -76,9 +74,82 @@ Original survey code
     .upload-box:hover { background:#eff6ff; }
     .preview img { max-width:140px; margin:6px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
     .preview div.file-name { background:#f3f4f6; border:1px solid #d1d5db; border-radius:6px; padding:8px; margin:5px; font-size:14px; }
+
+    /* Tutorial Overlay */
+    #tutorialOverlay {
+      position: fixed;
+      top:0; left:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.7);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index: 9999;
+    }
+    #tutorialBox {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    #tutorialBox h2 {
+      color:#145078;
+      margin-bottom:20px;
+    }
+    .voice-test-btn {
+      background:#facc15;
+      color:#111;
+      border:none;
+      padding:10px 16px;
+      border-radius:8px;
+      font-weight:bold;
+      cursor:pointer;
+      margin-top:8px;
+    }
+    .voice-test-btn.playing {
+      background:#dc2626;
+      color:white;
+    }
   </style>
 </head>
 <body>
+  <div id="tutorialOverlay">
+    <div id="tutorialBox">
+      <h2>👋 Welcome to the Guided Tutorial</h2>
+      <p>Select a tutorial language and guide voice below:</p>
+
+      <div class="section">
+        <h3 style="color:#0284c7;">Choose Language</h3>
+        <select id="tutorialLang" style="width:100%; padding:10px; margin:8px 0;">
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="ht">Kreyòl</option>
+        </select>
+      </div>
+
+      <div class="section voice-section">
+        <h3 style="color:#0284c7;">Choose Your Guide</h3>
+        <select id="voiceSelect" style="width:100%; padding:10px; margin:8px 0;">
+          <option value="Sean">Sean - Steady & Reassuring</option>
+          <option value="Diani">Diani - Bright & Encouraging</option>
+          <option value="Mia">Mia - Gentle & Understanding</option>
+          <option value="Tiffany">Tiffany - Energetic & Clear</option>
+          <option value="Paul">Paul - Calm & Thoughtful</option>
+          <option value="Adam">Adam - Direct & Focused</option>
+          <option value="Frank">Frank - Supportive & Straightforward</option>
+        </select>
+        <button id="voiceTestBtn" class="voice-test-btn">🔊 TEST THIS VOICE</button>
+      </div>
+
+      <div style="margin-top:20px;">
+        <button class="btn" onclick="startTutorial()">▶️ Start Tutorial</button>
+        <button class="btn" style="background:#6b7280;" onclick="skipTutorial()">⏭️ Skip Tutorial</button>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
     <div id="survey"></div>
   </div>
@@ -126,17 +197,347 @@ const translations = {
   }
 };
 
-function setLanguage(l) {
-  lang = l;
-  localStorage.setItem("taskLanguage", l);
+// ===== Tutorial Voices =====
+const voiceData = {
+  Sean:   { gender: 'male', pitch: 1.0, rate: 1.0, intro: {
+    en: "Hey there! I'm Sean, your steady and reassuring guide. Let’s complete this survey together step by step.",
+    es: "¡Hola! Soy Sean, tu guía firme y tranquilo. Vamos a completar esta encuesta paso a paso.",
+    ht: "Bonjou! Mwen se Sean, gid ou ki konfyans. Ann konplete sondaj sa a etap pa etap."
+  }},
+  Diani:  { gender: 'female', pitch: 1.3, rate: 1.05, intro: {
+    en: "Hi! I’m Diani, excited to guide you today. I’ll make sure this feels bright and encouraging!",
+    es: "¡Hola! Soy Diani y estoy emocionada de guiarte hoy. ¡Haremos esto de forma positiva y alentadora!",
+    ht: "Bonjou! Mwen se Diani, mwen kontan pou ede w jodi a. Ann fè sa ak kè kontan ak ankourajman!"
+  }},
+  Mia:    { gender: 'female', pitch: 1.1, rate: 1.0, intro: {
+    en: "Hello, I’m Mia. I know surveys can feel like a lot, so I’ll keep this gentle and easy for you.",
+    es: "Hola, soy Mia. Sé que las encuestas pueden sentirse pesadas, así que haré que sea suave y fácil.",
+    ht: "Bonjou, mwen se Mia. Mwen konnen sondaj yo ka sanble twòp, kidonk m ap fè sa senp e fasil pou ou."
+  }},
+  Tiffany:{ gender: 'female', pitch: 1.4, rate: 1.15, intro: {
+    en: "What’s up! I’m Tiffany, here to guide you with energy. This will be quick and clear.",
+    es: "¡Hola! Soy Tiffany, y te guiaré con energía. Esto será rápido y claro.",
+    ht: "Kijan ou ye! Mwen se Tiffany, mwen la ak enèji pou ede ou. Sa ap rapid e klè."
+  }},
+  Paul:   { gender: 'male', pitch: 0.9, rate: 0.95, intro: {
+    en: "Good day, I’m Paul. Calm and thoughtful, I’ll guide you carefully through each step.",
+    es: "Buen día, soy Paul. Con calma y cuidado, te guiaré paso a paso.",
+    ht: "Bonjou, mwen se Paul. Trankil e reflechi, m ap mennen ou avèk swen."
+  }},
+  Adam:   { gender: 'male', pitch: 1.0, rate: 1.05, intro: {
+    en: "Hey! I’m Adam, direct and focused. Let’s get this survey done together.",
+    es: "¡Hola! Soy Adam, directo y enfocado. Vamos a completar esta encuesta juntos.",
+    ht: "Bonjou! Mwen se Adam, dirèk e konsantre. Ann fini sondaj sa ansanm."
+  }},
+  Frank:  { gender: 'male', pitch: 0.95, rate: 1.0, intro: {
+    en: "Hi, I’m Frank. I’ll keep this straightforward and supportive as we move through the survey.",
+    es: "Hola, soy Frank. Mantendré esto claro y con apoyo mientras avanzamos en la encuesta.",
+    ht: "Bonjou, mwen se Frank. M ap fè bagay yo klè e ak sipò pandan n ap fè sondaj la."
+  }}
+};
+let availableVoices = [];
+let isCurrentlySpeaking = false;
+
+// Load browser voices when available
+function loadVoices() {
+  availableVoices = speechSynthesis.getVoices();
+}
+speechSynthesis.onvoiceschanged = loadVoices;
+
+// Test selected voice intro
+function testVoice() {
+  const testBtn = document.getElementById('voiceTestBtn');
+  const voiceSelect = document.getElementById('voiceSelect');
+  const tutorialLang = document.getElementById('tutorialLang')?.value || 'en';
+  const selected = voiceSelect.value;
+
+  if (isCurrentlySpeaking) {
+    speechSynthesis.cancel();
+    isCurrentlySpeaking = false;
+    testBtn.textContent = '🔊 TEST THIS VOICE';
+    testBtn.classList.remove('playing');
+    return;
+  }
+
+  // Get intro text for chosen voice + language
+  const introText = voiceData[selected]?.intro[tutorialLang] || "Testing this voice...";
+
+  const utterance = new SpeechSynthesisUtterance(introText);
+
+  // Pick best-matching voice
+  if (availableVoices.length > 0) {
+    const config = voiceData[selected] || {};
+    utterance.voice = availableVoices.find(v => 
+      (config.gender === 'male' && v.name.toLowerCase().includes('male')) ||
+      (config.gender === 'female' && v.name.toLowerCase().includes('female'))
+    ) || availableVoices[0];
+  }
+
+  // Adjust pitch, rate, volume
+  utterance.rate = voiceData[selected]?.rate || 1.0;
+  utterance.pitch = voiceData[selected]?.pitch || 1.0;
+  utterance.volume = 0.9;
+
+  utterance.onstart = () => {
+    isCurrentlySpeaking = true;
+    testBtn.textContent = '⏹️ STOP VOICE';
+    testBtn.classList.add('playing');
+  };
+
+  utterance.onend = () => {
+    isCurrentlySpeaking = false;
+    testBtn.textContent = '🔊 TEST THIS VOICE';
+    testBtn.classList.remove('playing');
+  };
+
+  speechSynthesis.speak(utterance);
+}
+
+// Hook test button
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("voiceTestBtn").addEventListener("click", testVoice);
+});
+function getTutorialSteps() {
+  const steps = [
+    {
+      page: 1,
+      selector: '.radio-card:first-child',
+      text: {
+        en: "Let’s begin with the first question. Since you’re here, you’re probably still employed. Select ‘Yes, still employed’.",
+        es: "Comencemos con la primera pregunta. Como estás aquí, probablemente sigues empleado. Selecciona ‘Sí, sigo empleado’.",
+        ht: "Ann kòmanse ak premye kesyon an. Depi ou la, ou pwobableman toujou gen travay. Chwazi ‘Wi, toujou ap travay’."
+      },
+      action: () => {
+        setTimeout(() => {
+          const radio = document.querySelector('input[value="yes"]');
+          if (radio) {
+            radio.checked = true;
+            formData.stillWorking = "yes";
+            toggleEmployment(true);
+          }
+        }, 600);
+      }
+    },
+    {
+      page: 1,
+      selector: '#continueBtn',
+      text: {
+        en: "Perfect! See how the Continue button appeared? Click it to move on.",
+        es: "¡Perfecto! ¿Ves cómo apareció el botón Continuar? Haz clic para continuar.",
+        ht: "Pafè! Ou wè kijan bouton Kontinye a parèt? Klike sou li pou kontinye."
+      },
+      action: () => {
+        setTimeout(() => nextPage(), 1200);
+      }
+    },
+    {
+      page: 2,
+      selector: '#firstName',
+      text: {
+        en: "Now we’re at Step 2 for your contact info. Let’s start by entering a first name.",
+        es: "Ahora estamos en el Paso 2 para tu información de contacto. Ingresemos un nombre.",
+        ht: "Kounye a nou nan Etap 2 pou enfòmasyon kontak ou. Ann mete yon non."
+      },
+      action: () => {
+        setTimeout(() => {
+          const field = document.getElementById('firstName');
+          if (field) field.value = "John";
+        }, 800);
+      }
+    },
+    {
+      page: 2,
+      selector: '#lastName',
+      text: {
+        en: "Next, type a last name.",
+        es: "Ahora escribe un apellido.",
+        ht: "Kounye a mete yon siyati."
+      },
+      action: () => {
+        setTimeout(() => {
+          const field = document.getElementById('lastName');
+          if (field) field.value = "Smith";
+        }, 800);
+      }
+    },
+    {
+      page: 2,
+      selector: '.btn:last-child',
+      text: {
+        en: "Good! Click Continue to go to Step 3.",
+        es: "¡Bien! Haz clic en Continuar para ir al Paso 3.",
+        ht: "Bon! Klike sou Kontinye pou ale nan Etap 3."
+      },
+      action: () => {
+        setTimeout(() => nextPage(), 1200);
+      }
+    },
+    {
+      page: 3,
+      selector: '#q1',
+      text: {
+        en: "Step 3 is about your experience. First, describe wha
+let selectedVoice = null;
+
+// Speak helper using chosen guide + language
+function speak(text, callback) {
+  if (!speechSynthesis) return callback?.();
+
+  if (speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+  }
+
+  const voiceSelect = document.getElementById('voiceSelect');
+  const tutorialLang = document.getElementById('tutorialLang')?.value || 'en';
+  const chosen = voiceSelect.value;
+  const config = voiceData[chosen] || voiceData.Sean;
+
+  const utterance = new SpeechSynthesisUtterance(text);
+
+  // Assign actual browser voice if available
+  if (availableVoices.length > 0) {
+    utterance.voice = availableVoices.find(v =>
+      (config.gender === 'male' && v.name.toLowerCase().includes('male')) ||
+      (config.gender === 'female' && v.name.toLowerCase().includes('female'))
+    ) || availableVoices[0];
+  }
+
+  // Apply per-voice tuning
+  utterance.rate = config.rate || 1.0;
+  utterance.pitch = config.pitch || 1.0;
+  utterance.volume = 0.9;
+
+  utterance.onend = () => {
+    if (callback) callback();
+  };
+
+  speechSynthesis.speak(utterance);
+}
+
+// Tutorial runner
+let isDemoMode = false;
+let demoStep = 0;
+
+function runTutorialStep() {
+  if (!isDemoMode) return;
+
+  const steps = getTutorialSteps();
+  if (demoStep >= steps.length) {
+    const voiceSelect = document.getElementById('voiceSelect');
+    const tutorialLang = document.getElementById('tutorialLang')?.value || 'en';
+    const chosen = voiceSelect.value;
+    const config = voiceData[chosen] || voiceData.Sean;
+
+    const closingText = {
+      en: "Tutorial completed! You can now fill in your real information.",
+      es: "¡Tutorial completado! Ahora puedes ingresar tu información real.",
+      ht: "Tutorial fini! Kounye a ou ka ranpli enfòmasyon reyèl ou."
+    }[tutorialLang];
+
+    speak(closingText, exitTutorial);
+    return;
+  }
+
+  const step = steps[demoStep];
+
+  // Make sure we’re on the right page
+  if (page !== step.page) {
+    page = step.page;
+    renderPage();
+    setTimeout(() => runTutorialStep(), 500);
+    return;
+  }
+
+  // Highlight element
+  const element = document.querySelector(step.selector);
+  if (element) {
+    clearHighlights();
+    element.style.border = '3px solid #f59e0b';
+    element.style.boxShadow = '0 0 15px rgba(245,158,11,0.6)';
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Speak translated text
+    const tutorialLang = document.getElementById('tutorialLang')?.value || 'en';
+    const stepText = step.text[tutorialLang] || step.text.en;
+
+    speak(stepText, () => {
+      step.action();
+      setTimeout(() => {
+        demoStep++;
+        runTutorialStep();
+      }, 1500); // pacing
+    });
+  } else {
+    demoStep++;
+    runTutorialStep();
+  }
+}
+
+// Clear highlights
+function clearHighlights() {
+  document.querySelectorAll('*').forEach(el => {
+    el.style.border = '';
+    el.style.boxShadow = '';
+  });
+}
+// Start Tutorial
+function startTutorial() {
+  const tutorialLang = document.getElementById('tutorialLang').value;
+  const voiceSelect = document.getElementById('voiceSelect').value;
+
+  // Save language
+  lang = tutorialLang;
+  localStorage.setItem("taskLanguage", lang);
+
+  // Reset state
+  isDemoMode = true;
+  demoStep = 0;
+  page = 1;
+  formData = {};
+
+  renderPage();
+  document.getElementById("tutorialOverlay").style.display = "none";
+
+  // Intro line
+  const introText = voiceData[voiceSelect]?.intro[tutorialLang] 
+    || voiceData.Sean.intro.en;
+
+  setTimeout(() => {
+    speak(introText, () => {
+      setTimeout(() => runTutorialStep(), 800);
+    });
+  }, 500);
+}
+
+// Exit Tutorial (end of walkthrough or user cancels)
+function exitTutorial() {
+  isDemoMode = false;
+  speechSynthesis.cancel();
+  clearHighlights();
+
+  // Reset survey to normal
+  page = 1;
+  formData = {};
   renderPage();
 }
 
+// Skip Tutorial (jump straight to survey)
+function skipTutorial() {
+  const tutorialLang = document.getElementById('tutorialLang').value;
+  lang = tutorialLang;
+  localStorage.setItem("taskLanguage", lang);
+
+  isDemoMode = false;
+  document.getElementById("tutorialOverlay").style.display = "none";
+  page = 1;
+  formData = {};
+  renderPage();
+}
 function renderPage() {
   const t = translations[lang];
   let html = "";
 
-  // Step 1: Employment Status FIRST
+  // ===== STEP 1: Employment Status =====
   if (page === 1) {
     html = `
       <div class="header-bar">
@@ -184,7 +585,8 @@ function renderPage() {
       </div>
     `;
   }
-  // Step 2: Contact Information
+
+  // ===== STEP 2: Contact Info =====
   if (page === 2) {
     const labels = {
       en: {
@@ -304,7 +706,10 @@ function renderPage() {
       </div>
     `;
   }
-  // Step 3: Survey and Upload
+
+  document.getElementById("survey").innerHTML = html;
+}
+  // ===== STEP 3: Monthly Documentation =====
   if (page === 3) {
     const labels = {
       en: {
@@ -432,7 +837,7 @@ function renderPage() {
       </div>
     `;
   }
-  // Step 4: Success Page (no resubmit option)
+  // ===== STEP 4: Success Page =====
   if (page === 4) {
     const labels = {
       en: {
@@ -537,12 +942,13 @@ function renderPage() {
       </div>
     `;
   }
+
+  // finally inject page HTML
   document.getElementById("survey").innerHTML = html;
 }
-
 // ===== Helpers =====
 
-// Toggle employment eligibility
+// Toggle employment eligibility (Step 1)
 function toggleEmployment(isEmployed) {
   formData.stillWorking = isEmployed ? "yes" : "no";
   if (isEmployed) {
@@ -554,7 +960,7 @@ function toggleEmployment(isEmployed) {
   }
 }
 
-// Save form data
+// Save form data across pages
 function saveFormData() {
   if (page === 2) {
     formData.firstName = document.getElementById("firstName")?.value || "";
@@ -572,7 +978,7 @@ function saveFormData() {
   }
 }
 
-// Validation
+// Validate required fields
 function validatePage() {
   const t = translations[lang];
 
@@ -621,8 +1027,7 @@ function prevPage() {
   page--;
   renderPage();
 }
-
-// Submit
+// ===== Submit Handler =====
 function submitSurvey() {
   if (!validatePage()) return;
 
@@ -645,6 +1050,7 @@ function submitSurvey() {
   formData.submissionId = "TASK_" + Date.now();
   formData.timestamp = new Date().toISOString();
 
+  // store submission marker
   localStorage.setItem("taskFormSubmitted", Date.now().toString());
   console.log("Form submitted:", formData);
 
@@ -652,7 +1058,7 @@ function submitSurvey() {
   renderPage();
 }
 
-// Phone formatting
+// ===== Phone formatting =====
 function formatPhone(input) {
   let val = input.value.replace(/\D/g, "");
   if (val.length > 3 && val.length <= 6) {
@@ -664,7 +1070,7 @@ function formatPhone(input) {
   }
 }
 
-// File preview
+// ===== File Preview =====
 function previewFile(input, previewId) {
   const preview = document.getElementById(previewId);
   preview.innerHTML = "";
@@ -705,4 +1111,3 @@ renderPage();
 </script>
 </body>
 </html>
-
