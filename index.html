@@ -1,3 +1,5 @@
+Original survey code
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,6 +28,8 @@
       justify-content: space-between;
       margin-bottom: 20px;
     }
+    .lang-select { display: flex; align-items: center; gap: 10px; }
+    .progress { display: flex; justify-content: space-between; flex: 1; margin-left: 30px; }
     .step {
       width: 50px; height: 50px; border-radius: 50%;
       background: #ccc; color: white; display: flex;
@@ -56,6 +60,8 @@
     }
     .btn:hover { transform:translateY(-2px); box-shadow:0 4px 10px rgba(0,0,0,0.2); }
 
+    .highlight-box { border:2px solid #facc15; border-radius:14px; padding:20px; margin:20px 0; background:#fefce8; }
+
     .radio-card {
       border:2px solid #d1d5db; border-radius:14px; padding:20px;
       text-align:center; cursor:pointer; background:#fafafa; transition:all 0.2s ease;
@@ -70,57 +76,17 @@
     .upload-box:hover { background:#eff6ff; }
     .preview img { max-width:140px; margin:6px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
     .preview div.file-name { background:#f3f4f6; border:1px solid #d1d5db; border-radius:6px; padding:8px; margin:5px; font-size:14px; }
-
-    /* Demo highlight */
-    .demo-highlight {
-      animation: pulse 2s infinite;
-      border-color: #f59e0b !important;
-      background-color: #fffbeb !important;
-      box-shadow: 0 0 20px rgba(245, 158, 11, 0.5) !important;
-    }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.5); }
-      50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.8); }
-      100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.5); }
-    }
   </style>
 </head>
 <body>
   <div class="container">
     <div id="survey"></div>
   </div>
-
-  <!-- Demo Overlay -->
-  <div id="demoOverlay" class="demo-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; z-index:1000;">
-    <div class="demo-content" style="background:white; padding:40px; border-radius:20px; max-width:600px; text-align:center;">
-      <h2 style="color:#145078; margin-bottom:20px;">Welcome to TASK Monthly Survey</h2>
-      <p style="font-size:18px; margin-bottom:20px;">Would you like a guided tutorial?</p>
-
-      <!-- Tutorial Mode -->
-      <div class="voice-selector" style="margin-bottom:20px;">
-        <h3 style="color:#0284c7; margin-bottom:10px;">Tutorial Style</h3>
-        <label style="display:flex; align-items:center; margin:6px 0;">
-          <input type="radio" name="tutorialMode" value="auto" checked style="margin-right:8px;"> Auto-Advance (plays full demo)
-        </label>
-        <label style="display:flex; align-items:center; margin:6px 0;">
-          <input type="radio" name="tutorialMode" value="pause" style="margin-right:8px;"> Pause Mode (you click through)
-        </label>
-      </div>
-
-      <button class="btn" onclick="startTutorial()">🎬 Start Tutorial</button>
-      <button class="btn" style="background:#6b7280; margin-top:10px;" onclick="skipTutorial()">Skip Tutorial & Start Survey</button>
-    </div>
-  </div>
 <script>
 let page = 1;
 let formData = {};
 let lang = "en";
-let isDemoMode = false;
-let tutorialMode = "auto";
-let demoStep = 0;
-let demoTimeout;
 
-/* ===== Translations ===== */
 const translations = {
   en: {
     continue: "Continue",
@@ -160,27 +126,25 @@ const translations = {
   }
 };
 
-/* ===== Language Toggle ===== */
 function setLanguage(l) {
   lang = l;
   localStorage.setItem("taskLanguage", l);
   renderPage();
 }
 
-/* ===== Render Page ===== */
 function renderPage() {
   const t = translations[lang];
   let html = "";
 
-  /* Step 1: Employment Status */
+  // Step 1: Employment Status FIRST
   if (page === 1) {
     html = `
       <div class="header-bar">
         <div class="lang-select">
           🌐 <select id="langToggle" onchange="setLanguage(this.value)">
-            <option value="en" ${lang==='en'?'selected':''}>English</option>
-            <option value="es" ${lang==='es'?'selected':''}>Español</option>
-            <option value="ht" ${lang==='ht'?'selected':''}>Kreyòl</option>
+            <option value="en" ${lang === 'en' ? 'selected' : ''}>English</option>
+            <option value="es" ${lang === 'es' ? 'selected' : ''}>Español</option>
+            <option value="ht" ${lang === 'ht' ? 'selected' : ''}>Kreyòl</option>
           </select>
         </div>
         <div class="progress">
@@ -197,34 +161,98 @@ function renderPage() {
         <label class="radio-card">
           <div style="font-weight:bold; color:#145078;">${t.yesEmployed}</div>
           <div style="font-size:13px; color:#16a34a;">${t.yesHelper}</div>
-          <input type="radio" name="stillWorking" value="yes" ${formData.stillWorking==='yes'?'checked':''} onchange="toggleEmployment(true)">
+          <input type="radio" name="stillWorking" value="yes"
+            ${formData.stillWorking === 'yes' ? 'checked' : ''}
+            onchange="toggleEmployment(true)">
         </label>
+
         <label class="radio-card" style="border-color:#fca5a5;">
           <div style="font-weight:bold; color:#145078;">${t.noEmployed}</div>
           <div style="font-size:13px; color:#dc2626;">${t.noHelper}</div>
-          <input type="radio" name="stillWorking" value="no" ${formData.stillWorking==='no'?'checked':''} onchange="toggleEmployment(false)">
+          <input type="radio" name="stillWorking" value="no"
+            ${formData.stillWorking === 'no' ? 'checked' : ''}
+            onchange="toggleEmployment(false)">
         </label>
       </div>
 
-      <div id="continueBtn" style="text-align:right; margin-top:20px; ${formData.stillWorking==='yes'?'':'display:none;'}">
+      <div id="continueBtn" style="text-align:right; margin-top:20px; ${formData.stillWorking === 'yes' ? '' : 'display:none;'}">
         <button class="btn" onclick="nextPage()">${t.continue} →</button>
       </div>
 
-      <div id="stopMessage" style="color:#dc2626; font-weight:bold; text-align:center; margin-top:20px; ${formData.stillWorking==='no'?'':'display:none;'}">
+      <div id="stopMessage" style="color:#dc2626; font-weight:bold; text-align:center; margin-top:20px; ${formData.stillWorking === 'no' ? '' : 'display:none;'}">
         ${t.stopMessage}
       </div>
     `;
   }
-
-  /* Step 2: Contact Info */
+  // Step 2: Contact Information
   if (page === 2) {
+    const labels = {
+      en: {
+        title: "Step 2: Contact Information",
+        blurb: "We collect your contact info so TASK can stay in touch and provide support.",
+        firstName: "First Name *",
+        lastName: "Last Name *",
+        phone: "Phone Number *",
+        email: "Email *",
+        preferred: "Preferred Contact Method",
+        months: "How many months have you been employed through TASK's job placement program? *",
+        options: ["Phone","Email","Text Message"]
+      },
+      es: {
+        title: "Paso 2: Información de Contacto",
+        blurb: "Recopilamos tu información de contacto para que TASK pueda mantenerse en contacto y brindarte apoyo.",
+        firstName: "Nombre *",
+        lastName: "Apellido *",
+        phone: "Número de Teléfono *",
+        email: "Correo Electrónico *",
+        preferred: "Método de Contacto Preferido",
+        months: "¿Cuántos meses has estado empleado a través del programa de colocación laboral de TASK? *",
+        options: ["Teléfono","Correo Electrónico","Mensaje de Texto"]
+      },
+      ht: {
+        title: "Etap 2: Enfòmasyon Kontak",
+        blurb: "Nou kolekte enfòmasyon kontak ou pou TASK ka rete nan kontak ak ba ou sipò.",
+        firstName: "Non *",
+        lastName: "Siyati *",
+        phone: "Nimewo Telefòn *",
+        email: "Imèl *",
+        preferred: "Metòd Kontak ou pi pito",
+        months: "Konbyen mwa ou te gen travay nan pwogram travay TASK la? *",
+        options: ["Telefòn","Imèl","Mesaj Tèks"]
+      }
+    }[lang];
+
+    function buildMonthOptions() {
+      let opts = "";
+      for (let i = 1; i <= 120; i++) {
+        let label;
+        if (i < 12) {
+          label = `${i} ${lang==='es'?'mes':'month'}${i>1?(lang==='es'?'es':'s'):''}`;
+        } else {
+          const years = Math.floor(i / 12);
+          const rem = i % 12;
+          let yearLabel = years + " " + (lang==='es' ? (years>1?"años":"año") : lang==='ht' ? (years>1?"ane":"ane") : (years>1?"years":"year"));
+          if (rem > 0) {
+            yearLabel += lang==='es'
+              ? `, ${rem} mes${rem>1?"es":""}`
+              : lang==='ht'
+                ? `, ${rem} mwa`
+                : `, ${rem} month${rem>1?"s":""}`;
+          }
+          label = `${i} ${lang==='es'?"meses":lang==='ht'?"mwa":"months"} (${yearLabel})`;
+        }
+        opts += `<option value="${i}" ${formData.monthsEmployed==i?'selected':''}>${label}</option>`;
+      }
+      return opts;
+    }
+
     html = `
       <div class="header-bar">
         <div class="lang-select">
           🌐 <select id="langToggle" onchange="setLanguage(this.value)">
-            <option value="en" ${lang==='en'?'selected':''}>English</option>
-            <option value="es" ${lang==='es'?'selected':''}>Español</option>
-            <option value="ht" ${lang==='ht'?'selected':''}>Kreyòl</option>
+            <option value="en" ${lang === 'en' ? 'selected' : ''}>English</option>
+            <option value="es" ${lang === 'es' ? 'selected' : ''}>Español</option>
+            <option value="ht" ${lang === 'ht' ? 'selected' : ''}>Kreyòl</option>
           </select>
         </div>
         <div class="progress">
@@ -235,57 +263,116 @@ function renderPage() {
         </div>
       </div>
 
-      <h2>${lang==='es'?'Paso 2: Información de Contacto':lang==='ht'?'Etap 2: Enfòmasyon Kontak':'Step 2: Contact Information'}</h2>
-      <p>${lang==='es'?'Recopilamos tu información para ayudarte.':lang==='ht'?'Nou kolekte enfòmasyon ou pou ede w.':'We collect your info so TASK can support you.'}</p>
+      <h2>${labels.title}</h2>
+      <p class="blurb">${labels.blurb}</p>
 
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-        <div><label>First Name *</label><input id="firstName" value="${formData.firstName||''}"></div>
-        <div><label>Last Name *</label><input id="lastName" value="${formData.lastName||''}"></div>
-        <div><label>Phone *</label><input id="phone" type="tel" value="${formData.phone||''}" oninput="formatPhone(this)"></div>
-        <div><label>Email *</label><input id="email" type="email" value="${formData.email||''}"></div>
+      <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div>
+          <label>${labels.firstName}</label>
+          <input id="firstName" required value="${formData.firstName || ''}">
+        </div>
+        <div>
+          <label>${labels.lastName}</label>
+          <input id="lastName" required value="${formData.lastName || ''}">
+        </div>
+        <div>
+          <label>${labels.phone}</label>
+          <input id="phone" type="tel" oninput="formatPhone(this)" required value="${formData.phone || ''}">
+        </div>
+        <div>
+          <label>${labels.email}</label>
+          <input id="email" type="email" required value="${formData.email || ''}">
+        </div>
       </div>
 
-      <label>${lang==='es'?'Método de Contacto Preferido':lang==='ht'?'Metòd Kontak':'Preferred Contact Method'}</label>
+      <label>${labels.preferred}</label>
       <select id="preferredContact">
-        <option ${formData.preferredContact==='Phone'?'selected':''}>Phone</option>
-        <option ${formData.preferredContact==='Email'?'selected':''}>Email</option>
-        <option ${formData.preferredContact==='Text Message'?'selected':''}>Text Message</option>
+        ${labels.options.map(o=>`<option value="${o}" ${formData.preferredContact===o?'selected':''}>${o}</option>`).join("")}
       </select>
 
-      <label>${lang==='es'?'Meses empleados':lang==='ht'?'Mwa travay':'Months employed'} *</label>
-      <select id="monthsEmployed">
-        <option value="">Select...</option>
-        <option value="6" ${formData.monthsEmployed==='6'?'selected':''}>6</option>
-        <option value="12" ${formData.monthsEmployed==='12'?'selected':''}>12</option>
-      </select>
+      <div class="highlight-box">
+        <label style="font-size:18px; font-weight:bold;">${labels.months}</label>
+        <select id="monthsEmployed" required>
+          <option value="">${lang==='es'?'Seleccionar...':lang==='ht'?'Chwazi...':'Select...'}</option>
+          ${buildMonthOptions()}
+        </select>
+      </div>
 
       <div style="display:flex; justify-content:space-between;">
-        <button class="btn" onclick="prevPage()">← ${t.back}</button>
-        <button class="btn" onclick="nextPage()">${t.continue} →</button>
+        <button class="btn" onclick="prevPage()">← ${translations[lang].back}</button>
+        <button class="btn" onclick="nextPage()">${translations[lang].continue} →</button>
       </div>
     `;
   }
-
-  document.getElementById("survey").innerHTML = html;
-}
-</script>
-<script>
-/* ===== Render Continued ===== */
-function renderPage() {
-  const t = translations[lang];
-  let html = "";
-
-  /* Step 1 and 2 already above... */
-
-  /* Step 3: Feedback + Pay Stub Upload */
+  // Step 3: Survey and Upload
   if (page === 3) {
+    const labels = {
+      en: {
+        title: "Step 3: Monthly Documentation & Support",
+        blurb: "Share your feedback and upload employment verification",
+        q1: "What has helped you stay successful in your TASK-assisted job?",
+        q1ph: "Supportive management, flexible schedule, good pay...",
+        q2: "What ongoing challenges can TASK help you address?",
+        q2ph: "Transportation, childcare, housing, financial stress...",
+        q3: "How has TASK support made a difference in your employment journey?",
+        q3ph: "Job search assistance, interview prep, work clothes...",
+        uploadTitle: "Upload Your Last Two Pay Stubs *",
+        uploadDesc: "You can upload files or take photos. Please upload both stubs.",
+        auth: "Authorization *",
+        authList: [
+          "Contact me monthly for employment check-ins and support",
+          "Provide information about additional resources and services",
+          "Connect me with emergency assistance if needed",
+          "Follow up if employment status changes"
+        ]
+      },
+      es: {
+        title: "Paso 3: Documentación Mensual y Apoyo",
+        blurb: "Comparte tus comentarios y sube la verificación de empleo",
+        q1: "¿Qué te ha ayudado a mantenerte exitoso en tu trabajo asistido por TASK?",
+        q1ph: "Gerencia solidaria, horario flexible, buen pago...",
+        q2: "¿Qué desafíos continuos puede ayudarte TASK a abordar?",
+        q2ph: "Transporte, cuidado infantil, vivienda, estrés financiero...",
+        q3: "¿Cómo el apoyo de TASK ha marcado la diferencia en tu trayectoria laboral?",
+        q3ph: "Asistencia en búsqueda de empleo, preparación de entrevistas, ropa de trabajo...",
+        uploadTitle: "Sube Tus Últimos Dos Talones de Pago *",
+        uploadDesc: "Puedes subir archivos o tomar fotos. Por favor sube ambos talones.",
+        auth: "Autorización *",
+        authList: [
+          "Contactarme mensualmente para verificaciones de empleo y apoyo",
+          "Proporcionar información sobre recursos y servicios adicionales",
+          "Conectarme con asistencia de emergencia si es necesario",
+          "Dar seguimiento si cambia mi estado laboral"
+        ]
+      },
+      ht: {
+        title: "Etap 3: Dokiman Chak Mwa ak Sipò",
+        blurb: "Pataje kòmantè ou yo epi telechaje verifikasyon travay",
+        q1: "Kisa ki te ede ou rete siksè nan travay TASK te ede ou jwenn lan?",
+        q1ph: "Jesyon ki sipòte, orè fleksib, bon salè...",
+        q2: "Ki defi k ap kontinye TASK ka ede w rezoud?",
+        q2ph: "Pwoblèm transpò, swen timoun, lojman, estrès finansye...",
+        q3: "Kijan sipò TASK fè yon diferans nan vwayaj travay ou?",
+        q3ph: "Asistans pou rechèch travay, preparasyon entèvyou, rad travay...",
+        uploadTitle: "Telechaje 2 Dènye Fich Peman Ou *",
+        uploadDesc: "Ou ka telechaje fichye oswa pran foto. Tanpri telechaje tou de.",
+        auth: "Otorizasyon *",
+        authList: [
+          "Kontakte m chak mwa pou verifye travay ak sipò",
+          "Bay enfòmasyon sou resous ak sèvis adisyonèl",
+          "Konekte m ak asistans ijans si sa nesesè",
+          "Fè swivi si estati travay chanje"
+        ]
+      }
+    }[lang];
+
     html = `
       <div class="header-bar">
         <div class="lang-select">
           🌐 <select id="langToggle" onchange="setLanguage(this.value)">
-            <option value="en" ${lang==='en'?'selected':''}>English</option>
-            <option value="es" ${lang==='es'?'selected':''}>Español</option>
-            <option value="ht" ${lang==='ht'?'selected':''}>Kreyòl</option>
+            <option value="en" ${lang === 'en' ? 'selected' : ''}>English</option>
+            <option value="es" ${lang === 'es' ? 'selected' : ''}>Español</option>
+            <option value="ht" ${lang === 'ht' ? 'selected' : ''}>Kreyòl</option>
           </select>
         </div>
         <div class="progress">
@@ -296,324 +383,326 @@ function renderPage() {
         </div>
       </div>
 
-      <h2>${lang==='es'?'Paso 3: Tu Experiencia':lang==='ht'?'Etap 3: Eksperyans Ou':'Step 3: Your Experience'}</h2>
-      <p>${lang==='es'?'Cuéntanos tu historia para mejorar.':lang==='ht'?'Rakonte nou istwa ou pou amelyore.':'Tell us your story so we can help better.'}</p>
+      <h2>${labels.title}</h2>
+      <p class="blurb">${labels.blurb}</p>
 
-      <label>${lang==='es'?'¿Qué te ha ayudado a mantenerte en tu trabajo?':lang==='ht'?'Kisa ki ede w kenbe travay la?':'What has helped you stay in your job?'}</label>
-      <textarea id="q1">${formData.q1||''}</textarea>
-
-      <label>${lang==='es'?'¿Qué desafíos enfrentas que TASK podría ayudarte a superar?':lang==='ht'?'Ki defi w ap fè fas ak yo ke TASK ka ede w?':'What challenges do you face that TASK could help with?'}</label>
-      <textarea id="q2">${formData.q2||''}</textarea>
-
-      <label>${lang==='es'?'¿Cómo ha hecho TASK una diferencia para ti?':lang==='ht'?'Kijan TASK te fè yon diferans pou ou?':'How has TASK made a difference for you?'}</label>
-      <textarea id="q3">${formData.q3||''}</textarea>
-
-      <label>${lang==='es'?'Sube tus dos últimos talones de pago':lang==='ht'?'Telechaje de dènye fich peman ou yo':'Upload your last two pay stubs'}</label>
-      <div class="upload-box" onclick="document.getElementById('payStubInput').click()">
-        📤 ${lang==='es'?'Haz clic para subir':'Click to upload'}
+      <div class="highlight-box">
+        <label>${labels.q1}</label>
+        <textarea id="q1" rows="4" placeholder="${labels.q1ph}">${formData.q1 || ''}</textarea>
       </div>
-      <input type="file" id="payStubInput" multiple accept="image/*,.pdf" style="display:none" onchange="previewFiles(this)">
-      <div class="preview" id="payStubPreview"></div>
 
-      <label style="display:flex; align-items:center; margin-top:20px;">
-        <input type="checkbox" id="authorization" ${formData.authorization?'checked':''} style="margin-right:10px;">
-        ${lang==='es'?'Autorizo que TASK use esta información':lang==='ht'?'Mwen otorize TASK itilize enfòmasyon sa yo':'I authorize TASK to use this information'}
-      </label>
+      <div class="highlight-box">
+        <label>${labels.q2}</label>
+        <textarea id="q2" rows="4" placeholder="${labels.q2ph}">${formData.q2 || ''}</textarea>
+      </div>
 
-      <div style="display:flex; justify-content:space-between; margin-top:20px;">
-        <button class="btn" onclick="prevPage()">← ${t.back}</button>
-        <button class="btn" onclick="submitSurvey()">${t.submit}</button>
+      <div class="highlight-box">
+        <label>${labels.q3}</label>
+        <textarea id="q3" rows="4" placeholder="${labels.q3ph}">${formData.q3 || ''}</textarea>
+      </div>
+
+      <div class="highlight-box">
+        <h3 style="font-size:20px; color:#145078;">${labels.uploadTitle}</h3>
+        <p style="font-size:16px; color:#555;">${labels.uploadDesc}</p>
+
+        <div class="upload-box" onclick="document.getElementById('payStubInput').click()">
+          <div style="font-size:38px; margin-bottom:10px;">📷 📁</div>
+          <p>${lang==='es'?'Haz clic para subir o tomar fotos':lang==='ht'?'Klike pou telechaje oswa pran foto':'Click to upload or take photos'}</p>
+        </div>
+        <input type="file" id="payStubInput" accept=".pdf,image/*" multiple capture="environment" style="display:none;" onchange="previewFile(this,'payStubPreview')">
+
+        <div id="payStubPreview" class="preview" style="margin-top:15px;"></div>
+      </div>
+
+      <div class="highlight-box">
+        <label style="display:flex; align-items:start; cursor:pointer;">
+          <input type="checkbox" id="authorization" style="margin-top:6px; margin-right:12px; transform:scale(1.2); width:auto;">
+          <div>
+            <span style="font-size:18px; font-weight:bold; color:#145078;">${labels.auth}</span>
+            <div style="font-size:14px; margin-top:8px; color:#145078;">
+              ${labels.authList.map(item=>`<div>• ${item}</div>`).join("")}
+            </div>
+          </div>
+        </label>
+      </div>
+
+      <div style="display:flex; justify-content:space-between;">
+        <button class="btn" onclick="prevPage()">← ${translations[lang].back}</button>
+        <button class="btn" onclick="submitSurvey()">${translations[lang].submit}</button>
       </div>
     `;
   }
-
-  /* Step 4: Success Screen */
+  // Step 4: Success Page (no resubmit option)
   if (page === 4) {
+    const labels = {
+      en: {
+        success: "Monthly Report Submitted Successfully!",
+        thanks: "Thank you for your continued commitment to employment success through TASK!",
+        office: "TASK Employment Office",
+        location: "Trenton Area Soup Kitchen",
+        address: "72½ Escher St, Trenton, NJ 08609",
+        phoneLabel: "Employment Office",
+        phone: "609-697-6215 or 609-697-6166",
+        hours: "Meal Time Hours",
+        h1: "Mon-Fri: 10:30 AM - 1:00 PM",
+        h2: "Mon-Thu: 3:30 PM - 5:00 PM",
+        online: "Online",
+        website: "trentonsoupkitchen.org",
+        reward: "Reward Program",
+        rewardText: "Complete monthly surveys and maintain employment to earn gift card rewards! Visit our Employment Office to claim your incentive."
+      },
+      es: {
+        success: "¡Informe Mensual Enviado Exitosamente!",
+        thanks: "¡Gracias por tu compromiso continuo con el éxito laboral a través de TASK!",
+        office: "Oficina de Empleo TASK",
+        location: "Cocina de Sopa del Área de Trenton",
+        address: "72½ Escher St, Trenton, NJ 08609",
+        phoneLabel: "Oficina de Empleo",
+        phone: "609-697-6215 o 609-697-6166",
+        hours: "Horario de Comidas",
+        h1: "Lun-Vie: 10:30 AM - 1:00 PM",
+        h2: "Lun-Jue: 3:30 PM - 5:00 PM",
+        online: "En Línea",
+        website: "trentonsoupkitchen.org",
+        reward: "Programa de Recompensas",
+        rewardText: "Completa encuestas mensuales y mantén el empleo para ganar tarjetas de regalo. ¡Visita nuestra oficina para reclamar tu incentivo!"
+      },
+      ht: {
+        success: "Rapò Chak Mwa Soumèt ak Siksè!",
+        thanks: "Mèsi pou angajman kontinyèl ou ak siksè travay nan TASK!",
+        office: "Biwo Travay TASK",
+        location: "Kizin Soup Trenton Area",
+        address: "72½ Escher St, Trenton, NJ 08609",
+        phoneLabel: "Biwo Travay",
+        phone: "609-697-6215 oswa 609-697-6166",
+        hours: "Orè Manje",
+        h1: "Lendi-Vandredi: 10:30 AM - 1:00 PM",
+        h2: "Lendi-Jedi: 3:30 PM - 5:00 PM",
+        online: "Sou Entènèt",
+        website: "trentonsoupkitchen.org",
+        reward: "Pwogram Rekonpans",
+        rewardText: "Konplete sondaj chak mwa yo epi kenbe travay pou jwenn rekonpans ak kat kado! Vizite Biwo Travay nou pou reklame li."
+      }
+    }[lang];
+
     html = `
-      <div class="header-bar">
-        <div class="progress">
-          <div class="step active">1</div>
-          <div class="step active">2</div>
-          <div class="step active">3</div>
-          <div class="step active">4</div>
+      <div style="text-align:center;">
+        <div style="font-size:80px; margin-bottom:20px;">🎉</div>
+        <h1 style="color:#16a34a;">${labels.success}</h1>
+        <p style="font-size:20px; color:#6b7280; margin-bottom:30px;">${labels.thanks}</p>
+
+        <div class="highlight-box" style="text-align:left; background:#f0fdf4; border-color:#86efac;">
+          <h2 style="color:#145078; margin-bottom:15px;">${labels.office}</h2>
+
+          <div class="contact-item" style="margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+            <span style="font-size:20px;">📍</span>
+            <div>
+              <div style="font-weight:bold; font-size:16px;">${labels.location}</div>
+              <div style="font-size:14px;">${labels.address}</div>
+            </div>
+          </div>
+
+          <div class="contact-item" style="margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+            <span style="font-size:20px;">📞</span>
+            <div>
+              <div style="font-weight:bold;">${labels.phoneLabel}</div>
+              <div style="font-size:14px;">${labels.phone}</div>
+            </div>
+          </div>
+
+          <div class="contact-item" style="margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+            <span style="font-size:20px;">🕐</span>
+            <div>
+              <div style="font-weight:bold;">${labels.hours}</div>
+              <div style="font-size:14px;">${labels.h1}</div>
+              <div style="font-size:14px;">${labels.h2}</div>
+            </div>
+          </div>
+
+          <div class="contact-item" style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:20px;">🌐</span>
+            <div>
+              <div style="font-weight:bold;">${labels.online}</div>
+              <div style="font-size:14px;">${labels.website}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="highlight-box" style="text-align:center; background:#fff7ed; border-color:#fdba74; margin-top:20px;">
+          <div style="font-size:22px; font-weight:bold; color:#166534; margin-bottom:10px;">
+            💵 ${labels.reward}
+          </div>
+          <p style="color:#166534; font-weight:500;">${labels.rewardText}</p>
         </div>
       </div>
-      <h2 style="color:#16a34a;">✅ ${lang==='es'?'¡Envío exitoso!':lang==='ht'?'Soumèt avèk siksè!':'Submission Successful!'}</h2>
-      <p>${lang==='es'?'Gracias por completar tu informe mensual. Por favor pasa por TASK para recoger tu tarjeta de regalo.':lang==='ht'?'Mèsi paske w te konplete rapò chak mwa ou. Tanpri pase pa TASK pou ranmase kat kado ou.':'Thank you for completing your monthly report. Please come to TASK to pick up your gift card.'}</p>
     `;
   }
-
   document.getElementById("survey").innerHTML = html;
 }
-</script>
-<script>
-/* ===== Navigation ===== */
-function toggleEmployment(isYes) {
-  formData.stillWorking = isYes ? "yes" : "no";
-  renderPage();
+
+// ===== Helpers =====
+
+// Toggle employment eligibility
+function toggleEmployment(isEmployed) {
+  formData.stillWorking = isEmployed ? "yes" : "no";
+  if (isEmployed) {
+    document.getElementById("continueBtn").style.display = "";
+    document.getElementById("stopMessage").style.display = "none";
+  } else {
+    document.getElementById("continueBtn").style.display = "none";
+    document.getElementById("stopMessage").style.display = "";
+  }
 }
 
-function nextPage() {
-  if (page === 1) {
-    if (!formData.stillWorking) return alert(translations[lang].completeRequired);
-    if (formData.stillWorking === "no") return; // stops at stop message
-  }
+// Save form data
+function saveFormData() {
   if (page === 2) {
-    formData.firstName = document.getElementById("firstName").value.trim();
-    formData.lastName = document.getElementById("lastName").value.trim();
-    formData.phone = document.getElementById("phone").value.trim();
-    formData.email = document.getElementById("email").value.trim();
-    formData.preferredContact = document.getElementById("preferredContact").value;
-    formData.monthsEmployed = document.getElementById("monthsEmployed").value;
-    if (!formData.firstName || !formData.lastName || !formData.phone || !formData.email || !formData.monthsEmployed) {
-      return alert(translations[lang].completeRequired);
+    formData.firstName = document.getElementById("firstName")?.value || "";
+    formData.lastName = document.getElementById("lastName")?.value || "";
+    formData.phone = document.getElementById("phone")?.value || "";
+    formData.email = document.getElementById("email")?.value || "";
+    formData.preferredContact = document.getElementById("preferredContact")?.value || "";
+    formData.monthsEmployed = document.getElementById("monthsEmployed")?.value || "";
+  }
+  if (page === 3) {
+    formData.q1 = document.getElementById("q1")?.value || "";
+    formData.q2 = document.getElementById("q2")?.value || "";
+    formData.q3 = document.getElementById("q3")?.value || "";
+    formData.authorization = document.getElementById("authorization")?.checked || false;
+  }
+}
+
+// Validation
+function validatePage() {
+  const t = translations[lang];
+
+  if (page === 2) {
+    const required = ["firstName","lastName","phone","email","monthsEmployed"];
+    for (let field of required) {
+      const el = document.getElementById(field);
+      if (!el?.value.trim()) {
+        alert(t.completeRequired);
+        el?.focus();
+        return false;
+      }
     }
   }
+
+  if (page === 3) {
+    const payStubFiles = document.getElementById("payStubInput")?.files || [];
+    const authChecked = document.getElementById("authorization")?.checked;
+
+    if (payStubFiles.length < 2) {
+      alert(lang==="es"
+        ? "Por favor sube al menos dos talones de pago."
+        : lang==="ht"
+          ? "Tanpri telechaje omwen 2 fich peman."
+          : "Please upload at least two pay stubs."
+      );
+      return false;
+    }
+    if (!authChecked) {
+      alert(t.completeRequired);
+      return false;
+    }
+  }
+  return true;
+}
+
+// Navigation
+function nextPage() {
+  if (!validatePage()) return;
+  saveFormData();
   page++;
   renderPage();
 }
-
 function prevPage() {
-  if (page > 1) {
-    page--;
-    renderPage();
-  }
+  saveFormData();
+  page--;
+  renderPage();
 }
 
-/* ===== File Preview ===== */
-function previewFiles(input) {
-  const preview = document.getElementById("payStubPreview");
-  preview.innerHTML = "";
-  for (const file of input.files) {
-    const div = document.createElement("div");
-    div.className = "file-name";
-    div.textContent = file.name;
-    preview.appendChild(div);
-  }
-}
-
-/* ===== Phone Formatter ===== */
-function formatPhone(el) {
-  let x = el.value.replace(/\D/g, "").slice(0, 10);
-  let formatted = x;
-  if (x.length > 6) {
-    formatted = `(${x.slice(0,3)}) ${x.slice(3,6)}-${x.slice(6)}`;
-  } else if (x.length > 3) {
-    formatted = `(${x.slice(0,3)}) ${x.slice(3)}`;
-  }
-  el.value = formatted;
-}
-
-/* ===== Submission ===== */
+// Submit
 function submitSurvey() {
-  formData.q1 = document.getElementById("q1").value.trim();
-  formData.q2 = document.getElementById("q2").value.trim();
-  formData.q3 = document.getElementById("q3").value.trim();
-  formData.authorization = document.getElementById("authorization").checked;
+  if (!validatePage()) return;
 
-  if (!formData.q1 || !formData.q2 || !formData.q3 || !formData.authorization) {
-    return alert(translations[lang].completeRequired);
+  // Prevent resubmissions within 30 days
+  const lastSubmission = localStorage.getItem("taskFormSubmitted");
+  if (lastSubmission) {
+    const daysSince = Math.floor((Date.now() - parseInt(lastSubmission)) / (1000*60*60*24));
+    if (daysSince < 30) {
+      alert(lang==="es"
+        ? "Ya enviaste un informe este mes. Vuelve el próximo mes."
+        : lang==="ht"
+          ? "Ou deja soumèt yon rapò mwa sa a. Tanpri retounen mwa pwochen."
+          : "You already submitted a report this month. Please return next month."
+      );
+      return;
+    }
   }
-  // Normally save to backend
+
+  saveFormData();
+  formData.submissionId = "TASK_" + Date.now();
+  formData.timestamp = new Date().toISOString();
+
+  localStorage.setItem("taskFormSubmitted", Date.now().toString());
+  console.log("Form submitted:", formData);
+
   page = 4;
   renderPage();
 }
-</script>
-<script>
-let demoSteps = [];
 
-/* ===== Start / Skip Tutorial ===== */
-function startTutorial() {
-  isDemoMode = true;
-  demoStep = 0;
-  const modeEl = document.querySelector("input[name='tutorialMode']:checked");
-  tutorialMode = modeEl ? modeEl.value : "auto";
-  document.getElementById("demoOverlay").style.display = "none";
-  page = 1;
-  renderPage();
-  demoSteps = getDemoSteps();
-  runDemoStep();
-}
-function skipTutorial() {
-  document.getElementById("demoOverlay").style.display = "none";
-  page = 1;
-  renderPage();
-}
-
-/* ===== Speak (uses Speech Synthesis) ===== */
-function speak(text) {
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = lang === "es" ? "es-ES" : lang === "ht" ? "ht-HT" : "en-US";
-  speechSynthesis.speak(utter);
-}
-
-/* ===== Tutorial Steps ===== */
-function getDemoSteps() {
-  return [
-    { selector: 'input[name="stillWorking"][value="yes"]',
-      text: lang==="es" ? "Marca Sí para indicar que aún estás empleado."
-           : lang==="ht" ? "Chwazi Wi pou montre ou toujou ap travay."
-           : "Select Yes to show you’re still employed.",
-      action: () => {
-        formData.stillWorking = "yes";
-        document.querySelector('input[value="yes"]').checked = true;
-        document.getElementById("continueBtn").style.display = "";
-      }
-    },
-    { selector: '#continueBtn',
-      text: lang==="es" ? "Haz clic en Continuar para pasar al siguiente paso."
-           : lang==="ht" ? "Klike sou Kontinye pou ale nan pwochen etap la."
-           : "Click Continue to move forward.",
-      action: () => nextPage()
-    },
-    { selector: '#firstName',
-      text: lang==="es" ? "Ingresa tu nombre, por ejemplo John."
-           : lang==="ht" ? "Antre non ou, pou egzanp John."
-           : "Enter your first name, for example John.",
-      action: () => {
-        if (tutorialMode==="auto") document.getElementById("firstName").value = "John";
-        else { document.getElementById("firstName").placeholder="e.g. John (replace with yours)"; document.getElementById("firstName").style.color="#9ca3af"; }
-      }
-    },
-    { selector: '#lastName',
-      text: lang==="es" ? "Ahora tu apellido, por ejemplo Smith."
-           : lang==="ht" ? "Koulye a non fanmi ou, pou egzanp Smith."
-           : "Now your last name, for example Smith.",
-      action: () => {
-        if (tutorialMode==="auto") document.getElementById("lastName").value = "Smith";
-        else { document.getElementById("lastName").placeholder="e.g. Smith"; document.getElementById("lastName").style.color="#9ca3af"; }
-      }
-    },
-    { selector: '#phone',
-      text: lang==="es" ? "Escribe tu número de teléfono."
-           : lang==="ht" ? "Antre nimewo telefòn ou."
-           : "Enter your phone number.",
-      action: () => {
-        if (tutorialMode==="auto") document.getElementById("phone").value = "(609) 555-1234";
-        else { document.getElementById("phone").placeholder="e.g. (609) 555-1234"; document.getElementById("phone").style.color="#9ca3af"; }
-      }
-    },
-    { selector: '#email',
-      text: lang==="es" ? "Agrega tu correo electrónico."
-           : lang==="ht" ? "Ajoute adrès imel ou."
-           : "Add your email address.",
-      action: () => {
-        if (tutorialMode==="auto") document.getElementById("email").value = "john.smith@email.com";
-        else { document.getElementById("email").placeholder="e.g. you@email.com"; document.getElementById("email").style.color="#9ca3af"; }
-      }
-    },
-    { selector: '#monthsEmployed',
-      text: lang==="es" ? "Selecciona cuántos meses has trabajado, por ejemplo 6 meses."
-           : lang==="ht" ? "Chwazi konbyen mwa ou te travay, pou egzanp 6 mwa."
-           : "Select how many months you’ve been employed, for example 6 months.",
-      action: () => {
-        if (tutorialMode==="auto") document.getElementById("monthsEmployed").value="6";
-      }
-    },
-    { selector: '.btn:last-of-type',
-      text: lang==="es" ? "Haz clic en Continuar para seguir."
-           : lang==="ht" ? "Klike sou Kontinye pou kontinye."
-           : "Click Continue to move forward.",
-      action: () => nextPage()
-    },
-    { selector: '#q1',
-      text: lang==="es" ? "Escribe qué te ha ayudado a mantener tu empleo."
-           : lang==="ht" ? "Ekri sa ki ede w kenbe travay la."
-           : "Write what has helped you stay successful at work.",
-      action: () => {
-        if (tutorialMode==="auto") document.getElementById("q1").value = "Supportive manager and flexible schedule.";
-        else { document.getElementById("q1").placeholder="e.g. Supportive manager..."; document.getElementById("q1").style.color="#9ca3af"; }
-      }
-    },
-    { selector: '#q2',
-      text: lang==="es" ? "Agrega un desafío que enfrentas."
-           : lang==="ht" ? "Ajoute yon defi w ap fè fas ak li."
-           : "Add a challenge you face.",
-      action: () => {
-        if (tutorialMode==="auto") document.getElementById("q2").value = "Transportation can be tough sometimes.";
-        else { document.getElementById("q2").placeholder="e.g. Transportation issues"; document.getElementById("q2").style.color="#9ca3af"; }
-      }
-    },
-    { selector: '#q3',
-      text: lang==="es" ? "Explica cómo TASK ha hecho una diferencia."
-           : lang==="ht" ? "Eksplike kijan TASK fè yon diferans."
-           : "Explain how TASK has made a difference.",
-      action: () => {
-        if (tutorialMode==="auto") document.getElementById("q3").value = "They helped me with job search and training.";
-        else { document.getElementById("q3").placeholder="e.g. TASK helped with training"; document.getElementById("q3").style.color="#9ca3af"; }
-      }
-    },
-    { selector: '#payStubInput',
-      text: lang==="es" ? "Sube dos talones de pago. Aquí mostramos un ejemplo ficticio."
-           : lang==="ht" ? "Telechaje 2 fich peman. Isit la nou montre yon egzanp fo."
-           : "Upload two pay stubs. Here we just show a fake example.",
-      action: () => {
-        const preview = document.getElementById("payStubPreview");
-        preview.innerHTML = '<div class="file-name" style="opacity:0.6">(example) paystub_jan.pdf</div><div class="file-name" style="opacity:0.6">(example) paystub_feb.pdf</div>';
-      }
-    },
-    { selector: '#authorization',
-      text: lang==="es" ? "No olvides marcar la autorización."
-           : lang==="ht" ? "Pa bliye make bwat otorizasyon an."
-           : "Don’t forget to check the authorization box.",
-      action: () => {
-        if (tutorialMode==="auto") document.getElementById("authorization").checked = true;
-      }
-    },
-    { selector: 'button.btn:last-of-type',
-      text: lang==="es" ? "Haz clic en Enviar para completar."
-           : lang==="ht" ? "Klike sou Soumèt pou fini."
-           : "Click Submit to finish.",
-      action: () => { if (tutorialMode==="auto") { page=4; renderPage(); } }
-    }
-  ];
-}
-
-/* ===== Run Step ===== */
-function runDemoStep() {
-  if (!isDemoMode) return;
-  if (demoStep >= demoSteps.length) {
-    speak(lang==="es" ? "Has completado el tutorial."
-         : lang==="ht" ? "Ou fini ak leson patikilye a."
-         : "You’ve completed the tutorial.");
-    isDemoMode = false;
-    return;
-  }
-
-  const step = demoSteps[demoStep];
-  const el = document.querySelector(step.selector);
-  if (el) {
-    el.classList.add("demo-highlight");
-    speak(step.text);
-    step.action && step.action();
-    el.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
-
-  if (tutorialMode === "auto") {
-    demoTimeout = setTimeout(() => {
-      if (el) el.classList.remove("demo-highlight");
-      demoStep++;
-      runDemoStep();
-    }, 4500);
+// Phone formatting
+function formatPhone(input) {
+  let val = input.value.replace(/\D/g, "");
+  if (val.length > 3 && val.length <= 6) {
+    input.value = `(${val.slice(0, 3)}) ${val.slice(3)}`;
+  } else if (val.length > 6) {
+    input.value = `(${val.slice(0, 3)}) ${val.slice(3, 6)}-${val.slice(6, 10)}`;
   } else {
-    // Pause mode: wait for user to advance manually
-    const observer = new MutationObserver(() => {
-      if (page !== 1 && step.selector==="#continueBtn") { el.classList.remove("demo-highlight"); observer.disconnect(); demoStep++; runDemoStep(); }
-      if (page !== 2 && step.selector===".btn:last-of-type") { el.classList.remove("demo-highlight"); observer.disconnect(); demoStep++; runDemoStep(); }
-      if (page !== 3 && step.selector==="button.btn:last-of-type") { el.classList.remove("demo-highlight"); observer.disconnect(); demoStep++; runDemoStep(); }
-    });
-    observer.observe(document.getElementById("survey"), { childList:true, subtree:true });
+    input.value = val;
   }
 }
-</script>
-<script>
-/* ===== Init Load ===== */
-window.onload = () => {
-  const savedLang = localStorage.getItem("taskLanguage");
-  if (savedLang) lang = savedLang;
-  // Show tutorial overlay first
-  document.getElementById("demoOverlay").style.display = "flex";
-};
+
+// File preview
+function previewFile(input, previewId) {
+  const preview = document.getElementById(previewId);
+  preview.innerHTML = "";
+
+  if (input.files.length > 0) {
+    const count = document.createElement("p");
+    count.textContent = `${input.files.length} file(s) selected`;
+    count.style.fontWeight = "bold";
+    count.style.color = "#16a34a";
+    count.style.marginBottom = "10px";
+    preview.appendChild(count);
+  }
+
+  Array.from(input.files).forEach(file => {
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        preview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      const div = document.createElement("div");
+      div.classList.add("file-name");
+      div.textContent = file.name;
+      preview.appendChild(div);
+    }
+  });
+}
+
+// ===== Init =====
+const savedLang = localStorage.getItem("taskLanguage");
+if (savedLang && translations[savedLang]) {
+  lang = savedLang;
+}
+renderPage();
 </script>
 </body>
 </html>
+
