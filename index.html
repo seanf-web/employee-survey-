@@ -179,7 +179,7 @@ textarea{min-height:90px;resize:vertical}.btnbar{display:flex;gap:8px;justify-co
 </div>
 
 <!-- Admin modal -->
-<div id="admin" class="modal" aria-hidden="true" style="display: none;">
+<div id="admin" class="modal" aria-hidden="true">
   <div class="dialog">
     <button id="adminClose" class="closex">✕</button>
     <h3 data-i18n="admin_h">Admin</h3>
@@ -187,37 +187,7 @@ textarea{min-height:90px;resize:vertical}.btnbar{display:flex;gap:8px;justify-co
       <button id="btnClearLock" class="btn" data-i18n="clear_lock">Clear monthly lock</button>
       <button id="btnShowSubs" class="btn" data-i18n="view_subs">View submissions</button>
     </div>
-    <div id="subList" class="small"><table style="width:100%;border-collapse:collapse">
-    <thead><tr><th>Date</th><th>Name</th><th>Phone</th><th>Employer</th><th>Title</th><th>Start (yrs/mo)</th><th>Pay</th><th>Hours</th></tr></thead>
-    <tbody><tr>
-      <td>9/13/2025, 11:15:42 PM</td>
-      <td>Sean Ford</td>
-      <td>(609)-577-0785</td>
-      <td>TASK</td>
-      <td>wfd</td>
-      <td>2020-12 (4y 9m)</td>
-      <td>45</td>
-      <td>40</td>
-    </tr><tr>
-      <td>9/13/2025, 11:00:37 PM</td>
-      <td>Sean Ford</td>
-      <td>(609)-577-0785</td>
-      <td>TASK</td>
-      <td>wfd</td>
-      <td>2016-11 (8y 10m)</td>
-      <td>25</td>
-      <td>25</td>
-    </tr><tr>
-      <td>9/13/2025, 6:04:01 PM</td>
-      <td>Sean Ford</td>
-      <td>(609)-577-0785</td>
-      <td>UPS</td>
-      <td>Warehouse</td>
-      <td>2006-09 (19y 0m)</td>
-      <td>25</td>
-      <td>25</td>
-    </tr></tbody>
-  </table></div>
+    <div id="subList" class="small"></div>
   </div>
 </div>
 
@@ -497,9 +467,99 @@ check1(); check2(); check3(); check4();
 
 
 
-<!-- View Submissions: export ALL fields (CSV + XLSX) with flattening -->
+<!-- Cloudflare Stream swap (keeps voices; replaces only the tutorial <video>) -->
+<script>
+(function () {
+  // Paste your Cloudflare Stream VIDEO ID here
+  var CF_VIDEO_ID = 'YOUR_VIDEO_ID_HERE';
+  if (!CF_VIDEO_ID || /YOUR_VIDEO_ID_HERE/.test(CF_VIDEO_ID)) return;
+
+  var oldVideo =
+    document.querySelector('#tutorial video') ||
+    document.getElementById('tutVideo') ||
+    document.querySelector('video');
+  if (!oldVideo) return;
+
+  var src = 'https://iframe.videodelivery.net/' + CF_VIDEO_ID +
+            '?controls=true&playsinline=1&preload=metadata';
+  var iframe = document.createElement('iframe');
+  iframe.src = src;
+  iframe.title = 'Tutorial';
+  iframe.setAttribute('allowfullscreen', '');
+  iframe.setAttribute('allow',
+    'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+  iframe.setAttribute('loading', 'lazy');
+  iframe.style.width = '100%';
+  iframe.style.aspectRatio = '16/9';
+  iframe.style.border = '0';
+  oldVideo.replaceWith(iframe);
+
+  // Fallback link if iframes are blocked
+  var a = document.createElement('a');
+  a.href = 'https://watch.videodelivery.net/' + CF_VIDEO_ID;
+  a.textContent = 'Open tutorial video';
+  a.style.display = 'none';
+  iframe.addEventListener('error', function(){ a.style.display = 'inline-block'; });
+  iframe.insertAdjacentElement('afterend', a);
+})();
+</script>
+
+<!-- Mobile audio/TTS unlock (iOS-safe) + View Submissions: ALL answers CSV/XLSX -->
 <script>
 (function(){
+  // -------- AUDIO/TTS UNLOCK ----------
+  // Adds a tiny "Enable sound" button near the tutorial so iOS can resume audio contexts
+  function iOS(){ return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; }
+
+  function createUnlockButton(anchor){
+    var btn = document.createElement('button');
+    btn.textContent = 'Enable sound';
+    btn.id = 'audioUnlock';
+    btn.style.cssText = 'margin:8px 0 0; padding:8px 12px; border-radius:10px; border:1px solid #3a4b6b; background:#16233b; color:#e7edf8; cursor:pointer;';
+    anchor.insertAdjacentElement('afterend', btn);
+    btn.addEventListener('click', unlockAudio, {once:true});
+  }
+
+  var unlocked = false, ctx;
+  function unlockAudio(){
+    try {
+      // Web Audio unlock
+      ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+      if (ctx && ctx.state === 'suspended') ctx.resume();
+      // 10ms beep to fully unlock on older iOS
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.frequency.value = 440; g.gain.value = 0.0001; o.connect(g).connect(ctx.destination);
+      o.start(); setTimeout(function(){ o.stop(); }, 10);
+    } catch(_){}
+    // Poke speech synthesis so voices load
+    try {
+      var u = new SpeechSynthesisUtterance('');
+      u.volume = 0; window.speechSynthesis.speak(u);
+      setTimeout(function(){ window.speechSynthesis.cancel(); }, 50);
+    } catch(_){}
+    var b = document.getElementById('audioUnlock'); if (b) b.remove();
+    unlocked = true;
+  }
+
+  function placeUnlock(){
+    if (!iOS()) return; // usually only needed on iOS
+    if (unlocked) return;
+    // Find the tutorial media area and place the button just below it
+    var anchor =
+      document.querySelector('#tutorial iframe, #tutorial video') ||
+      document.getElementById('tutVideo') ||
+      document.querySelector('iframe, video');
+    if (anchor) createUnlockButton(anchor);
+    // Also unlock on the first global tap
+    ['touchend','click'].forEach(function(evt){
+      window.addEventListener(evt, function once(){ if(!unlocked) unlockAudio(); window.removeEventListener(evt, once, true); }, true);
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', placeUnlock);
+  else placeUnlock();
+
+  // -------- VIEW SUBMISSIONS (ALL fields) ----------
   function findViewBtn(){
     return document.getElementById('viewSubmissions') ||
            Array.from(document.querySelectorAll('button,a,input[type="button"],input[type="submit"]')).find(function(el){
@@ -508,25 +568,15 @@ check1(); check2(); check3(); check4();
            });
   }
 
-  // Robustly get all stored submissions; prefer APP.keys.SUBS if defined
   function getStoredSubmissions(){
     var rows = [];
     try {
       var key = (window.APP && APP.keys && APP.keys.SUBS) ? APP.keys.SUBS : null;
-      var fallbacks = [
-        key,
-        'TASK_SUBMISSIONS_v3',
-        'TASK_SUBMISSIONS',
-        'submissions',
-        'retention_submissions'
-      ].filter(Boolean);
+      var fallbacks = [key, 'TASK_SUBMISSIONS_v3', 'TASK_SUBMISSIONS', 'submissions', 'retention_submissions'].filter(Boolean);
       for (var i=0;i<fallbacks.length;i++){
         var raw = localStorage.getItem(fallbacks[i]);
         if (!raw) continue;
-        try {
-          var arr = JSON.parse(raw);
-          if (Array.isArray(arr) && arr.length){ rows = arr; break; }
-        } catch(_){}
+        try { var arr = JSON.parse(raw); if (Array.isArray(arr) && arr.length){ rows = arr; break; } } catch(_){}
       }
     } catch(_){}
     return rows;
@@ -551,30 +601,21 @@ check1(); check2(); check3(); check4();
     return rows;
   }
 
-  // Deep-flatten nested objects/arrays to a flat dict with dot.notation keys
   function flatten(obj, prefix, out){
     out = out || {}; prefix = prefix || '';
     if (obj==null) return out;
     if (Array.isArray(obj)){
       for (var i=0;i<obj.length;i++){ flatten(obj[i], prefix + (prefix?'.':'') + i, out); }
     } else if (typeof obj === 'object'){
-      for (var k in obj){
-        if (!Object.prototype.hasOwnProperty.call(obj,k)) continue;
-        flatten(obj[k], prefix ? (prefix + '.' + k) : k, out);
-      }
-    } else {
-      out[prefix] = obj;
-    }
+      for (var k in obj){ if (!Object.prototype.hasOwnProperty.call(obj,k)) continue; flatten(obj[k], prefix ? (prefix + '.' + k) : k, out); }
+    } else { out[prefix] = obj; }
     return out;
   }
 
   function normalize(records){
     return records.map(function(r){
       var flat = flatten(r);
-      // derive readable date when ts present
-      if ('ts' in flat && !('date' in flat)){
-        try { flat.date = new Date(flat.ts).toLocaleString(); } catch(_){}
-      }
+      if ('ts' in flat && !('date' in flat)){ try { flat.date = new Date(flat.ts).toLocaleString(); } catch(_){ } }
       return flat;
     });
   }
@@ -583,12 +624,7 @@ check1(); check2(); check3(); check4();
     var set = new Set();
     rows.forEach(function(r){ Object.keys(r).forEach(function(k){ set.add(k); }); });
     var cols = Array.from(set);
-    // Put common fields first, including retention questions
-    var first = [
-      'date','ts','first','last','name','phone','email','pref',
-      'employer','job','title','pay','hours','start','stars',
-      'well','helped','challenge','support'
-    ];
+    var first = ['date','ts','first','last','name','phone','email','pref','employer','job','title','pay','hours','start','stars','well','helped','challenge','support'];
     cols.sort(function(a,b){
       var ia = first.indexOf(a), ib = first.indexOf(b);
       if (ia===-1 && ib===-1) return a.localeCompare(b);
@@ -606,7 +642,7 @@ check1(); check2(); check3(); check4();
     return out.join('\n');
   }
 
-  // Minimal XLSX (OOXML) generator (stored ZIP)
+  // Minimal XLSX (stored ZIP)
   function strToU8(s){ return new TextEncoder().encode(s); }
   var CRC32_TABLE=(function(){var c,t=new Uint32Array(256);for(var n=0;n<256;n++){c=n;for(var k=0;k<8;k++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);t[n]=c>>>0;}return t;})();
   function crc32(u){var crc=0^(-1);for(var i=0;i<u.length;i++){crc=(crc>>>8)^CRC32_TABLE[(crc^u[i])&255];}return (crc^(-1))>>>0;}
@@ -618,13 +654,10 @@ check1(); check2(); check3(); check4();
   function xmlEscape(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
   function buildXlsx(rows, keys){
     var sheetRows=[];
-    // header
     sheetRows.push('<row r="1">'+ keys.map(function(k,j){var r=colName(j)+'1';return '<c r="'+r+'" t="inlineStr"><is><t>'+xmlEscape(k)+'</t></is></c>';}).join('') +'</row>');
-    // data
     for (var i=0;i<rows.length;i++){
       var rnum=i+2; var r=rows[i];
-      var cells=keys.map(function(k,j){
-        var v=(r[k]==null?'':String(r[k])); var ref=colName(j)+rnum;
+      var cells=keys.map(function(k,j){var v=(r[k]==null?'':String(r[k]));var ref=colName(j)+rnum;
         if (/^\s*-?\d+(\.\d+)?\s*$/.test(v)) { v=v.replace(/,/g,''); return '<c r="'+ref+'"><v>'+v+'</v></c>'; }
         return '<c r="'+ref+'" t="inlineStr"><is><t>'+xmlEscape(v)+'</t></is></c>';
       }).join('');
@@ -651,18 +684,11 @@ check1(); check2(); check3(); check4();
     var stored = getStoredSubmissions();
     var records = stored && stored.length ? stored : scrapeAdminTable();
     if (!records.length){ alert('No submissions found on this device.'); return; }
-
-    // Normalize + flatten, then decide columns (union across all)
     var flat = normalize(records);
     var cols = getColumns(flat);
-
-    // Make sure retention fields are present in header even if some are empty
     ['stars','well','helped','challenge','support'].forEach(function(k){ if (cols.indexOf(k)===-1) cols.push(k); });
-
-    // CSV
     var csvBlob = new Blob([toCSV(flat, cols)], {type:'text/csv;charset=utf-8;'});
     downloadBlob(csvBlob, 'submissions_all_answers.csv');
-    // XLSX
     try {
       var xlsxBlob = buildXlsx(flat, cols);
       downloadBlob(xlsxBlob, 'submissions_all_answers.xlsx');
